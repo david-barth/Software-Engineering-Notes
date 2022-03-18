@@ -1,0 +1,61 @@
+SpringBoot:  Notes Gleaned from Practical Project Work. 
+
+
+Creating an ORM connection to MySQL DB and endpoint: 
+
+---> The following structure is neccessary in order to perform a successful endpoint connection to the DB: 
+
+
+	A. Rest Controller => This serves as the "resource" which contains the "endpoint" connection to the data source. 
+
+		---> @RestController is the component level stereotype annotation used for creating the controller, which is meant to direct the incoming request to the desired service. 
+
+		---> @RequestMapping("/Path") => This will help resolve the incoming request to it's proper "route" / destination service. 
+			
+			---> This contains all the necessary HTTP verb arguments needed to specify GET, POST, DELETE, and other REST functionalities. 
+	
+			---> The more specific @GetMapping, @PostMapping, etc annotations can be used too. 
+
+
+	B. Service Level => The service level contains the logic for business validation and data transformation as needed.  
+
+		---> This is usually autowired to its associated controller class. 
+
+			---> In turn, the associated Repository class is autowired to this class. 
+
+
+		---> The business logic can include various validations and data transformations. 
+
+
+
+
+	C. Repository Level => This is the level that performs the actual calls to the database.  
+
+		---> In the case of SpringBoot, the repository level can be implemented as an interface which extends a larger interface provided by Spring called the CrudRepository, which is parameterized by a DTO / model type and its primary key. 
+
+		---> The abstract methods in here are not implemented by concrete classes from the develpoer perspective, but instead implemented under the hood by SpringBoot.  
+
+		---> Therefore, the implementations of the CrudRepository can be left to SpringBoot to handle, unless specialized use cases are needed. 
+
+	
+	
+	D. Entity / DTO / Model =>  The data transfer object is the object onto which a database row / record is mapped onto and is transferred through the layers of the module / application. 
+
+		
+		---> The @Entity class level annotation must be used in order to mark the class as a DTO onto which a database record can be mapped onto this. 
+
+			---> If the "name" argument is provided, then @Entity will use this name in order to resolve which table in the DB the entity corresponds to. 
+
+
+		---> The same can be achiebed with the @Table annotation, with a name argument, but more flexibility can be given with the @Table annotation allows for more flexibility regarding, schema, unique constraints and more (see theory). 
+
+		---> @Id is used to identify the primary key of the table and @GeneratedValue is used to account for automatic data generation such auto-incrementing. 
+
+		---> @Column is used to indicate a field as corresponding to a certain column.  		
+
+
+		---> Note, at the very minimum a default constructor and setter methods must be present on field values in order to allow column information to be mapped onto the fields.              
+		
+
+
+
