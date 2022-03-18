@@ -1,29 +1,6 @@
 Tasks to be defined in the future: 
 
-	1. Adding logging to the backend with associated error handling. 
-
-		---> Reason => The tomcat server does not report on various interactions of the backend when external requests come in. 
-
-			---> Look into Spring Actuator (?) 
-
-
-
-	2. Add scanning of the data source to the property files.  
-
-		---> Reason => When the app is built onto its deployed environment, it should be able to perfomr a necessary connection to its data source. 
-
-
-
-	3. Add DDL and DML scripts to resource section in order to initialize with tables if necessary. 
-
-		---> Reason => Moslty for archetype deployment purposes.
-
-			---> More context is needed to define if this is really needed. 
-
-
-	4. Encryption of key information is needed. 
-
-		---> Reason => Good for security purposes related ot the app. 
+	
 
 
 
