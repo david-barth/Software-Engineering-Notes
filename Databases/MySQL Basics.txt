@@ -1,0 +1,37 @@
+MySQL Basics. 
+
+
+Existence of Databases on a computer: 
+
+---> A database is hosted at a localhost port and so will not need to be located in the same working directory as a project. 
+
+---> Therefore, an ORM only needs to scan for data source instances that exist on the localhost ports. 
+
+
+
+MySQL Work Bench: 
+
+---> This is a GUI application that is used to work directly with MySQL in a graphical way. 
+
+
+
+
+MySQL Shell: 
+
+---> This is used to directly talk to the MySQL server.  
+
+---> The shell has 3 different modes: 
+
+	1. SQL mode 
+
+	2. JS mode 
+
+	3. Python mode
+
+	---> Being in one of those modes allows the syntax of that language to be used for it.  
+
+	---> To switch to SQL mode, the command \sql must be used.  
+
+	
+
+

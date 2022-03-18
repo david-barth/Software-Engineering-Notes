@@ -1,0 +1,94 @@
+Git Basics. 
+
+
+Fundamentals: Terms and definitions
+
+---> Commit => Is a version of a project that is "saved" by git. 
+
+	---> A commit represents a snapshot of the project at the time the commit is taken. 
+
+	---> Each file is uniquely stored by git once. 
+
+		---> A changed file counts as a unique file and is therefore stored by git. 
+
+
+	---> A collection of commits represents the history of a project.  
+
+
+
+---> Branch => An independent line of development in a project. 
+
+	---> Branches contain their own unique set of branches. 
+	
+	---> The default branch is called the master branch. 
+
+		---> The master / main branch represents the stable version of the project that contains work which has been previously been reviewed and approved for inclusion.
+
+
+	---> A branch can correspond to many different things such as a bug fix, a feature, etc. 
+
+`		---> A separate branch from the main branch can be worked on independently from the main branch. 
+
+		---> The main branch does not know about the side branch until merging. 
+
+
+---> Pull request => A request to merge a side branch into the main branch of a project. 
+
+	---> A merge represents combining the latest commit of a side branch into the main branch. 
+
+		---> This then incorporates the changes into the main branch that were made in the side branch, pending no merge conflicts. 
+
+	
+	---> Pull requests act as a way to review code before merges are approved and can include things like automated test checks and code review. 
+
+
+
+Overview of Git: Git Locations 
+
+---> Git is a distributed version control system in which repositories of code can be made available on local machines from a single point of truth / master repository. 
+
+	---> Local repos are synchronized to remote repos via pushes of code and pulls of code from the remote. 
+
+
+---> A repository represents many things, but can be considered a store of the project history including branches and the commits associated with each branch. 
+
+---> In git, there are several "locations" to consider when working with repositories: 
+
+	
+	A. Working Tree => The location where "work" is currently being done on a project's directories and files. 
+
+		---> git checkout allows different contents to be placed into the working tree. 
+
+		---> Checking out a commit places a commits snapshot of files / folders into the working tree. 
+
+		---> Checking out a branch places the latest commit of a branch (ie the tip of the branch) to the working tree. 
+
+		---> The working tree is conveniently thought of as the space in which the user of git can interact with different version of the project. 
+
+			---> All other version of the project are stored and non-interactive on the file level until they are placed into the working tree. 
+
+
+	B. Staging Area / Index => This location contains files / modifications that are planned for the next commit. 
+
+		---> git add / rm is used to add / remove files to / from the staging area. 
+
+		---> The staging area is a "skeleton" for the next commit. 
+
+		---> git status is used to check what the current contents of the staging are looks like. 
+
+
+`	C. .git => This is a hidden file within the project directory in which the staging area and commit history (local repo) are contained. 
+
+	
+
+---> Altogether, the working tree and the .git directory are contained in the project directory. 
+
+	---> The working tree represents the current version of source code being considered and has its contents shifted when checking out other commits + branches. 
+
+	---> The .git is where all the meta data associated with the project versioning itself is contained. 
+
+
+M
+
+
+  

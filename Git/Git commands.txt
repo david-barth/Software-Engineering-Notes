@@ -1,0 +1,204 @@
+Git Notes: Practical Side. 
+
+---> These notes are meant to be transferred to confluence. 
+
+
+Part A. Notes on various Commands.
+
+---> git fetch => A command that allows the contents of a remote repo to be downloaded into a local repo. 
+
+	---> New git objects and references are retrieved from the remote repository.
+
+	---> git pull is similar to this, but git fetch does not merge the contents of the fetch to the local repo. 
+
+	---> Fetched content is kept separate inside of the repo. 
+
+	---> Remote tracking branches are also updated when git fetch is used. 
+
+
+---> git checkout => Allows user to switch between different local branches. 
+
+	---> In doing so, git checkout allows for the current working tree (ie current version of the directory considered by the repo) to be updated to a version consistent with the branch. 
+
+		---> git checkout does this by updating the HEAD reference to the desired branch (most recent commit) and then updating the working tree with the commit contents. 
+
+	---> Future commits will also be applied to the this branch as well. 
+
+	---> git checkout -b <name> => This will create a branch and subsequently update the HEAD reference to the specified branch's most recent commit. 
+
+	---> git checkout <SHA-1> => Allows a particular commit to be checked out if necessary.
+
+
+---> git revert => Allows for a commit to be reverted on a branch within a local repo. 
+
+	---> Allows for the HEAD pointer to be used (e.g. git revert HEAD), which reverts the commit in which the HEAD pointer is pointing to. 
+
+	---> Otherwise requires the hash code (SHA-1) identifier of the desired commit within the desired branch. 
+
+
+---> git log => Opens a log of the history of commits and changes of a repo / branch. 
+
+	---> git log --oneline => Shows a condensed version of logs. 
+
+	---> git log --oneline -2 => Shows the most recent 2 commits. 
+
+		---> The number of most recent commits can be changed to a different number as desired. 
+
+
+
+---> git branch --set-upstream-to => Sets git to push to a specified remote branch. 
+
+	---> This acts as a pointer to a specific remote branch in a functional sense. 
+
+	---> git branch --set-upstream is the old deprecated version of this. 
+
+
+---> git clone => Used to create a local copy of a remote repository. 
+
+	---> git clone <url> [localProjectName] => Allows a directory name (localProjectName) to be used as a name for the local clone of the remote repository rather than using the remote repo name. 
+
+
+---> git remote --verbose => Displays information about remote repositories associated with the local repository. 
+
+	---> git remote -v => A single flag (-v) is the shorthand flag used for verbose in order to list the remote repos of the local repo. 
+
+	---> Note that "origin" is an alias to refer to the originating remote repo of the local repo (e.g. the remote originating branch). 
+
+
+---> git remote add <name> <url> => Adds a new remote repository to an already existing repository.  
+
+	---> The <name> is used as an alias for the new remote being added. 
+
+	---> The <url> contains the reference to the remote to which content can be pulled or pushed. 
+
+	---> The net effect is to allow a local repo to push or pull from more than one remote repo (e.g. to get information from repo a and b). 
+
+
+---> git push [-u] <repo> <branch> => This specifies the remote repo and branch to push to. 
+
+	---> New objects and references are therefore added from the local repo to the remote repo. 
+
+	---> <repo> => Can be a url or an alias. 
+
+	---> <branch> => Indicates the branch of the repo to push the changes to. 
+	
+	---> -u => Equivalent to --set-upstream which tracks the remote branch for the local branch. This allows the user to know when one branch is out of sync with the other. 
+
+		---> --set-upstream => Specifically sets up a remote tracking branch for the current local branch.  Updates the local tracking branch tag if the remote tracking branch exists. 
+
+
+
+
+---> git show <Git ID> => Shows the contents of a git object whose git ID is specified. 
+
+	---> A shortened git ID can also be used
+
+
+---> git tag => Outputs all tags in a repo. 
+
+	---> git tag <tagname> <CommitID> => Tags a commit with a lightweight tag. 
+
+	---> git tag -a -m <message> <tagname> <commitID / reference> => Allows a fully annotated tag for a commit. 
+
+		---> -F <File> => This can be included to tag a file. 
+
+	---> git push <remote> <tagame> => Can be used to transfer a single tag to a remote repo.  
+
+	---> git push <remote> --tags => Used to transfer all tags to the remote repo. 
+
+
+---> git branch => Lists the local branches in the current git repo or creates a new branch. 
+
+	---> git branch -a => Lists all branches associated to the git repo, including remotes. 
+
+	---> git branch <name> => Create a branch whose reference is the name argument. 
+
+		---> But the HEAD reference is still set on the current branch rather than the created branch. 
+
+
+	---> git branch -d <branch> => Allows a branch label to be deleted, but doesn't delete the branch commits itself. 
+
+		---> The reference to the branch label is gone, leaving the commits in a dangling state if the work is not merged into the parent branch.
+
+		---> The net effect is to lose work, but git will eventually garbage collect dangling commit objects. 
+
+		---> Normally git does not allow branches with unmerged work to be deleted. 
+		
+
+	---> git branch -D <branch> => This forcibly deletes a branch even if unmerged commits exist. 
+
+
+---> git reflog => Returns a local list of recent HEAD commits, allowing accidental branch deletion (e.g. with dangling commits) to be undone. 
+
+	--->  Obtaining the SHA-1 of a recently deleted HEAD commit and then using git checkout -b allows for a new branch label to be created for that commit, re-establishing the connection to the dangling commit. 
+
+
+
+---> git merge <branchX> => Performs a fast-forward merge (by default) on a branch X to it's base branch. 
+
+	---> The merge must be performed while checking out the base branch (ie HEAD is at the base branch). 
+
+	---> git merge --no-ff <branchX> => Forces a merge commit to be used for merging instead of a fast-forward commit even if a fast-forward commit is possible. 
+
+		---> A normal git merge will automatically default to a merge commit if a fast-froward merge is not possible and the sign of this is when a possibility to accept or modify a merge message appears.  
+
+
+---> git remote set-head <remote> <branch> => This sets the tracking branch HEAD pointer to a new remote branch. 
+
+	---> Note the remote name is simply an alias used to refer to any and all branch labels that are remote. 
+
+	---> "origin" is the default alias for this. 
+	
+
+---> git pull <repository> <branch> => Performs git fetch from the remote repo + branch and merges the fetched content into the present branch. 
+
+	---> The merging aspect is equivalent to the command "git merge FETCH_HEAD". 
+
+		---> FETCH_HEAD is a tag / reference to the tip of the tracking branch that is received.
+
+		---> Under this situation, it is likely that a fast-forward merge can be performed. 
+
+			---> For this situation, the HEAD and master branch labels are simply moved forward to the tracking branch label. 
+
+			---> For when a merge commit is done, the tracking branch label (e.g. origin/master) is updated to be where the remote branch label is, but not updated to be where the merge commit is. 
+
+
+
+	---> There are several flags that can also be added to a git pull: 
+
+		---> git pull --ff => Default command that uses fast-forward merging if possible and if it isn't possible, then a merge-commit. 
+
+		---> git pull --no--ff => Forces a merge commit. 
+
+		---> git pull --ff-only => Forces a fast-forward commit. 
+
+		---> git pull --rebase [--preserve-merges] => (To be discussed)
+
+
+
+---> git stash => Allows for files in the working tree to be stored for later use, but these files are not committed or staged. 
+
+	---> The command places the snapshot of the working directory into a stack, in which the files can be popped off the stack to get read of them. 
+
+	---> This is useful for overcoming different merge conflicts, such as when pulling from a repo with git pull. 
+
+
+
+
+Part B. Notes on various concepts in Git. 
+
+
+---> HEAD => This points to the current branch reference. 
+
+	---> Within this current branch reference is also a pointer to the latest commit that was done within the local system. 
+
+
+---> (Remote) tracking branch => This is a reference that keeps track of the state of remote branches.  
+
+	---> These are updated whenever git makes a network connection to a remote branch and are therefore managed by git. 
+
+	---> The nomenclature of the remote tracking branch is: <remote>/<branch>
+
+		---> e.g. origin/iss53 => Where "origin" is the default starting name for a branch and the name "iss53" is the branch name itself. 
+
+	

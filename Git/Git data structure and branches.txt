@@ -1,0 +1,367 @@
+Git: Graph Theory and Branches In-depth
+
+
+Git Graph Model.
+
+---> The commit structure of git works using a Directed Acyclic Graph (DAG). 
+
+---> A graph itself is a data structure that is used to model connected things.
+
+	---> A graph contains nodes that are connected to each other by edges (lines). 
+
+	---> Examples of graphs include trees and linked lists, but these are only specific examples. 
+
+
+---> A directed graph is a graph that has its nodes pointing in a specific direction towards their neighboring nodes. 
+
+	---> A directed graph operates similar to a singly linked list in which the nodes point in the direction of head to tail. 
+
+
+---> An acyclic graph is a graph that is non-circular, whose nodes are arranged in a list manner rather than in a circular manner. 
+
+	---> This is best thought of from the perspective of a circular linked list vs a singly linked list. 
+
+
+---> The graph model in git therefore combines all of these properties in its underlying data structure. 
+
+	---> Commits are the nodes in the git graph model. 
+
+	---> A commit node points to its parent commits.
+
+	---> Therefore, the most recent commit is the latest node in the graph and previous nodes in the graph represents the history of the graph. 
+
+	---> Branches are when a parent commit has more than one child, representing 2 different project histories branching off from one singular point in the overall project history. 
+
+	---> A merge occurs when a commit has more than one parent, representing when 2 diverging histories have combined into one singular history again in the overall project history. 
+
+
+---> It is possible to use either a GUI or the commandline to view the structure of the project git graph. 
+
+	---> The command line uses the following command: git log --oneline --graph
+
+		---> The --graph flag allows the graph structure to be viewed with the git log, without the --oneline flag. 
+
+
+
+Git IDs. 
+
+---> Git has 4 objects that it uses: 
+
+	A. Commit => An object that is a small text file containing important commit data. 
+
+		---> The text file contains information relating to the user behind the commit, the commit's parents, the root tree of the project, and the commit message. 
+
+	
+	B. Annotated tags => A permanent reference to a commit. 
+
+	
+	C. Tree => Directories and filenames in the project are organized in a tree structure and recognized by git as such (e.g. the working tree)
+
+	
+	C. Blob => The content of a file in the project. 
+
+
+	---> Git manages trees and blobs while users interact with commits and annotated tags. 
+
+		---> Trees and blobs are kept internally in the object store. 
+
+
+---> A Git ID represents the name of a git object and is represented by a 40 character hexadecimal string. 
+
+	---> The ID is a hash code generated from the SHA-1 hashing algorithm and is (in theory) supposed to unqiuely identify content. 
+
+	---> The ID would be used to reference a specific git object such as a commit when using commands such as git revert. 
+
+	---> Git IDs can be shortened to 4 or more characters of its SHA-1 hash string. 
+
+		---> This is useful for identifying commits in a succinct manner. 
+
+
+
+---> The following command is used to create a SHA-1 for any content: git hash-object <fileName> 
+
+	---> This is an example of a plumbing command, which is a command commonly used under the hood by git to do internal functions. 
+
+	---> These types of commands are rarely used in practical usage of git except for scripting cases. 
+
+ 
+
+ 
+Git References: 
+
+---> In Git, a reference is a user-friendly name that points to either a commit SHA-1 hash or another reference. 
+
+	---> If a reference points to another reference, it is called a symbolic reference. 
+
+		---> E.g. HEAD -> master, head is a symbolic reference whereas master is a direct reference to a SHA-1 commit of the master branch. 
+
+
+---> The master / main reference is a reference that points to the "tip of the branch", ie the most recent commit of the branch. 
+
+	---> The master branch itself (as a data structure) is different from the "master" reference, as the branch refers to all the commits forming the main branch of the git repo. 
+
+	---> A branch label itself is a reference that refers to the current commit of a branch (e.g. "origin" is a common default reference). 
+
+
+---> Much of the meta information of a git repo is contained in the .git directory.  
+
+	---> This information includes git hooks, logs, objects, references, the index / staging area, and more. 
+
+
+---> HEAD is a reference that is pointing to the most current commit (ie the last time "git commit" was used).  
+
+	---> In practice the HEAD reference points to the branch label of the current branch being checked out by git. 
+
+	---> Therefore, HEAD is usually a symbolic reference. 
+
+
+---> A tag is a reference that is attached to a specific commit, allowing a commit other than the branch tip to have a reference. 
+
+	---> There are 2 types of tags: 
+
+		A. Lightweight => A simple reference to a commit. 
+
+		B. Annotated => A full git object that references a commit and contains author information, tag date, tag message, and the commit git ID. 
+
+			---> It can also be signed and verified using GNU privacy guard. 
+
+
+	---> Tags are not transferred automatically to a remote repo and must be pushed (see git practical notes). 
+
+
+
+Git Branches: 
+
+---> A branch is a set of commits that trace back to the project's first commit. 
+
+	---> It is more helpful to think of a branch as a divergence of commits from the main branch. 
+
+	---> The most recent commit of the divergence can be traced back to the project's first commit and this constitutes a full description of a branch. 
+
+
+---> A branch is useful for (short term) several use cases: 
+
+	A. Bug fixes
+
+	B. Features
+
+	C. Hot fixes
+
+	D. Configuration changes
+
+	---> A branch allows multiple version of the same project to be developed concurrently with each other. 
+
+	---> The merging process allows the commit history to be incorporated into the general commit history of the project. 
+
+	---> A branch that is ued for short term use cases is called a topic branch. 
+
+
+
+---> Topic branches are merged back into long-lived branches. 
+
+	---> Long lived branches include the main branch and development / release branches. 
+
+	---> These types of branches can live throughout a large portion of the project duration or throughout the entire project. 
+
+
+---> It is also possible to use git checkout on a particular commit by providing the SHA-1 git ID as an argument. 
+
+	---> This will set the HEAD reference to the direct SHA-1 of the commit rather than to a branch label, thus turning the HEAD reference from a symbolic reference to a detached HEAD. 
+
+	---> Detached HEAD states can be used to view the commit contents at different points throughout the project, but is not ideal for adding new commits to a particular commit. 
+
+	---> In order to add a new commit to a detached HEAD commit (ie not the most recent commit in a branch), it is best to open a new branch from that commit and then setting the HEAD reference back to the branch tip of the new branch as a symbolic reference. 
+
+
+---> When branches are deleted, the branch labels are deleted and this leaves room for the possibility that unmerged commits could be left over (cf dangling pointers). 
+
+	---> Git has a garbage collector system for dealing with this issue. 
+
+
+
+Merging: 
+
+---> Merging involves combining the commit history of a topic branch into a base branch (ie a longlived branch in practice). 
+
+	---> The mechanism of merging depends on the topic branch structure relative to the base branch structure. 
+
+	---> A differing branching situation will result in a different branching algorithm to be used. 
+
+	---> A merge will also delete the branch label of the topic branch, but a tag can be added in order to permanently reference the feature work.   
+
+
+---> There are 4 types of merges: 
+
+	1. Fast-forward merge => Moves the main / master branch label up to the tip of the topic branch to be merged. 
+
+		---> This adds the commits of the topic branch in a linear fashion to the master branch, akin to adding X nodes to a linked list head. 
+
+		---> A fast-forward merge cannot be performed if there are commits made to the master branch that occur after a topic branch has been made. 
+
+			---> By moving the base branch label in this fashion, dangling commits can be created. 
+
+		---> The result of a fast-forward merge gives a linear commit history (ie a linked list) with no commits having multiple parents. 
+
+
+	2. Merge commit => Combines the commits at the tips of the topic and base branches into a single commit, which points to the tips of both branches. 
+
+		---> This results in a commit that has multiple parents and the non-linearity of this can result in potential merge conflicts (see more in other notes). 
+
+
+	3. Squash merge (explained later) 
+
+	4. Rebase (explained later)  
+
+
+---> It is advisable to use either git log --graph or a GUI to view the current graph structure of the repo commits in order to determine which merge is best to use.
+
+	---> This can also be down to how a particular team operates.  
+
+
+
+Resolving Merge Conflicts: 
+
+---> A merge conflict occurs when at least one file has been changed in different ways on different branches, but in the same lines of the file, and a merge is attempted. 
+
+	---> E.g. A fileA has line 2 read "A" on branch A and "B" on branch B
+
+	---> In such a situation a choice needs to be made as to which version of the file needs to be accepted between the two branches or which changes need to be done in the file in order to ensure that there isn't a conflict to begin with. 
+
+
+---> These following scenarios do not constitute merge conflicts: 
+
+	A. Isolated parts in different files. 
+
+		---> E.g. FileA line 2 has "A" and "B" is moved to FileB line 1. 
+
+
+	B. When different hunks / parts of a file are merged between branches. 
+
+		---> E.g. When line 1 is changed in 1 branch and a line 3 is added in another branch. 
+
+		---> Git is able to recognize when the different parts are changed and merge them seamlessly. 
+
+
+---> In development workflows, merge conflicts can be avoided with frequent merges to the base branch to avoid accruing changes in the development branch that could end up producing merge conflicts. 
+
+	---> This is the case in trunk based developments where merges to the main branch can occur daily or weekly. 
+
+
+---> Merge conflicts are only reduced when modular code is present as different potentially conflicting pieces of code are isolated into differnet files, preventing a merge conflict from occurring. 
+
+	---> The number of merge conflicts that occur tend to be a direct function of how modular the code is (since merge conflicts can only happen when tryng to merge different conflicting versions of the same file).
+
+
+---> Resolving merge conflicts involves the following anatomy of commits in the commit graph: 
+
+
+	A. The tip of the current branch being merged into => This is called "ours" or "mine" 
+
+	B. The tip of the branch to be merged (ie the feature branch) => This is called "theirs"
+
+	C. A common ancestor / divergence point where the feature branch split off => This is called the "merge base"
+
+
+---> The following steps are taken to fix a merge: 
+
+	1. A merge is attempted from the base branch
+
+	2. Git detects a merge conflict in a FileA
+
+		---> The conflict occurs when 2 different versions of content are detected in the same hunk / part of a file. 
+
+	
+	3. Git modifies the FileA to say where the conflict is and the modified file is placed in the working tree. 
+
+	4. The FileA must be fixed in some way to resolve the merge. 
+ 
+	5.  The file is staged to the index / staging area and then committed, completing the merge commit. 
+
+	6. The branch label can then be deleted to close the branch. 
+
+
+
+---> The anatomy of a git modified file with files looks like this: 
+
+
+	feature  1      ---> This part is an unconflicted portion.  
+ 	<<<<<<<< HEAD   ---> <<<< are called conflict markers that mark the start of a conflicted hunk.  The HEAD label shows that the following content is the content in the HEAD / base branch. (ie "ours") 
+	feature  3
+	=======         ---> The ==== marks a division where the following content is the content in the topic branch that conflicts with the base branch (ie "theirs")
+	feature  4
+	>>>>>>>  feature 2  ---> The >>>>> conflict markers end the hunk in which the conflict occurs and the "feature2" branch label denotes that the content above it is the content that belongs to the branch. 
+
+
+	---> The basis of the conflict is that line 2 in "ours" has feature 3 and line 2 in "theirs" has feature 2. 
+
+	---> This hunk can be resolved by simply moving feature 2 or 3 to a different line / hunk in order to allow the merge commit to follow through. 
+
+
+
+Tracking Branches: 
+
+---> A tracking branch is a local branch that represents a remote branch. 
+
+	---> They use the nomenclature <remote>/<branch>
+
+	---> e.g. remotes/origin/main
+
+	---> This tracking branch synchronizes or "tracks" changes with the actual remote branch. 
+
+	---> The tracking branch is a reference / label that points to the same commit as the corresponding local branch, if content is synchronized with its remote variant. 
+
+		---> Otherwise, the tracking branch label points to the commit of the local branch that best represents the last known state of the tracking branch. 
+
+
+	---> Note, cloning a repo will automatically produce a tracking branch for its main branch. 
+
+
+
+---> Important => The tracking branch label on the local repo is decoupled to the actual remote branch state unless it is updated by git network commands. 
+
+	---> E.g. remotes/origin/main is on a commit 1 on the local machine, but a commit 2 is pushed to the remote main branch, then remotes/origin/main will not be on commit 2 unless updated with a network command like git pull or git fetch. 
+
+
+---> remotes/origin/HEAD => This represents the HEAD pointer that is pointing to the currently considered remote branch. 
+
+	---> Therefore, the simple term "origin" can be used with commands to refer to the remote branch that is currently being considered by the local repo. 
+
+
+---> Note that the default tracking branch to be created when a repo is cloned can be set on the remote repo on hosts like github, gitlab, and. 
+
+
+---> git status can also be used to compare the current local branch state to the last synchronized version of the corresponding remote tracking branch. 
+
+	---> This remote tracking branch information must be updated via git fetch or git pull in order to be up to date and provide a current comparison. 
+
+
+
+Git Network Commands: Fetch, Pull, and Push
+
+---> Most git CLI commands work with the local repo, but not the remote repo connected to the local. 
+
+---> Network commands are the main commands in git that are used to interact with remote repos.  There are 4 main ones. 
+
+	1. git clone 
+
+	2. git fetch 
+
+	3. git pull 
+
+	4. git push 
+
+	---> See practical notes on git commands for specifics. 
+
+	---> Overall, these commands either deal with sending and receiving content between remote and local repos. 
+
+
+---> It is generally recommended to git pull / fetch inbefore pushing in order to keep the local repo up to date with the remote repo. 
+
+
+
+
+Rebasing: 
+
+---> 
+
+	

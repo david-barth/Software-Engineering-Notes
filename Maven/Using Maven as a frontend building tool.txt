@@ -1,0 +1,11 @@
+Basics for setting up a complete archetype. 
+
+
+Connecting the frontend with Maven: 
+
+---> The use of the <execution> tag in a pom.xml is likely able to let maven execute specified processes.
+
+---> An explanation of the process can be found here: https://medium.com/@itzgeoff/including-react-in-your-spring-boot-maven-build-ae3b8f8826e 
+
+
+
