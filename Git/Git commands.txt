@@ -143,6 +143,11 @@ Part A. Notes on various Commands.
 		---> A normal git merge will automatically default to a merge commit if a fast-froward merge is not possible and the sign of this is when a possibility to accept or modify a merge message appears.  
 
 
+	---> git merge --squash <branch> => Performs a squash merge of the specified branch onto the checked out branch. 
+
+
+
+
 ---> git remote set-head <remote> <branch> => This sets the tracking branch HEAD pointer to a new remote branch. 
 
 	---> Note the remote name is simply an alias used to refer to any and all branch labels that are remote. 
@@ -195,6 +200,15 @@ Part A. Notes on various Commands.
 	---> In this context, upstream refers to the parent branch to which the topic branch is being rebased to. 
 
 		---> In a non-rebase context, the upstream branch refers to the remote tracking branches to which the local repo is synched to. 
+
+
+---> git rebase -i <StartingCommit> => Performs an interactive rebase on all commits starting from the commit mentioned (or from the upstream branch starting point like in a normal rebase). 
+
+	---> This opens up an editor in order to perform operations on each commit as desired (e.g. deleting a commit, squashng a commit, executing a command, etc).
+
+	---> These all form a script that is executed before the rebase is performed.  
+
+
 
 
 ---> git commit --amend => Allows the most recent commit to be amended.
