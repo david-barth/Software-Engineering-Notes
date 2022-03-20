@@ -184,6 +184,30 @@ Part A. Notes on various Commands.
 
 
 
+---> git rebase <upstream> => Changes the parent of the currently checked out branch to the target branch, via the rebase mechanism (See "Git internals and branches" notes). 
+
+	---> git rebase <upstream> <branch> => Checks out the branch and changes the branch's parent to the specified target branch / upstream branch. 
+
+	---> git rebase --continue => This continues the rebase process when a merge conflict is fixed. 
+
+	---> git rebase --abort => Returns the git commit graph back to the pre-rebase state. 
+	
+	---> In this context, upstream refers to the parent branch to which the topic branch is being rebased to. 
+
+		---> In a non-rebase context, the upstream branch refers to the remote tracking branches to which the local repo is synched to. 
+
+
+---> git commit --amend => Allows the most recent commit to be amended.
+
+	---> This will end up creating a new SHA-1 for the commit.  
+
+	---> This can also apply for changing files simply by adding a file modification to the staging area via git add. 
+
+	---> git commit --amend --no-edit => Allows the most recent commit to be amended in some way while reusing the previously used commit message. 
+
+	---> A new message can also be specified with -m and a message. 	
+
+
 
 Part B. Notes on various concepts in Git. 
 
@@ -200,5 +224,7 @@ Part B. Notes on various concepts in Git.
 	---> The nomenclature of the remote tracking branch is: <remote>/<branch>
 
 		---> e.g. origin/iss53 => Where "origin" is the default starting name for a branch and the name "iss53" is the branch name itself. 
+
+
 
 	

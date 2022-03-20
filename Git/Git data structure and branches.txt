@@ -362,6 +362,51 @@ Git Network Commands: Fetch, Pull, and Push
 
 Rebasing: 
 
----> 
+---> Rebasing involves rewriting the commit history of a branch. 
+
+	---> It is a general rule that commit history (ie branches / graphs) that have been shared with others should not be rewritten. 
+
+
+---> The basic kind of rebase involves moving a branch of commits from an old parent to a new parent. 
+
+	---> Specific mechanism => The starting commit of a set of unique commits in a branch are reapplied to the tip of the master branch. 
+
+	---> This involves moving the pointer of the starting commit from its original parent to the tip / head commit of the master / main branch. 
+
+	---> The end result is a changed ancestor branch, with each reapplied commit having a new commit ID (ie SHA-1 ID). 
+
+
+---> Rebasing involves using diffs or patches. 
+
+	---> A diff is the calculated difference between 2 commits. 
+
+	---> Ie it is the differences in snapshots between the project in a commit A and a commit B. 
+
+	---> In rebasing, the diffs of the topic branch are reapplied to a new parent commit in order to generate new commit IDs. 
+
+
+---> Rebasing represents a form of merging branches and can be subject to merge conflicts. 
+
+	---> If commits B and C change the same hunk of the same file, a merge conflict can occur during a rebase. 
+
+	---> Rebasing allows changes from a parent branch to be incorporated to the topic branch (e.g. bug fixes, fetches, etc) and it allows an eventual merge to be fast forwardable. 
+
+	---> Therefore, rebasing represents a type of "secondary" merge wherein a true merge is not really performed, but rather a shift of the connections of the topic branch relative to the parent branch. 
+
+	---> This allows for linear and clean commit histories to be maintained, via the use of fast-forward commits. 
 
 	
+
+---> Git rebase can represent a process that can be continued or aborted in the case of merge conflicts. 
+
+	---> If a merge conflict occurs and it is resolved, then the rebase can continue.
+
+	---> The rebase can also be aborted and the repo commit graph can be returned to its original state. 
+	
+
+
+Rewriting Commit Histories: 
+
+---> 
+
+
