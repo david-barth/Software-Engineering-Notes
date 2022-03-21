@@ -1,0 +1,133 @@
+Working in Teams on Git. 
+
+
+Pull Requests: 
+
+---> A pull request is a way for developers to communicate regarding the work that is done for a branch.               
+
+	---> In opening a PR, a communication channel is opened on a git hosting site wherein feedback and comments on branch code can be exchanged between developers.                       
+
+	---> The final point of a PR is to approve the contents of a branch for merging back into a long lived branch of the project. 
+
+
+---> There are 2 types of PR: 
+
+
+	1. Single Repository PR
+
+	2. Multi-Repository PR => This involves using a mechanism called forking. 
+
+
+---> A PR can be opened for different reasons, but mostly come to: 
+
+
+	1. Asking for comments relating to work on the branch
+
+	2. Reviewing the work on the branch for approval for merging into the main branch. 
+
+
+---> A PR is created on the git hosting site (e.g. Github, GitLab, BitBucket) and is specified there. 
+
+	---> It is a feature that is built on top of the primary git system. 
+
+	---> The completion of a PR involves the automated merging of a branch into the base branch, with the merging method usually being specified upon completing the PR or in the repo settings.                       
+	
+	---> Thi sapplies to single repo PRs. 
+
+
+---> In a multi-repo PR, forking is required: 
+
+	---> Forking is the act of copying a remote repository to a user's own account on the git hosting site. 
+
+	---> The original repo is called the "upstream" repo and is considered the "source of truth" for the copied repo. 
+
+		---> Source of truth refers to the authoritative version of the repo that is being worked with or the point at which all decisions are made or incorporated. 
+
+
+	---> Both the original repo and the copied repo are remote repos hosted on the git hosting site. 
+
+	---> For the context of a multi-repo PR, a forked repository can potentially be subject to a pull request to merge the forked repo with the upstream repo. 
+
+
+---> It is possible to create a fork on the git hosting site via the original repository. 
+
+	---> A forked repo will not be synchronized with the upstream repository by default. 
+
+	---> But the two repos can be synchronized together, via a merge method like merge commit, in order to allow upstream commits to be incorporated into the merge commit. 
+
+
+---> The following steps are used to perform a multi-repo PR: 
+
+	1. Create a fork of the desired repo. 
+
+	2. Create a branch on the forked repo. 
+
+	3. Create a PR on the forked repo which seeks to merge the forked repo branch to the upstream repo. 
+
+	---> This can all be done from the git hosting site interface. 
+
+	---> It is also possible to merge the forked repo branch by CLI on a local client. 
+
+		---> The forked repo is added as a remote to a local version of the upstream repo. 
+
+		---> The desired branch is then merged locally and pushed to the remote upstream repo. 
+
+
+ 
+Git Workflows: 
+
+---> A git workflow defines how a team uses git in order to complete project work under version control.  
+
+---> There are several different types of workflows: 
+
+	1. Centralized workflow => This involves working from a single branch for a git repo, without any branching or PRs. 
+
+		---> This involves developers consistently fetching / pulling from a single branch in order to stay updated with development while also making commits to the branching. 
+
+		---> The obvious downside of this approach is not being able to use branching to isolate particular aspects of work and not being able to use PRs to review work properly. 
+
+
+	2. Feature branch workflow => This involves isolating feature based work to specific topic branches and uses PRs + merges to a single repo for project work. 
+
+		---> This leverages branching in a basic way to isolate the kind of work to different topic branches and to allow discussion to be used to polish various aspects of code in the topic branches. 
+
+		---> All work is focused on a single remote depository. 
+
+	
+	3. Forking Worklow => This involves using multi-repo PRs with forked repos connected to a single upstream branch. 
+
+		---> Work is merged into the upstream repo via PR to the upstream repo. 
+
+		---> Via this workflow, it is possible to rebase the forked branch easily. 
+
+		---> Additionally, it is not necessary to have write access to the upstream repo and allows a user to retain a consistent backup of their work. 
+
+		---> The downside is that the forked repo must be consistently kept synchronized with the upstream branch so that commits made to the upstream repo are integrated into the forked repo. 
+
+			---> The synchronization involves either consistent rebasing or merging with the upstream repo. 
+
+		---> This type of workflow is often used with open source projects. 
+
+
+	4. Gitflow => This is a complex workflow that involves several different branch types and situationa rules governing the use of these branches: 
+
+		A. Master / main => This is always the stable version of the porject and is a long lived branch. 
+
+			---> Merge commits are the only types of commits permitted to the master branch. 
+
+		
+		B. Development => This is a long lived branch that represents the collective history of all development based commits that comes off of feature branches. 
+
+		C. Feature => This is a topic branch that is used for the short term development of individual features, which are always merged into the development branch before being deleted. 
+
+		D. Release => This is a topic branch that represents a release candidate version of the product that could be merged into the master branch if it passes enough scrutiny and asssessment. 
+
+			---> This is one of 2 types of branches that can be merged into master. 
+
+		E. Hotfix => Shortlived topic branches that are created in order to immediately patch any bugs that are found in the master branch version of the project. 
+
+			---> 
+
+
+
+
