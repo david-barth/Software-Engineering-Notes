@@ -124,9 +124,16 @@ Git Workflows:
 
 			---> This is one of 2 types of branches that can be merged into master. 
 
+
 		E. Hotfix => Shortlived topic branches that are created in order to immediately patch any bugs that are found in the master branch version of the project. 
 
-			---> 
+			---> This is the other type of branch that is permitted to be merged into master since it is a branch that is devoted specifically to fixing issues related to the master branch. 
+
+
+		---> AS a final rule, if a commit is made to master, then that commit must also be merged into the development branch in order to keep the master branch and the development branch in sync with each other.              
+
+
+ 
 
 
 
