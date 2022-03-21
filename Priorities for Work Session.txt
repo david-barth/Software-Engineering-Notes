@@ -1,15 +1,7 @@
 Priorities for Current Work Session: 
 
 
-1. Complete final Git Learning Session
 
-2. Resume working on SpringBoot Data connection + DDL / DML scripts
-
-3. Send email to David Richter for first round of documents. 
-
-4. Send Oceane email asking for update for SQ reference letter
-
-5. Complete purchase of relevant Spring books. 
 
 
 

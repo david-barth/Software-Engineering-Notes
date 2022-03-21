@@ -36,3 +36,35 @@ Configuring Data Sources in SpringBoot:
     	}
 
 	---> This contains the necessary steps to configure and inject the bean into the system. 
+
+
+
+Setting up Initialization DML and DDL Scripts: 
+
+
+---> In Springboot there are 2 scripts that are used in order to perform the necessary database initialization actions for a springboot project. 
+
+	---> DDL => schema.sql 
+
+		---> schema.sql is used to initialize the desired tables and other database objects related to the schema. 
+
+
+	---> DML => data.sql
+
+		---> data.sql is used to populate the tables with potential seed information if desired. 
+
+
+---> By itself, if the application.properties file is properly configured with the correct datasource information, then a connection to an already existing database can be established: 
+
+	spring.datasource.url=jdbc:mysql://localhost:3306/initialDB
+	spring.datasource.username=root
+	spring.datasource.password=root 
+
+	---> This is an example of the minimum set of information that is needed in order to ensure a connection is made.  
+
+
+---> Use case analysis => DDL and DML initialization will only be necessary if a pre-existing data source doesn't exist in the runtime environment and thus needs to be initialized. 
+
+	---> With a pre-existing data source, it only becomes necessary to have the properties needed to establish a connection. 
+
+ 
