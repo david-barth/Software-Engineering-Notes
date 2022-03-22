@@ -1,0 +1,108 @@
+Spring Theory: Fundamentals of Spring Revisited. 
+
+
+Overview of the Spring Framework: 
+
+---> Spring itself represents a framework consisting of various grouped helper classes that help to streamline enterprise Java development. 
+
+---> Spring Core is the underlying foundation of Spring on top of which everything runs.  
+
+---> The core container of Spring consists of the following parts: 
+
+	
+	A. Core => This contains the primary means for creating beans via a Bean Factory class.   
+
+	B. Beans => Instances of objects that are created according to the dependency inversion principle that is used by Spring. 
+
+	C. Spring Expression Language
+
+	D. Context => Contains the created beans and holds them in memory.             
+
+
+---> Spring also supports aspect oriented programming, which is a declarative form of programming that allows for application wide functionalities such as logging and messaging to be used. 
+
+---> Spring also contains a segment of itself devoted to data access in the form of the Spring Data Access Layer. 
+
+	---> This contains functionalities such as helper classes for JDBC and ORM (Hibernate, JPA, etc), which can be used to simplify application interactions with the database.       
+
+	---> Transactions, messaging, and more are also available via the data access layer. 
+
+
+---> For web applications, Spring MVC is used in order to allow for the development of web related programming. 
+
+	---> This contains things such as servlets, WebSocket, and other features related to the MVC pattern.              
+
+
+---> Spring also has a test layer built into it that contains support for testing forms such integration tests, mocking, and unit testing. 
+
+      
+
+The Spring Platform and Spring Projects
+
+---> On top of the core container, the data access layer, aspect oriented programming, Spring MVC, and the test layer, Spring also includes Spring Projects. 
+
+---> These are additionally modules that are built on-top (using) the Core Spring Framework. 
+
+	---> Spring Cloud
+
+	---> Spring Data
+
+	---> Spring Security
+
+	---> SPring Batch
+
+	---> Spring Web Services
+
+	---> There are many more after that. 
+
+
+---> Each of these projects help to direct Spring use towards specific contexts. 
+
+	---> Each of these projects provide frameworks, configurations, and APIs that can be useful for wokring with the project's stated use case.           
+
+
+ 
+Central Spring Concept 1: Inversion of Control. 
+
+---> Inversion of Control (IoC) is a general design choice that involves outsourcing the creation and management of objects to something else other than the developer.         
+
+	---> IoC requires a method to implement it as a design decision. 
+
+	---> In Spring, IoC is implemented by outsourcing the object's lifecycle to an object factory that is responsible for creating instances / beans of the object.         
+
+
+---> Specifically, Spring implements IoC via the Spring Container, which is an object factory that does 2 key functions: 
+
+
+	1. Create and manage bean / object lifecycles
+
+	2. Inject dependencies into the object via either setter or constructor injection
+
+	---> This object factory therefore removes the necessity of hard coding the creation of objects from the programmer's need and delegates this responsibility to Spring. 
+	
+	---> The type of object is also chosen by the object factory, given that this is an implementation of a factory (or abstract factory?) design pattern. 
+
+
+---> The Spring Container requires a configuration file to be setup in order to define the types of beans that exist, bean dependency relationship, and dependency injection possibilities. 
+
+	---> This can be an appConfig file, multiple segregated config files or for SpringBoot, the ServerApplication file. 
+
+
+---> The mechanism of Spring is defined as follows: 
+
+	1. Configure beans via the configuration file(s). 
+
+	2. Create the Spring Container 
+
+		---> The Spring container is known as the ApplicationContext
+
+		---> This is the ServerApplication file in SpringBoot. 
+
+
+	3. Retrieve the beans from the Spring Container for use in the application. 
+
+
+---> 
+
+
+

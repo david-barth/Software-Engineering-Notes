@@ -1,0 +1,100 @@
+SpringBoot Basics: Adding Logging to a SpringBoot Application
+
+---> By default, Springboot only provides a minmal amount of logging when its embedded server is started with mvn spring-boot:run. 
+
+	---> This level corresponds with the logging level of TRACE. 
+
+
+---> It is possible to change the logging level of the SpringBoot app to different levels.  The levels are: 
+
+
+	A. TRACE => This is the most fine-grained logging level, used for full visibility of what is happening in the application and its components. 
+
+		---> This is therefore the highest in terms of verbosity. 
+
+
+	B. DEBUG => This log level is used for diagnostic information that could be needed when diagnosing issues / troubleshooting things. 
+
+		---> This is less verbose than TRACE. 
+
+		---> DEBUG is useful for running the application in a testing environment in order to make sure the application is running correctly. 
+
+
+	C. INFO => This log level is used to indicate that something has happened in the application, such as the application entering into a certain state. 
+
+		---> This is a standard log level of intermediate verbosity. 
+
+		---> This commonly include state changes (e.g. Successful / Unsuccessful authentications, user identity for a request, etc)
+		
+		---> The information here is purely supportive and doesn't need to be considered on a regular basis. 
+         
+
+	d. WARN => This level is used to indicate that something unexpected happened to the application. 
+
+		---> This is of a lower level of verbosity than INFO. 
+
+		---> This is used for unexpected happenings in the application such as disturbed processes and potential errors. 
+                         
+		---> Overall, situations that merit this log level imply that the main code can still work.             
+
+
+	e. ERROR => This level is indicates when the application encounters an issue that prevents one or more functionalities from working. 
+		
+		---> This is even lower verbosity than WARN. 
+
+		---> This usually occurs for significant errors in the system in which non-fatal disruptions to services occur. 
+
+		---> The overall app can continue to one albeit with one or more important functionalities missing.     
+
+
+	f. FATAL => This level is used to detail when the application encounters a state or event which prevents a critical functionality from working. 
+
+		---> This is the lowest level of verbosity, but is also indicative of the most important events.  
+
+		---> This log level can imply events such as not being able to connect to crucial data sources or where one or more critical services are not working. 
+
+
+	
+	---> Log levels are used to separate log messages based on how important that particular message is.  
+
+	---> These can be used to distinguish the internal workings of an application, any deviations in how the components are working and how how severe these deviations are. 
+
+	---> The level of verbosity is inversely related to the criticality of the log's reported events.  
+
+	---> Each log level therefore has signficant, but different use cases. 
+
+	                
+---> In SpringBoot, the application.properties file is used in order to set the logging level for the application as a whole and for various parts of the application.  An example includes: 
+
+	#Logging configuration:
+	logging.level.root=debug
+	logging.level.org.springframework.web=debug
+	logging.level.org.hibernate=debug
+
+  	---> Each part can correspond to logging of different parts of the application. 
+
+		---> root => This stands for the main application overall. 
+
+		---> org.springframework.web => This refers to logging related to the web portion of Spring. 
+
+		---> org.hibernate => This cover logging related to Hibernate. 
+
+		---> More logging specifications can be added in this case. 
+
+		---> Logging being turned on in this way represents the highest level of logging and therefore the least granular approach to application logging. 
+
+		---> Other more specific ways, such as class level logging and even block level logging can be used if desired, especially depending on the logging framework used. 
+
+
+---> The logging framework included by default in SpringBoot is Logback, used in tandem with Commons logging, an API that allows for an underlying logging implementation to be used. 
+
+	---> Log4J is the current best logging framework and is the recommended one for inclusion in an industrial project. 
+
+
+
+
+
+
+
+
+      

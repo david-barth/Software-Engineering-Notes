@@ -2,6 +2,11 @@ Priorities for Current Work Session:
 
 
 
+3. Determine a proper use case to use for streaming information from a trading API
+
+4. Determine tasks in a new epic for the proper implementation of the chosen use case. 
+
+5. Start implementation on new tasks. 
 
 
 
