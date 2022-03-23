@@ -1,12 +1,28 @@
 Priorities for Current Work Session: 
+ 
+
+1. Spring Learning 
+
+2. Start on Feature implementation: 
+
+	A. Research and implement calling a REST API in Spring / SpringBoot. 
+
+	B. Confirm that data is being returned as desired. 
+
+	C. Write in the code for multi-asset list call. 
+
+	D. Write up a Quote interface that can be used for the backend DTO. 
+
+	E. Review best practice for implementing error handling in the backend setup. 
+
+	F. Start on implementing Hibernate CRUD operations for the quotes. 
+	
+		- Create necessary schema changes on local MySQL in order to get this working. 
 
 
 
-3. Determine a proper use case to use for streaming information from a trading API
 
-4. Determine tasks in a new epic for the proper implementation of the chosen use case. 
 
-5. Start implementation on new tasks. 
 
 
 

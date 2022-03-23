@@ -1,0 +1,45 @@
+Spring Theory: Fundamentals of Spring Beans. 
+
+
+Bean Scopes: 
+
+---> The scope of a bean is the lifecycle of a bean and has the following implications: 
+
+	A. Duration of bean lifecycle
+
+	B. The number of instances of the bean that are created 
+
+	C. The way the bean is shared in the application
+
+
+---> The following scopes are the main scopes available for a bean: 
+
+	A. Singleton => This scope follows after the Singleton design pattern: there is only one global instance of the bean in the Spring Container and application. 
+
+		---> The singleton bean is therefore cached in memory and holds a very long lifecycle duration (e.g. for the entire running time of the application instance). 
+
+		---> A singleton is cached in memory and all requests for the bean return a shared reference to the same bean object in memory. 
+
+			---> Therefore, a singleton is shared among all parts of the application that require it.  
+
+
+		---> A singleton is the default scope for a bean and is best used for a bean that doesn't require any active state management (ie a stateless bean).  
+
+ 
+	B. Prototype => This scope allows for the creation of a new bean per request to the Spring Container for that container type. 
+
+		---> The lifecycle duration of a prototype scoped bean is shorter than a singleton since the prototype is confined to a single discrete request to the Spring container rather than being a global instance. 
+
+		---> A prototype bean is only shared with parts of the application that correspond to the instance of that request. 
+
+		---> State is something that ends up changing per request (in a Spring use case) and therefore, the prototype scope is useful for stateful beans (and therefore stateful data). 
+
+
+---> There are other bean scopes that exist for Spring MVC, which will be detailed later. 
+
+
+
+
+
+
+

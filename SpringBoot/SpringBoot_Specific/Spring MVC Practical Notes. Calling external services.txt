@@ -1,0 +1,64 @@
+Spring MVC Practical Notes: Consuming External Web Services. 
+
+
+
+Basic Steps involved: 
+
+	1. Create a domain class / DTO that will encapsulate the REST data fetched. 
+
+		A. Use @JsonProperty to complete data mapping from JSON document property to field value.                 
+                          
+
+	2. A bean needs to be defined for the RestTemplate class or the WebClient class used for interacting with RESTful services. 
+
+		---> This can be used to bind data to custom domain types.         
+
+
+	3. The WebClient bean needs to be injected into the service, where the calls are made. 
+
+		---> The service level is where all calls to the external service need to be made. 
+
+		---> The resource / controller level is not aware of the details of the web service consumption. 
+
+
+
+WebClient vs RestTemplate: 
+
+---> RestTemplate was the older method of consuming external REST based web services. 
+
+	---> The class was based on using a single thread per request approach that resulted in blocking / synchronous behavior. 
+
+	---> Mechanistically, a slow responding web service means that the original thread will be blocked, requiring the use or creation of another thread in order to make further requests for clients.                
+
+	---> With each thread consuming resources (e.g. memory, available threads), either all resources will be consumed in the available memory or all threads in the system thread pool will be used up until previously blocked threads are freed up. 
+
+
+---> WebClient is a newer method that uses asynchronous, non-blocking programming in order to consume external services.  
+
+	---> Tasks, representing web service calls, are queued up and only executed by a thread when an appropriate response has been sent from the external web service to the calling application. 
+
+	---> This is based off of an event-driven architecture using a concept known as Reactive Programming (to be specified later). 
+
+	---> The WebClient class is avaialble through Spring WebFlux and is used as a supporting class to modernize what already exists with Spring MVC. 
+
+
+
+Using WebClient to make calls to web services: 
+
+---> Consideration for mapping the JSON response body to the DTO: 
+
+	---> Under reactive programming, a publisher-subscriber methodology in which the WebClient instance will "publish" a response object to the consumer of the external service call only when data is available. 
+
+	---> Within the call, 2 types of publishers are used: 
+
+		A. Mono => Used when a single event is completed and emitted. 
+
+			---> A mono is the reactive counterpart to a single object instance being returned from the call to the web service. 
+
+
+		B. Flux => Used when multiple, zero or infinite events are completed and emitted. 
+
+			---> A flux is a reactive equivalent to a collection.  
+
+
+	---> A mono or flux object must have its desired information mapped onto a DTO.                   
