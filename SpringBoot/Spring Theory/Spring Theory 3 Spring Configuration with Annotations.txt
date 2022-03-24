@@ -1,0 +1,99 @@
+Spring Theory 3: Spring Configurations with Annotations. 
+
+
+Introduction: Annotations
+
+---> Java annotations are constructs used to provide meta data to Java classes. 
+
+---> Annotations are usually processed at compile time, but can be processed at runtime for special occasions or situations. 
+
+	---> The meta data ends up being in the form of further instructions that the compiler is given and the compiler will execute these instructions in relation to the annotation used. 
+
+
+---> Java annotations are used in 3 situations: 
+
+	A. For compiler instructions
+
+	B. Build-time instructions
+
+	C. Runtime instructions
+
+	---> The main idea is that annotations can be used to provide further customization to classes and these instructions can be added during any of the 3 situations defined above. 
+
+	---> An example: Build-time annotations: 
+
+		---> Build tools (maven, ant, or gradle) scan Java code for specific annotations and generate additional source code or files based on the presence of these annotations.          
+
+		---> The extra code generated is added on top of the normal class code to allow for further functionality to be integrated for the class. 
+
+
+	---> An example 2: Run-time annotations: 
+
+		---> Runtime annotations can be defined for runtime and accessed at runtime via the Java reflection API in order to allow instructions to be given dynamically. 
+   
+
+---> An annotation is defined by using @ with the proper annotation name, either above a class, a method or a field variable. 
+
+	---> Annotations can have elements, which act as parameters / inputs for the annotation. 
+
+		---> For single element, the following syntax is used: 
+
+		@Annotation("something") or @Annotation(value = "something")
+
+
+		---> For multiple elements, the following syntax is used: 
+
+		@Annotation(value1 = "Something", value2 = "Something") 
+
+
+---> Annotations can be placed at class level, method level, and field level in order to define compile-time instructions at different levels of granularity for either the class or different components of a class. 
+
+---> Furthermore, annotations can be created in their own files, like classes, and specified as desired. 
+
+	---> More will follow this on a usecase basis. 
+
+
+
+Annotations and Component Scanning: 
+
+---> With annotations, Spring will scan all Java classes for special annotations (@Bean, @Component, @Service, etc) and all classes with these bean annotations will be registered in the Spring Container as beans. 
+
+---> Component scanning must be enabled in the Spring config file with @ComponentScanning. 
+
+	---> Note that @SpringBootApplication contains @ComponentScanning as a part of all SpringBoot configurations. 
+
+	---> @Component is used as a class level declaration of a bean for Spring. 
+
+	---> Component scanning can be defined either using a Java based approach or via an xml config file. 
+
+
+---> @Component("Something"), the element will define "Something" as the bean ID. 
+
+	---> If @Component is used without specifying an ID value, then Spring will assign a default ID for a class of BeanClass called "beanClass" to be used in Spring. 
+
+
+---> Note => The bean ID must be used to retrieve the bean via the getBean() method, which is part of the SpringContext class instance. 
+
+
+
+Constructor Injection with Annotations and Autowiring: 
+
+---> Spring can use autowiring in order to automate dependency injection during bean configuration. 
+
+---> Autowiring involves the following rough steps: 
+
+	1. The @Autowired annotation is placed over a constructor, a setter, or a field. 
+
+	2. The @Autowired instruction tells Spring to scan all beans / components for dependencies matching the type or types of beans found in the point of injection. 
+
+	3. When a scan finds a dependency of the appropriate type, the dependency is automatically injected into the bean using the mechanism / point of entry specified. 
+
+	---> Autowiring involves matching by type (class or interface) for finding the dependency during the scan. 
+
+	---> In XML, this is defined in a property tag with the type needed, but in Java this is defined in other ways that will be explored shortly. 
+
+		---> The default is to take the first type of bean that is found by the scan. 
+
+
+
+

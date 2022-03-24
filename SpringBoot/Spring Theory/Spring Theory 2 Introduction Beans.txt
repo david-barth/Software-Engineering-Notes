@@ -38,6 +38,63 @@ Bean Scopes:
 ---> There are other bean scopes that exist for Spring MVC, which will be detailed later. 
 
 
+The Bean Lifecycle: 
+
+---> Bean's have a specific lifecycle that is analagous to the normal object lifecycle in programming (e.g. C++ and Java). 
+
+---> The steps of the bean lifecycle are: 
+
+	1. The Spring Container is started
+
+	2. The bean is instantiated / created. 
+
+	3. Dependencies for the bean are injected into it. 
+
+	4. Internal Spring processing occurs
+
+	5. A custom initialization method can be called and then the bean is used. 
+
+	6. Once the container is shut down, the bean can also invoke a customized destroy method, which occurs when the bean is ready to be deleted from memory. 
+
+	7. The bean is deleted from memory.
+
+	---> The init and destroy methods can be called via use of annotation or XML.     
+
+
+---> The bean initialization and destruction methods are similar to constructors and destructors that are found in C++. 
+
+---> The bean lifecycle methods allow for customized code to be added in post-instantiation or during bean destruction. This code can inclide: 
+
+	A. Custom business logic methods
+
+	B. Setting up handles to resources (e.g. databases, sockets, files, etc)
+
+	---> These lifecycle methods allow access into key points of the lifecycle of a bean and these methods therefore are "hooks" into these sections of the bean lifecycle. 
+
+	---> This is comparable to react hooks in functional components, which allow for specific access in the component lifecycle. 
+
+
+---> The specific methods for init and destroy are defined in the classes for the beans. 
+
+	---> The method names are configured in the Spring Config file. 
+
+	---> The bean life cycle methods must have a void return type and also cannot accept any arguments (ie a no-arg method). 
+
+
+---> It is important to note that prototype scoped beans (created per client request) do not trigger any destroy method from the bean lifecycle. 
+
+	---> The bean is instantiated, configured and assembled as a prototype by the Spring Container before being handed to the client / application for further use. 
+
+	---> Custom code must be used in order to destroy prototype scoped beans, which is necessary in order to free expensive resources (space + memory) held by the bean.          
+
+	---> To destroy a prototype bean, a custom bean processor must be created in order to call the destroy() method on the prototype beans. 
+
+		---> Therefore, prototype bean classes must implement the DisposableBean interface, which contains an abstrat destroy() method that is called by the custom bean processor. 
+
+
+
+
+
 
 
 
