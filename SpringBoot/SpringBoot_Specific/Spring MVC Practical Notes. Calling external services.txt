@@ -61,4 +61,155 @@ Using WebClient to make calls to web services:
 			---> A flux is a reactive equivalent to a collection.  
 
 
-	---> A mono or flux object must have its desired information mapped onto a DTO.                   
+	---> A mono or flux object must have its desired information mapped onto a DTO.              
+
+
+---> Mono and Flux are 2 objects that can be seen as the Java equivalent to promises, which allow for taking into account asynchronous behavior. 
+
+---> An example is seen in the following code: 
+
+	cryptoInfoClient.get()
+                .uri(assetName)
+                .retrieve()
+                .bodyToMono(Quote.class)
+		.block(); 
+
+
+	---> Without block(), the result will be an object of type Mono<Quote>, which will essentially contain none of the data expected from the call. 
+
+	---> This class is used as an intermediate, which will wait for the response and with block() resolve to the Quote object once the response is received. 
+
+	---> Until resolution, the Mono object sits in the application awaiting the response, but without exhibiting blocking behavior for the application's resources. 
+
+	---> bodyToMono(Quote.class) is used to map the Mono object (and the response contained inside of it) to the desired class, returning the desired object.      
+
+
+Obtaining the response body from the Reactive Object (Mono or Flux): 
+
+---> There are 3 ways to obtain the response code and the response body from a call to an external REST based web service. These are: 
+
+
+	1. (Informal) => Mapping the response body on to the String class to generate the string based representation of the JSON response: 
+
+		cryptoInfoWebClient.get()
+                	.uri(assetURI)
+                	.retrieve()
+                	.bodyToMono(String.class)
+                	.block();
+
+
+	2. Using onStatus() on the response ClientResponse object that comes from retrieve(): 
+
+		Mono<String> response = WebClient
+  		.builder()
+ 		.build()
+  		.post()
+  		.uri("some-resource")
+  		.retrieve()
+ 		.onStatus( 
+    			HttpStatus.INTERNAL_SERVER_ERROR::equals,
+    			response -> response.bodyToMono(String.class).map(CustomServerErrorException::new)) 
+  		.onStatus(
+    			HttpStatus.BAD_REQUEST::equals,
+    			response -> response.bodyToMono(String.class).map(CustomBadRequestException::new))
+  		...more calls... 
+  		.bodyToMono(String.class);
+
+		---> This allows for a more fine grained approach to handle different response status scenarios in case of bad responses.  
+
+		---> This uses the status code and a lambda function to properly handle the response. 
+
+
+	3. Using ExchangeFilterFunction to provide a flexible and generalized way to handle different response scenarios and to extract the response body. 
+
+		---> This is detailed in the following article: https://www.baeldung.com/spring-webclient-get-response-body
+
+
+---> However, to process the response, deserialization (ie decoding the response) must be used in order to properly map the appropriate JSON data to a DTO. 
+
+	---> This can be achieved using the Jackson library. 
+
+
+
+Deserializing a JSON response to a DTO: Under the hood. 
+
+---> Jackson is a popular data-binding library for Java, which is especially used to bind JSON encoded data to Java objects and vice versa. 
+
+---> In bodyToMono(), the method likely uses Jackson methods as part of its functionality to map response bodies to class representations (ie POJOs). 
+
+---> The important caveat here is that the precise structure of the JSON body must be adhered to: 
+
+
+	{
+    		"status": {
+        	"elapsed": 1,
+       		"timestamp": "2022-03-25T18:54:57.200239879Z"
+    		},
+    		"data": {
+        		"id": "1e31218a-e44e-4285-820c-8282ee222035",
+      			...
+		}
+	}
+
+	---> Here, the properties of "status" and "data" must be modeled as classes in the corresponding POJO.
+
+	---> The POJO correspondence would be: 
+
+		public class Model {
+			private Status status; 
+			private Data data; 	
+		}
+
+		---> If [] representation is used in the JSON response, then a list can be used in the POJO property. 
+
+		---> If the property is a primitive, then the corresponding primitive can be used. 
+
+
+---> It is important that there is a default constructor present for the Jackson deserialization process because Jackson creates an empty object instance and uses setter methods to inject the deserialized values into the DTO during the mapper process. 
+
+
+
+Summary of consuming external web services with WebClient: 
+
+
+1. Set up the configuration of the WebClient bean in a Spring config file: 
+
+    @Bean("messariWebClient")
+    public WebClient webClient() {
+        return WebClient.builder()
+                .baseUrl("https://data.messari.io/api")
+                .defaultHeader("x-messari-api-key", messariAPIKey)
+                .build();
+    }
+
+    ---> Set up the base URL and apply a default header to any necessary uses of API keys for the web service. 
+
+
+2. Inject the WebClient dependency into the appropriate service bean. 
+
+3. Use a WebClient HTTP method in order to make the following type of call: 
+
+	cryptoInfoWebClient.get()
+                .uri(assetURI)
+                .retrieve()
+                .bodyToMono(Quote.class)
+                .block();
+
+	---> post(), put(), and other HTTP verb based methods can also be used, with the appropriate modifications in this chain. 
+
+	---> The appropriate model / entity / DTO class must be prepared in accordance with the Jackson requirements detailed above.
+	
+		---> The deserialization process is already built into the bodyToMono() and bodyToFlux() methods.  
+
+		---> block() must be used as a minimum in order to ensure the code execution waits for the response to be returned and be populated. 
+
+			---> Alternatively, onStatus() and a few other methods can be used in this chain in order to add more post response processing. 
+
+4. The DTO is then used as needed.  
+
+
+
+---> More information will be added to handle the case of serializing post based bodies to JSON for POST and other HTTP requests with a request body. 
+
+
+

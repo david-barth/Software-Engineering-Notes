@@ -95,5 +95,152 @@ Constructor Injection with Annotations and Autowiring:
 		---> The default is to take the first type of bean that is found by the scan. 
 
 
+---> Note, by default Spring will look for the first available instance of the object type to use for injection by autowiring, which can create problems in the case where there are multiple implementations of a more abstract data type. 
+
+
+	---> The @Qualifier notation is used in order to resolve issues wherein multiple implementations exist (to be detailed later). 
+
+
+---> Reminder: Constructor's are required for autowiring to be used with constructor injection: 
+
+
+	public class SomeClass {
+
+		@Autowired
+		public someClass(args...) {
+			...
+		}
+	}
+
+	---> The compiler will recognize that @Autowired above a constructor specifies the Spring Container to use constructor injection. 
+
+		---> The location of the annotation is what determines this for the type of dependency injection that is used, which includes setter and field injection. 
+
+
+---> Note: As of Spring 4.3, if a bean only has one constructor, then the Spring Container will automatically use constructor injection with that class.
+
+	---> @Autowired only needs to be used in cases where overloaded constructors are present in the bean wherein the constructor with @Autowired is the constructor that Spring recognizes as being the point of dependency injection. 
+
+
+
+Setter Injection with Annotations and Autowiring: 
+
+---> Autowiring setter injection works off of similar principles as autowiring constructor injection: 
+
+	1. If a setter method has @Autowired above it, (within a bean) then Spring will be told to look for the first dependency that satisfies the dependency data type required by the setter method. 
+
+	2. Once found, the dependency is injected into the setter method. 
+
+	---> Once more, @Qualififer is used to differentiate between dependencies of the same abstract type. 
+
+	---> Additionally, it is noted that setter injection is useful for intermediate stages of the bean life cycle whereas constructor injection is only used for when the bean is created. 
+
+
+---> @Autowired can be used above multiple setter method for handling the injection of different individual dependencies. 
+
+---> Important note: @Autowired can be used with ANY method, so as long as the dependency is accepted by the method and attached to the object via field assignment. 
+
+	---> Therefore, autowiring setter and constructor injections are specific manifestations of method injection, which are used by convention for dependency injection inside of Spring. 
+
+	---> Generalized method injection can be used with autowiring to allow combinations of dependencies to be injected in customized ways, but the method itself must be written with the intention of having dependencies being injected into the bean. 
+
+
+Field Injection: Dependency Injection for Fields. 
+
+---> Field injection can be autowired by placing @Autowired directly above the field and this works with public, protected, and private fields (ie regardless of access modifiers). 
+
+	---> Field injection is accomplished using the Java reflection API and therefore Java reflection. 
+
+
+---> Brief introduction to reflection: 
+
+	---> Reflection is a technique used in Java that allows a class or object to "introspect" (ie inspect and/or modify) runtime attributes of classes, interfaces, fields, and methods.  
+
+	---> Manifestations of reflection can include the following: 
+
+		A. Instantiation of new objects, not defined at compile-time, during runtime. 
+
+		B. The dynamic invocation of methods during runtime. 
+
+		C. Dynamic accessing or setting of field values during runtime. 
+
+			---> This particular property is used with @Autowired for field injection. 
+
+
+	---> The very basic usage of reflection involves using the getClass() method of an object instance in order to get the runtime representation of a class. 
+
+		---> This runtime representation "class" object has methods which allow for the properties of the class to be changed or accessed during runtime. 
+
+
+	---> The main point of reflection is therefore being able to manipulate the object during its runtime "flow" in the code. 
+
+	---> It is important to note that Java provides an API for implementing various uses of reflection. 
+
+
+---> Field injection involves using reflection to achieve the runtime representation of the bean and inject the dependency into the specified field soon after the bean is created. 
+
+---> Note: Field injection is not recommended for best practice use vs setter and constructor injection.
+
+	---> One reason for this is that field injection does not allow immutable dependencies to be placed into the bean, so fields using the "final" keyword will not be applicable to this kind of injection. (Constructor injection needs to be used in this case)
+
+	---> Field injection can also help make a class violating the Single Responsibility Principle less obvious to look for compared to constructor injection. 
+
+	---> Field injection closely couples the bean class to the Spring Container, because reflection must be used within the Spring container to set the autowired field, leaving the class to have null field values if moved out of the Spring container. 
+
+	---> Finally, field injection hides dependencies because there is no way to expose these dependencies using a public interface (e.g. getter methods).  
+
+
+---> Final note: All dependency injection types can be used to equal effect, but it is important to stay consistent with the type of dependency injection used throughout the project for the sake of making the project easily understandable to other team members. 
+
+
+
+Qualifiers for Dependency Injection: 
+
+---> For the situation of multiple implementing dependencies to choose from for autowiring, the @Qualifier annotation can be used with @Autowired to specify which particular bean ID and thus implementation should be used in the dependency injection of that autowiring. 
+
+---> An example is given: 
+
+	@Autowired
+	@Qualifier("anotherDependency")
+	private Dependency anotherDependency; 
+
+	---> In this case, a default bean ID (ie not specifying an id in the Spring config file) is assumed (via lower casing the class name of the dependency). 
+
+	---> @Qualifier states that only a bean of type anotherDependency should be used, vs any class that implements the parent type of Dependency. 
+
+	---> This can be used with all 3 types of dependency injection. 
+
+
+---> Extra note: When using a default name for the bean ID and the bean class name has at least two uppercase letters in a row, such as RESTService, then the default class name is just the class name (no lower casing occurs for the first letter). 
+
+---> Using @Qualifier with constructors: 
+
+	---> For constructors, @Qualifier must be placed next to the argument of the constructor argument for which a specific bean ID needs to be specified: 
+
+	public someConstructor(
+		@Qualifier("Dependency1") Dependency dep1, 
+		@Qualifier("Dependency2") Dependency dep2
+	)
+	{	
+		...
+	{
+
+	---> Reason: @Qualifier is meant to match by bean ID / type of only 1 bean to 1 dependency in the bean bein configured. 
+
+	---> Therefore, @Qualifier would not be able to distinguish which dependency the qualifier ID would point to for autowiring. 
+
+
+---> Final note: it is possible to inject property values from a .properties file into a field of a bean via the following process: 
+
+	1. Specify the properties and load the properties file into the config file (either XML or normal Java config). 
+
+	2. Use @Value("${prop.someValuee}") over the desired field: 
+
+		@Value("${foo.email}")
+		private String email;
+
+
+
+
 
 
