@@ -1,0 +1,85 @@
+Spring Theory 4: Bean Scopes and Annotations. 
+
+
+Revisiting Scopes with Annotations: 
+
+---> Reminder of Bean Scopes: These refer to the lifecycle and how the instance of the bean lives in the Spring Container and application. 
+
+	A. Singleton => Only 1 global instance of the bean exists and all attempts to get this bean ultimately return a reference to the same bean in (cached) memory. 
+
+	B. Prototype => An instance of a bean is created per user request (see notes on bean scopes in earlier Spring Theory notes). 
+
+
+---> The way to specify a bean scope with annotations is: 
+
+
+	@Component
+	@Scope("singleton")
+	public class SomeBean {
+		...
+	}
+
+	---> The value of "prototype" can be used to specify a bean of the prototype scope in place of a singleton bean. 
+
+
+
+Bean Lifecycle Methods with Annotations: 
+
+---> Reminder => The bean lifecycle methods are used to "hook" / insert custom code into either the creation or destruction phase of a bean. 
+
+	---> This is usually done for the sake of handling resources or using customized business logic during bean creation or bean destruction. 
+
+
+---> The two main ways to use annotations with lifecycle methods are via: 
+
+	
+	A. @PostConstruct => A hook that allows the execution of custom code after the construction of the bean. 
+
+	B. @PreDestroy => A hook that allows the execution of custom code before the destruction of the bean. 
+
+	---> @PostConstruct is used to lock resources onto an object when it is created and @PreDestroy is used to allow those resources to be freed from the object in a customized way before it is destroyed. 
+
+
+---> The example belows shows the usage of these annotations: 
+
+
+@Component
+public class SomeClass {
+
+	@PostConstruct
+	public void initMethod() {
+	...
+	}
+
+	@PreDestroy
+	public void destructorMethod() {
+	...
+	}
+}
+
+	---> Note 1: @PostConstruct code will execute after the constructor of the object is called and after dependency injection is completed. 
+ 
+	---> Note 2: The methods should be void by convention when used with these lifecycle method annotation. 
+
+		---> A return type can be given when desired, but the return value will not be captured with the use of lifecycle methods. 
+
+
+	---> Note 3: Th emethods cannot accept any arguments. 
+
+
+---> In versions of Java >= 9, it might be necessary to add an additioanl JAR to the project in order to make the annotations work. 
+
+---> Reminder: Prototype beans require a specific process to allow a preDestroy style method. 
+
+	---> @PreDestroy is directly applicable to Singleton scoped beans.
+
+	---> See configuration by XML notes earlier in the Spring Theory notes fo rmore information on this. 
+
+
+
+
+
+
+
+
+

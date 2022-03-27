@@ -1,0 +1,142 @@
+Spring Theory 5: Configuration with Java Code. 
+
+---> As a reminder, there are several ways to configure the Spring Container: 
+
+	A. Full XML => Where beans are directly defined in an XML config file. 
+
+	B. XML Component Scan => Beans are defined using stereotype annotations and a component scan in order to scan for the bean definitions. 
+
+	C. Java configuration => Beans are defined either via component scan or directly as a getter method in a Java configruation class. 
+
+	---> Hybrids between the methods can occur with XML and Java config files being used in combination with each, but this leaves room for readability and consistency issues.       
+
+
+---> The general setup process is as follows: 
+
+	1. The @Configuration annotation is added on top of a class to mark it as a config class that can contain bean definitions: 
+
+	@Confgiruation 
+	public class SomeConfigClass {
+	...
+	}
+
+	---> Note: Multiple configuration classes can be defined with @Configuration in order to split bean configurations thematically or by domain. 
+
+	
+	2. Component Scanning can optionally be added to scan for @Component and other derived stereotype annotations in order to acquire bean definitions: 
+
+	@Configuration
+	@ComponentScan("com.project.somepackage")
+	public class SomeConfigClass {
+	...
+	}
+
+	---> The value of the @ComponentScan annotation is used to define which base package to do a scan for beans in. 
+
+	---> @ComponentScan is the annotation that is used in the component scan for the configuration class. 
+
+	---> Note: Multiple scans can be configured in this fashion in order to scan different packages per config class. 
+
+		---> This can allow for many different sub scans separated by domain if necessary or by some other metric. 
+
+
+	3. The configuration class is given to the Spring context to be read and used by the Spring Container: 
+
+	AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SportConfig.class); 
+
+	---> AnnotationConfigApplicationContext is the type that is used for annotation based contexts + approaches to Spring. 
+
+	---> There is a corresponding XML based context class / type that is used, wherein the XML config file is fed into said context when using the XML configuration approach. 
+
+
+	4.  Beans are retrieved from the Spring Container in order to be used in the application. 
+
+	context.getBean("someBeanID", SomeBean.class)
+
+	---> The getBean() method is used in order to retrieve the bean from the Spring Container and the match is made by type and by Bean ID. 
+
+	
+---> Note: SpringBoot uses a SpringApplication class that acts as a wrapper used to encapsulate much of the above methods such as preparing the Spring context, starting up an embedded server, and retriever all the necessary beans.              
+
+
+---> Important: In order to configure different areas of Spring (e.g. logging, Spring Security, Spring MVC, etc), the main process of configuration must always be adhered to with the use of a config file. 
+
+	---> It is advisable to use property files (located in a "Resources" package usually) in order to inject the properties into the configuration files and therefore into the bean when it is being created. 
+
+	---> This step is the core setup element of virtually all Spring configuration possibilities, including popular ones like SpringBoot and in-house configurations of Spring. 
+
+
+
+Defining Beans with Java Code: 
+
+---> In addition to the normal component scan + autowiring (+@Qualifier) method of defining beans, Java Spring configuration also offers a way to define and create beans in the config file class itself. 
+
+	---> This uses the @Bean annotation along with a getter method to create and return the bean: 
+
+	@Bean
+	public SomeBean someBean() {
+		SomeBean somebean = new SomeBean(); 
+		...Dependency injection (by setter)...
+		return someBean; 
+	}
+
+	@Bean 
+	public SomeBean2 someBean2() {
+		return new SomeBean2(someBean());
+	}	
+
+	---> Above are 2 examples where the @Bean annotation is used with a getter method in order to "expose" a class as a bean to Spring. 
+
+		---> The @Bean annotation tells the compiler to acknowledge the returned object as a bean that is to be stored and used by the Spring Container, hence the term "exposing". 
+
+
+	---> The name of the method is by default the bean ID for the class. 
+
+	---> Constructor injection is used when other @Bean definitions for dependencies are present and exposed in the config class, which can be called as the arguments to the current bean constructor. 
+
+	---> Otherwise, setter injection can be used, which can also call other bean exposed methods in order to create a dependency instance and injected into the bean. 
+
+		---> Usually setter injection is used for classes with a more complex configuration process that requires dependencies to be injected in moments beyond the instantiation of the bean. 
+
+
+---> All of the above is implied by the use of the @Bean annotation, which is used for when manual bean configuration is desired: 
+
+	---> @Bean allows the method name to be used as the bean ID and it is what is used for complex situations of configuration where autowiring is insufficent. 
+
+	---> @Bean itself implies the following process: 
+
+		1. @Bean will intercept all calls to the method name that it annotates. 
+
+		2. Spring will search itself to see if a flag for singleton bean existence for the @Bean method signature being called. 		
+
+		3. If a flag does not exist: 
+
+			A. Spring will execute the method code to create the bean, configure it, and return it. 
+
+			B. Spring will then register a flag that indicates the bean has been created. 
+
+			ELSE: 
+
+			C. Spring will return a reference to the instance of the singleton bean. 
+
+		---> Note: The flag checking process will not occur for prototype scoped beans and the method execution will occur every single time for the prototype scope. 
+
+		---> Dependency injection will use this process when a dependency is being injected: 
+
+			---> If the dependency is a singleton scoped bean, then the reference to the singleton bean will be used for the dependency injection. 
+
+
+---> Use case for @Bean => When needing to wrap a third party class (from a framework or library external to Spring) as a bean so that it can be used as a dependency by other bean. 
+
+	---> Reason => Third party classes do not have the @Component annotation available to mark them as a bean, so they must be defined with @Bean and configured in the config file in order to be exposed as a bean to the Spring Container. 
+
+		---> Without this, the Spring context will not be able to interpret the third party class as a bean. 
+
+
+	---> This is manual configuration is used in combination with the normal @Component annotation, which marks internally used classes as Spring beans. 
+
+		---> @Bean exposed beans can be autowired for dependency injection into internally marked @Component beans as a result. 
+
+
+
+ 

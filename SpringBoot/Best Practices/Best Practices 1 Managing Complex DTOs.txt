@@ -1,0 +1,30 @@
+Making Complex DTOs: 
+
+
+---> In many cases, data encodings will send back information that is nested and complex. 
+
+---> An example is a document based representation of data such as JSON in which 2-4 levels of nesting can occur within a property. 
+
+---> Representing non-trivial data like this can require a complex DTO that is made up of many different composed objects. 
+
+	---> The central concept behind a complex DTO involves using the OOP concept of composition in order to use encapsulated objects to make up the representations of complex data responses from external services.  
+
+	---> The general best practice when trying to work with such contexts is to try and maintain a flat structure as much as possible within the overall DTO.  
+
+	---> However, if flat DTOs are not possible then composition is a preferred approach. 
+
+
+
+Example 1: JSON -> POJO Mappings with WebClient.
+
+---> With the above concpets taken into account, the following practical considerations must be accounted for: 
+
+	1. Composition should be used with public classes that have been defined as their own separate files. 
+
+	2. NoArgs constructors, getters and setters must be used. 
+
+	---> If these 2 practices are not used and inner classes are used instead, then exceptions will be raised with trying to deserialize the JSON encoding into the class fields during DTO instantions. 
+
+	---> NoArgs constructors and setters are required by Jackson under the hood in order to successfully access and map the data onto the DTO in the deserialization process.  
+
+  
