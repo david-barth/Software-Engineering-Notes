@@ -1,0 +1,81 @@
+Strategies for storing hierarchal data. 
+
+
+Background to the problem: 
+
+---> In modern development, data intensive applications often involve complex sets of hierarchal data. 
+
+---> In-memory, (e.g. from a Java / Spring perspective) hierarchal data is represented as composites of objects, wherein smaller objects compose ever bigger ones. 
+
+	---> Nested objects translate into complex situations for building up relational schemas that can be used in databases such as MySQL. 
+
+
+---> What follows are some fundamental considerations and strategies for building out a schema that can deal well with hierarchal data. 
+
+---> As a general notes, hierarchal data is not a strong use case for relational databases because tables are represented as flat lists. 
+
+	---> NoSQL document based databases like MongoDB could be considered a more appropriate use case for this. 
+
+
+
+Fundamentals: 
+
+---> Generally, there is a choice that needs to be made with respect to performance in read vs write times. 
+
+---> There are 4 general models of hierarchal data representation that can be considered for this: 
+
+	A. Nested Sets
+
+	B. Path enumeration
+
+	C. Adjacency List
+
+	D. Closure Table 
+
+	---> Reminder => Hierarchal data can be represented as tree-like in structure. 
+
+		---> All such approaches must therefore consider the tree-like structure present for hierarchal data. 
+
+		---> Each different method constructs a different tree out of the hierarchal data or manipulates it in different ways. 
+
+
+
+Strategy 1: The Nested Set Model. 
+
+---> The idea of a nested set model is to represent the tree-like structure of hierarchal data via the use of "left" and "right" values. 
+
+---> The left and right values are assigned to each entrant in the tree structure in a pre-order traversal method, which is shown as such: 
+
+	1. Do something on the current node
+	2. Visit the left  
+	3. Visit the right   
+
+	---> The above represents the pre-order traversal for BSTs. 
+
+	---> Hierarchal data is more complex than a BST, so a modified labeling method must be considered. 
+
+---> The main idea behind a nested set is to represent all values in a hierarchal data set in a table wherein the categories are represented with left and right values assigned on the basis of the modified preorder traversal mechanism. 
+
+	---> All SQL queries are written as algorithms to deal with the tree structure of the data in the DB.  
+
+
+---> The main tree is represented as a table on which there are join points that are marked by the left and right numbers. 
+
+	---> In this sense, joins can be used to query data as needed and join them together for queries. 
+ 
+
+
+---> Theory -> Practice => The following designations can be applied to what constitutes a "node" in the tree: 
+
+	A. Table with only primitives => Represents a leaf in the tree as it has no join points. 
+
+	B. Table with primitives + Join points => Represents a node with children in the tree. 
+
+	---> A leaf represents also an object with only primitive fields. 
+
+	---> A node with children represents an object with at least one nested object.  
+
+	---> Higher level objects, composed of only nested objects, represent aggregation points of all lower level data into a complete whole. 
+
+	---> The left and right numbers represent points where joins can be applied to a table.   
+

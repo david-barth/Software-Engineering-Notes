@@ -1,0 +1,117 @@
+Spring Theory 6: Introduction to Spring MVC. 
+
+
+Spring MVC Overview: 
+
+---> Spring MVC is a framework that is built on top of Spring Core in order to leverage the MVC design pattern for use in web development primarily.      
+
+---> The MVC design pattern is largely based on the following process: 
+
+	1. A web browser / client machine issues an HTTP request to the backend of the application where Spring is used. 
+
+	2. A Front controller object (called the dispatcher servlet) recieves the request and performs the following steps: 
+
+		A. Intercepts all HTTP requests coming from clients. 
+
+		B. The front controller resolves the request to its proper resources via request mappings to the proper endpoint. 
+			
+			---> The authentication, authorization, logging and tracking of the request is handled by the front controller / dispatcher servlet. 
+		
+		
+	3. The controller / resources processes the request (data interactions, communicating with the database, validation, etc), by forwarding to the request to its appropriate lower level services and repositories. 
+
+	4. Once processing is done, the controller sends the response back to the front controller / dispatcher servlet, where the following steps can occur: 
+
+		A.  Once a controller has populated a DTO / handled the request's backend processing, a response is sent to the front controller / dispatcher servlet.  
+
+		B.  The dispatcher servlet either sends the response back to the client (e.g. as a REST response) or sends the response to a view resolver (template engine such as Thymelead) where the response is mapped onto a view and sent back to the client. 
+
+	---> Overall, the MVC pattern uses the front controller design pattern (implemented by the dispatcher servlet) as a way to centralize the processing of requests from client to backend. 
+
+	---> It is noted that the dispatcher servlet already comes with the normal Spring Framework JAR files. 
+
+
+---> Spring MVC has several notable benefits: 
+
+	---> It allows for easy managing of application state for web requests and for backend processing of data in a systematic consistent way via validation, data conversions, manipulations, etc. 
+
+	---> The view layer is flexible in its configuration: 
+
+		A. Templating methods such as JSP, Thymeleaf, etc can be used. 
+
+		B. REST responses can also be used if clientside UI methods are used with React, Angular, etc. 
+
+
+Spring MVC: Behind the Scenes. 
+
+---> Beyond the dispatcher servlet, Spring MVC has several other key components to it: 
+
+
+	A. The Controller => This handles the processing for the request and includes inner sublayers such as service and repository components to handle the backend processing. This is considered the "resource" tied to the endpoint that the request is directed to. 
+
+		---> The service layer handles the mid-level processing of the request, including data manipulations, validations, consuming external services, and communicating to the repository level. 
+
+		---> The repository (+ Data Access) layer(s) handle the direct requests to the database when it comes to performing CRUD operations. 
+
+		---> Data handling typically involves processing information in the DTO that results from ORM use in the repository layer. 
+
+
+`	B. Model / DTO => The object that is used to contain information that is processed by the various layers in the overall controller structure. 
+
+		---> The DTO is passed between different layers of the backend and is used to transfer data between these layers. 
+
+		---> It is the point that retrieved data (e.g. from a DB or an external service) is mapped onto for convenient use in the application. 
+
+
+	C. View Template => This is where data from the model is mapped onto UI components that are meant to be sent to the client.  Essentially, this is where the "UI" is created for the client in the case of backend UI serving. 
+
+		---> A templating engine / view resolver is responsible for the mapping of the data to the UI for population of the view by the DTO. 
+
+		---> Templating engines include JSP, JSTL, Groovy, Thymeleaf, and more. 
+
+		---> In modern web applications, the responsibility of views are being transferred toward the frontend with techngologies such as React and Angular, making the backend only responsibile for sending data directly in encoded formats such as JSON rather than full UI. 
+
+
+---> Spring MVC normally requires a certain level of setup with several xml files to help configure important aspects such as the dispatcher servlet. 
+
+	---> However, this configuration is already handled by SpringBoot, so learning for this shall be done on a need to know basis. 
+
+	---> It is possible to configure the dispatcher servlet via the Java or XML configuration approaches in Spring. 
+
+
+
+Focus: Spring Controllers 
+
+---> A controller is defined through the use of the @Controller stereotype annotation, which inherits from the more general @Controller. 
+
+	---> This annotation therefore supports the use of component scanning and so will be picked up by the component scanning from the config file. 
+
+
+---> Once a controller has been defined, it is possible to use @RequestMapping in order to define the endpoint that is mapped onto the method: 
+
+	@Controller 
+	public class HomeController {
+		
+		@RequestMapping("/path")
+		public String showPage() {
+			...
+		}
+	}
+
+	---> The above is an example of using the @RequestMapping annotation, which accepts a string value that defines the endpoint that is mapped onto the method name. 
+
+	---> This method is called a "controller method" because it has an endpoint mapped onto to it. 
+
+	---> The mapping is used by the dispatcher servlet in order to resolve the resource / controller that the request should be routed to. 
+
+	---> Note: Any method name can be used in defining the controller method.  
+
+	---> Note 2: @RequestMapping can support actions for GET, POST, PUT, and other such HTTP verb methods. 
+
+
+---> For non-RESTful cases => It is necessary to return the name of a view in order to allow the view resolver to find the view that corresponds with the name. 
+
+	---> This especially applies for JSP. 
+
+ 
+

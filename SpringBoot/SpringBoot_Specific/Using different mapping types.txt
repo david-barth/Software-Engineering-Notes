@@ -1,0 +1,83 @@
+The use of different mapping types with Spring MVC. 
+
+
+General Introduction: 
+
+---> In Spring MVC, the way the dispatcher servlet maps requests to specific controllers and thus controller methods is determined by the use of the @RequestMapping annotation. 
+
+	---> This annotation is generalized for GET, POST, PUT, PATCH and DELETE HTTP verbs. 
+
+	---> A couple of examples: 
+
+		@RequestMapping(value = "/getSomething/{id}", method = RequestMethod.GET)
+		public int getSomething(@PathVariable int id) {
+			...
+		} 
+
+		@RequestMapping(value = "/postSomething/{id}", method = RequestMethod.POST)
+		public int postSomething(@PathVariable int id) {
+			...
+		}                
+
+		---> The RequestMethod enum contains all the options for the HTTP verbs and can be specified with @RequestMapping using the "method" argument. 
+
+
+---> However, the @RequestMapping annotation can be simplified using more specific annotations, which inherit from @RequestMapping: 
+
+	A. @GetMapping
+
+	B. @PostMapping
+
+	C. @PutMapping 
+
+	D. @DeleteMapping
+
+	E. @PatchMapping
+
+	---> These annotations all have the proper methods specified for them. 
+
+
+---> An example of the @GetMapping annotation definition is given to show how this works under the hood: 
+
+	@Target({ java.lang.annotation.ElementType.METHOD })
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@RequestMapping(method = { RequestMethod.GET })
+	public @interface GetMapping {
+    		// abstract codes
+	}
+
+---> A full example of a GET use is given below: 
+
+    @GetMapping("getProfileList/{assetCount}")
+    public @ResponseBody List<Profile> getAssetQuoteList(@PathVariable int assetcount, ) {
+	...
+    }
+
+    ---> Note: @ResponseBody is used to tell the parent controller that the object returned from the service layer is meant to be automatically serialized into JSON and passed back into the HTP Response object.      
+
+	---> However, this is not needed in controllers annotated with @RestController because this annotation automatically enables this serialization to all DTOs given to the controller from the lower service levels.   
+
+
+
+Post Mapping: 
+
+---> As per the HTTP specification, POST requests contain a request body, which contains a payload of additional information from the client side of the application. 
+
+---> The @PostMapping annotation must therefore be used in order to properly use the @RequestBody annotation in order to access the request body and automatically deserialize it from JSON into a POJO based DTO: 
+
+	---> An example is given: 
+
+	@PostMapping("/postRequest")
+	public Response postMethod(
+		@RequestBody BodyObject body) {
+		...
+	}
+
+	---> Like for the case of consuming external web services, @RequestBody based deserialization must have the JSON and DTO match in terms of structure (both in property types present and level of nesting of properties). 
+
+	---> The @RequestBody (and @ResponseBody) annotations therefore likekly use Jackson under the hood in order to properly serialize / deserialize. 
+
+
+---> Important Practical Note: The corresponding DTO must have a structure that corresponds to the structure of JSON (see notes on complex DTO usage and consumption of REST web services). 
+

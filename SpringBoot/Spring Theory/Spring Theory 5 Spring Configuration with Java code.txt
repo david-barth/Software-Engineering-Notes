@@ -139,4 +139,57 @@ Defining Beans with Java Code:
 
 
 
- 
+Reminder: Reading Values from a Properties File with Java Configurations. 
+
+---> Values can be dynamically injected into beans based on externally defined properties, which are key value pairs. 
+
+	---> This can be done with .properties where the key : value pairs are contained. 
+
+	---> Or this can be done with a .yaml file, which contains values, but with a different form of data encoding. 
+
+
+---> The way to inject properties into the Spring config file via Java is as follows: 
+	
+
+	1. Load properties into the Spring config class with @PropertySource: 
+
+	@Configuration
+	@PropertySource("classpath:sport.properties")
+	public class Config {
+		...
+	}
+
+	---> @PropertySource uses a reference to the properties file, on the class path, in order to locate the properties file and load it into the Spring config class. 
+
+
+	2. The values are then referenced from the properties file and injected into their relevant fields via field injection with @Value: 
+
+	public class SomeClass {
+		
+		@Value("${foo.value1}")
+		private String value1; 
+
+		@Value("${foo.value2}")
+		private int value2; 
+	}
+
+	---> @Value uses an input that uses a string syntax with ${} to represent the insertion of values into the annotation. 
+
+		---> This ${} syntax is similar to template literal syntax in Javascript
+
+
+	---> The @Value annotation is placed above the field in order to use field injection to inject the value into its relevant point in the class. 
+
+
+---> This method of field injection is helpful to load dynamically changing values into the Spring context based on changing runtime environments. 
+
+	---> References can potentially be made to environmental variables, which can be obtained from the system and injected dynamically into the application, allowing sensitive information to be kept hidden from public readability. 
+
+
+
+ 	 
+
+
+
+
+

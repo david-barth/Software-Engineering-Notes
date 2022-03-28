@@ -1,0 +1,3 @@
+Practical Hibernate Notes: Considerations for implementing proper concrete Repository classes. 
+
+
