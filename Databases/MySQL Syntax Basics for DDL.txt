@@ -1,0 +1,95 @@
+MySQL Syntax Basics for DDL 
+
+
+
+DDL: Creating a table. 
+
+---> The CREATE keyword is used to create a table as follows: 
+
+
+	
+	---> The generalized format is as follows => 
+
+	CREATE table tableName(
+		columnName dataType fieldAttributes..., 
+		...
+		constraints...
+		...
+		PRIMARY KEY (columnName)
+	);
+
+	---> The CREATE is a DDL reserved keyword and table is an object word used to describe the type of object being created. 
+
+	---> A list of column name, data type and field attributes is required for the "under the hood" function that creates the table. 
+
+		---> The field attributes are used to define aspects of the column, such as non nullability and auto-incrementing. 
+
+		---> Multiple field attributes can specified after the data type in order to allow for customization of the column properties. 
+
+		---> After the columns are defined, any constraints on the table can be defined. 
+
+		---> Finally, a primary key must always be defined in order to uniquely identify records / rows in the table. 
+
+
+	---> An applied example is given below: 
+
+	
+	create table tutorials_tbl(
+   		tutorial_id INT NOT NULL AUTO_INCREMENT,
+  		tutorial_title VARCHAR(100) NOT NULL,
+   		tutorial_author VARCHAR(40) NOT NULL,
+   		submission_date DATE,
+   		PRIMARY KEY ( tutorial_id )
+	);
+
+
+
+DDL: Alter statements. 
+
+---> The ALTER statement can be used to alter the table and its columns in some way in MySQL. 
+
+---> The general syntax for the ALTER statement is as follows: 
+
+	ALTER TABLE tbl_name
+    	...Do something...
+
+	---> This DDL statement is very versatile as there are many ways in which a table can be altered in SQL. 
+
+	---> There are 4 main ALTER statements that can be made: 
+
+
+		1. Adding a new column to a table: 
+			
+			ALTER TABLE table_name
+  			ADD new_column_name column_definition
+    			[ FIRST | AFTER column_name ];
+	
+		
+		2. Modifying a column and its column definition: 
+
+			ALTER TABLE table_name
+  			MODIFY column_name column_definition
+    			[ FIRST | AFTER column_name ];
+
+
+		3. Deleting a column from a table: 
+
+			ALTER TABLE table_name
+  			DROP COLUMN column_name;
+
+
+		4. Renaming a column in a table: 
+
+			ALTER TABLE table_name
+  			CHANGE COLUMN old_name new_name 
+    			column_definition
+    			[ FIRST | AFTER column_name ];
+
+
+		---> These 4 column altering operations are the main uses of the alter statement. 
+
+		---> Common features: 
+
+			---> Using keywords such as ADD, MODIFY, DROP, CHANGE, etc in order to perform the operations on the column. 
+
+

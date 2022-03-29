@@ -1,6 +1,154 @@
 Spring Theory 7: REST Web Services with Spring. 
 
 
-Introduction to REST Web Services: 
+Introduction to REST Web Services and REST in general: 
 
----> 
+---> REST stands for Representational State Transfer and is a set of architectural principles that are best used for the needs of web services and mobile applications. 
+
+---> These architectural guidelines are 6 in total: 
+
+
+	1. A client-server architcture which is composed of: 
+
+		A. Clients => Machines that issue requests for resources. 
+	
+		B. Server => Machines that respond to requests from clients and contain the desired resources. 
+
+		C. Resources => Data that is sent back as a response to the client by the server and is contained on the server.
+
+
+	2. Stateless client-servercommunication wherein infromation about a session's state is held by the client and no client content is stored on the server between requests.   
+
+		---> Ie the state of the client is not known by the server during the course of a transaction. 
+
+
+	3. Cacheable data on the client side in order to eliminate certain client-server interactions (e.g. cookies). 
+
+		---> These are used as a way to optimize performance. 
+
+
+	4. A uniform interface between components so that information is transferred in a standardized form that is not specific to an application. 
+
+		---> An example is using HTTP transactions with a form of data encoding, such as JSON, for all applications.  
+
+	5. A layered system, wherein client-server interactions are mediated by hierarchal layers. 
+
+
+	6. Allowing servers to extend functionality of a client by transferring executable code.
+
+
+	---> In practice, REST is implemented by using HTTP as a networking protocol. 
+
+	---> On the API side, requests and responses are serialized into common formats such as HTML, XML, JSON, etc. 
+
+	---> The HTTP transaction does not include anything from the client side beyond the information needed to retrieve the resource from the server side. 
+
+	---> Many implementations of REST (ie RESTful APIs) map the mechanics of an HTTP transaction, such as HTTP verbs (GET, POST, PUT, etc) onto the resource layers available on the backend server as routes that perfor the analgous HTTP verb action on the server side.              
+
+		---> E.g. A POST route on a Java oriented server will have code that allows for a request body to be receieved as an argument to the route method on the resource controller. 
+
+
+---> Significantly, a REST architecture is one that is flexible in implementation and merely needs to follow a set of principles.  
+
+	---> Compared other protocols / architectures, such as SOAP (Simple Object Access Protocol), REST can differ in its implementations, with the HTTP based form the most used. 
+
+	---> SOAP is a protocol that contains built-in standards and rules, which must be implemented in order to offer inherent compliances to certain qualities of an application, such as resiliency, ACID, and security. 
+
+		---> E.g. SOAP follows Atomicity, Consistency, Isolation, and Durability (ACID) principles, which are properties of a system that are used for ensuring relaible database transactions. 
+
+		---> Except rather than database communications, this is now generalized as a network protocol. 
+
+
+	---> The difference is that REST lacks these pieces of overhead in favor of increased performance and less overhead in implementation + development. 
+
+	---> One final difference is that SOAP can be handled via any application layer networking protocol such HTTP, SMTP, TCP, and more. 
+
+		---> REST is commonly limited to HTTP based implementations. 
+
+
+
+Introduction to Jackson: Use in Serializing and Deserialzing JSON. 
+
+---> In general, when data is sent between machines over a network, it is encoded in a format that can either be machine readable or human readable or both. 
+
+	---> The process of encoding data between different forms is called data binding. 
+
+	---> Data is bound to one form after an encoding or decoding process. These conversions are known as: 
+
+		A. Mapping => From form A to B and vice versa. 
+
+		B. Serialization / Deserialization 
+
+		C. Marshalling / Unmarshalling
+
+		---> These all refer to the processes of data binding / converting between different forms as data is transmitted over a network. 
+
+
+---> Data binding in Spring uses a library called Jackson in order to handle conversions between Java objects and JSON / XML encodings. 
+
+---> Jackson uses a mapping process in order to map values from a JSON or XML encoding into a Java object. 
+
+---> For JSON, the conversion of JSON -> POJO (deserialization) is done roughly as follows: 
+
+	ObjectMapper mapper = new ObjectMapper(); 
+	SomeObject anObject = mapper.readValue(new File("path/sample.json"), SomeObject.class); 
+
+	---> An ObjectMapper class is used to read values from a data source (in this case a JSON file). 
+
+	---> The data source contains the data encoded in JSON and the object mapper takes in a class of the POJO in order to complete the mapping process. 
+
+	---> Under the hood, Jackson uses the POJO's setter methods to set the values of the POJO fields according to the property names of the JSON encoding. 
+
+		---> For this to work, however, the hierarchal structure of the POJO fields and the names of the fields must match the structure and property names in JSON. 
+
+		---> Speculation => For JSON <-> POJO data binding, the hierarchal nature of JSON structure implies the use of a tree in order to manage conversions. 
+
+
+---> For the conversion of POJO -> JSON (serialization), the process is: 
+
+	mapper.enable(SerializationFeature.INDENT_OUTPUT); 
+	mapper.writeValue(new File("data/output.json"), someObject);
+
+	---> Here, the object mapper writes the field values of a POJO to a new file in the JSON format. 
+
+	---> The mapper uses the POJO getter methods to obtain the values and match them to a JSON file or response.  
+
+	---> In this example, the INDENT_OUTPUT enum option is used to allow for pretty formatting. 
+
+
+---> For Spring REST applications, Jackson is automatically integrated into Spring. 
+
+	---> Main use case => REST controllers use Jackson based serialization / deserialization methods for JSON data passed into a REST controller or DTOs being passed out through the REST controller. 
+
+
+---> Nested data in JSON comes in 2 forms: 
+
+	A. Object nestings => For Jackson to handle the data binding, a composite / nested object, matching the structure of the JSON must be designed for the POJO class. 
+
+	B. Array nestings => For this, a List type or an array must be used in order to accommodate the data binding. 
+
+	---> For most use cases of serialization / deserialization in Spring, these structural considerations will be sufficient. 
+
+
+---> Important => If a new property is added to JSON and this change is not accounted for the POJO, then an exception will be thrown. 
+
+	---> To fix this issue, the @JsonIgnoreProperties annotation can be used on the class level as follows: 
+
+	@JsonIgnoreProperties(ignoreUnknown=true)
+	public class SomeClass {
+		...
+	}
+
+	---> The argument of ignoreUnknown is set to true in order to allow Jackson to ignore properties that are not accounted for in the field values of the Java object. 
+
+
+
+
+
+
+
+
+	 
+
+         
+ 

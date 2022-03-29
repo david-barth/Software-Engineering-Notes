@@ -1,0 +1,36 @@
+MySQL Syntax Basics: DML
+
+
+
+INSERT: Entering records into a table. 
+
+---> The INSERT keyword is used to insert new values into a table and has the following 2 forms: 
+
+
+	1. Inserting values into all columsn of the table:
+
+		INSERT INTO table_name
+		VALUES (value1, value2, value3, ...);
+
+		---> Note => All values must be in the same order as the columns of the table. 
+
+
+	2. Inserting a specified subset of values into a subset of columns in the table:
+
+
+		INSERT INTO table_name (column1, column2, column3, ...)
+		VALUES (value1, value2, value3, ...);
+
+		---> The column name set order must correspond to the values name set order. 
+
+
+	---> Explanations of other keywords: 
+
+		A. INTO => An assistant keyword that specifies a destination table for the insertion of the values. 
+			
+			---> This seems to be a "directing" keyword that indicates a location for something to go into. 
+
+
+		B. VALUES => A keyword that specifies an object list of values. 
+
+			---> This is a "noun" keyword that indicates an object keyword. 	
