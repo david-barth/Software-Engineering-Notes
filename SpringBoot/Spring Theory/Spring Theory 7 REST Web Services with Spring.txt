@@ -143,12 +143,139 @@ Introduction to Jackson: Use in Serializing and Deserialzing JSON.
 
 
 
+Spring REST Controllers: 
+
+---> Spring MVC provides support for REST APIs and architectures via the @RestController annotation. 
+
+	---> @RestController is an extension of @Controller and handles HTTP requests + response transactions. 
+
+	---> Controllers that have @RestController used on the class level automatically handle the serialization / deserialization of JSON and Java objects. 
+
+		---> It is just imporant to havethe Jackson project on the classpath. 
 
 
 
+---> Important => The difference between a REST API and a REST architecture is as follows: 
+
+	A. REST API => This is simply the programmatic interface (e.g. on the backend) that helps to implement some of the architectural principles defined above for REST. 
+
+		---> Signficantly, the REST API is an important component in an overall REST architecture. 
+
+		---> Principles supported by the REST API: 
+
+			A. Forming the interface for the communication that the client has with the resources formed inside of the server (Interface + client-server architecture) 
+
+			B. Contains the hierarchal layers needed to mediate client-server "transactions" (Layered architecture) 
+
+			C. Can help to send executable code in certain MIME types (e.g. Already rendered HTML via templating enginges) (Sending executable code). 
 
 
-	 
+	B. REST Architecture => This is the entire architecture of the system that is designed in accordance to the REST architectural principles. 
+
+		---> REST architecture covers everything that is built to support the architectural principles of REST and therefore considers all the principles. 
+
+		---> The REST client (e.g. web browser that consumes a REST API) and the REST service (e.g. a backend REST API) are both part of a REST architecture. 
+
+
+---> Reminder: In order for a Spring MVC web app projec to to be initialized, in non-SpringBoot configurations, it is important to configure servlet initalization: 
+
+	---> This will help to initialize the dispatcher servlet that serves as the front controller for all other controllers in the web app. 
+
+	---> This can be done via the AbstractAnnotationConfigDispatcherServletInitializer abstract class, which is extended by an inheriting class. 
+
+	---> The required methods must be overrided as well, with the proper steps, which will be detailed in separate notes focused on the dispatcher servlet. 
+
+
+
+Reminder: Jackson Integration with Spring + Data binding 
+
+---> Jackson is already integrated under the hood with Spring and Spring will handle this integration as long as Jackson is on the classpath. 
+
+---> Jackson is what will provide the methods needed in order to accomplish the serialization / deserialization of JSON and POJOs, which is handled automatically by the @RestController annotation. 
+
+---> What is worth noting is the case where custom serialization / deserialization needs to be written for special use cases, where the Spring integration cannot handle it.  Currently, Spring + Jackson integration can handle the following use cases: 
+
+	A. Complex composite objects => Where nested JSON data and composed POJOs (consisting of nested object fields) have a direct correspondence in structure. 
+
+	B. Simple primitive objects or lists => Where nested JSON properties have primitive values or arrays of primitive values, which correspond similarly as composite objects in structure. 
+
+	---> The situation becomes more interesting with other more potentially complex data structures or potentially with cases where certain properties or fields need to be ignored. 
+
+
+ 
+Using @PathVariable for Query Parameters in REST Endpoints: 
+
+---> In endpoint terminology, a query parameter is used as a way to parameterize a segment of an endpoint in order to account for variable values that could be provided via an URI / URL when accessing an endpoint. 
+
+---> The nomenclature / pattern is: /something/{queryParameter} 
+
+	---> {} marks that section of an endpoint as having variable values.  
+
+	---> This allows for specific data to be targetted when interacting with the endpoint. 
+
+
+---> In Spring MVC + Spring REST, it is possible to use @PathVariable in order to bind the query parameter to an input that is an argument for a controller method: 
+
+	@GetMapping("/students/{studentId}")
+	public Student getStudent(@PathVariable int studentId) {
+		...
+	} 
+
+	---> Note 1: The studentId query parameter name must match the studentId argument name in the controller method in order to allow the query parameter <-> input binding to occur. 
+
+	---> Important => @Pathvariable is an example of an argument level annotation that affects an input to a method. 
+
+		---> Therefore, annotations can be placed at the class level, method level, field level, or argument level within Java in order to instruct the compiler to generate specific meta code relating to that annotation to the part of the code the annotation refers to. 
+
+
+
+Spring REST Exception Handling: 
+
+---> In order to handle exceptions / errors that can occur in a REST endpoint call, the following components need to be taken into account: 
+
+	A. Custom Error Response Class => This is the DTO that is serialized into JSON in order to inform the client that an error situation has occurred. 
+
+		---> This typically contains the error message and the response status code, which are transferred from either the exception or from other sources in the resource behidn the endpoint. 
+
+
+	B. Custom Exception Class => This is a custom exception that is generated for an exceptional error situation that is likely to occur within the situational context of the application. 
+
+		---> This exception usually ends up extending a base Exception class such as RunTimeException with custom behavior expressing the error situation that it is meant to handle. 
+
+
+
+	C. @ExceptionHandler => This annotation allows for exception handling behavior to be implemented. 
+
+		---> The exception handler returns a ResponseEntity object, which is a wrapper for an HTTP response object. 
+
+		---> The ResponseEntity class provides control over things such as HTTP status codes, HTTP headers, and the response body itself. 
+
+		---> This ResponseEntity class is often used in exception handling behavior and in "happy path" situations where the normal 200 response is returned. 
+
+
+---> An example is given below of how the @ExceptionHandler annotation is used: 
+
+
+	@ExceptionHandler
+	public ResponeEntity<StudentErrorResponse> handleException(StudentNotFoundException exception) {
+
+		StudentErrorResponse error = new StudentErrorResponse(); 
+
+		...Set code, message, other  details...
+
+		return new ResponseEntity<>(error, HttpStatus.Not_Found); 
+	}		
+
+	---> The ResponseEntity is parameterized with the custom error response class and accept the class instance and the appropriate status code to return. 
+
+	---> Important: The error code set in the error response object is not the same as the error code that is given to the ResponseEntity class. 
+
+		---> The error code accepted directly by the ResponseEntity class interacts with the system of the client machine to inform it of the status code. 
+
+			---> The "error code" of the custom response object is simply a value that is meant for presentational purposes to inform the end user the of client why the request failed. 
+
+			---> Therefore, these 2 values must be considered as separate in error handling situations. 
+
 
          
  

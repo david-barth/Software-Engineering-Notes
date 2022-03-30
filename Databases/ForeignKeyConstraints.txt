@@ -1,0 +1,46 @@
+SQL Fundamentals: Constraints. 
+
+
+Foreign Key Constraints: 
+
+---> In relational DBs, tables can have relationships or associations to each other, of which the primary ones are: 
+
+	A. One-to-One => Where there is a parent table that is referenced by a child table. 
+
+	B. One-to-Many => Where one parent table is referenced by many child tables. 
+
+	C. Many-to-Many => Where many parents are referenced by many children. 
+
+
+---> In practice, the reference column of the child table takes the primary key of the parent table. 
+
+	---> This key forms a join point for the tables so that data can be combined. 
+
+
+---> In order to define a foreign key in DDL, the following commands can be used: 
+
+
+	A. Table creation:
+ 
+		CREATE TABLE Orders (
+    			...
+    			PRIMARY KEY (OrderID),
+    			FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
+		);
+
+
+	B. Table modification: 
+
+		ALTER TABLE Orders
+			ADD CONSTRAINT FK_PersonOrder
+			FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+		---> Note that "CONSTRAINT FK_PersonOrder" can be dropped if there is no desire to name the foreign key. 
+
+		---> Note that the column must already exist in order to use the above command. 
+
+
+	---> FOREIGN KEY is the object keyword that is used to declare the foreign key. 
+
+	---> REFERENCES is the "destination" / locating keyword that is used to refer to the other foreign key. 
+

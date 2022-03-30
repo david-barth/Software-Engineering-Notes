@@ -1,2 +1,102 @@
 Hibernate + JPA Practical Notes 1: Setting up ORM for Nested / Complex Objects. 
 
+
+Basics to Hibernate Model <-> DB Interactions: 
+
+---> A model is a POJO that is what a database table is mapped onto in the process of ORM. 
+
+---> The minimum that a model object needs is identified as follows: 
+
+
+	@Entity 
+	@Table(name = "tableName")
+	public class User {
+	
+		@Id 
+		@GeneratedValue(strategy = GenerationType.IDENTITY)
+		@Column(name = "user_id")
+		private int userID; 
+
+
+		@Column(name = "name")
+		private String name; 
+	}	
+
+	---> @Entity marks the POJO as being an object that corresponds with a row of a table in a database. 
+
+	---> @Table can be used to explicitly define the table which corresponds with the object. 
+
+	---> @Entity vs @Table: 
+
+		---> One difference is that @Entity marks the name of an entity in a table.  Often table names are different than the entities which poppulate the table.          
+
+			---> E.g. Student (entity) vs Students (Table)
+
+			---> @Entity is used to officially mark the name of the entity, but if @Table is not used then the class name of the model is considered the default table name by Hibernate.     
+
+			---> If @Table is used, then the official difference between the entity and table names can be formalized.  Hibernate will use the @Entity name (or class name if @Entity is empty) as the database entity name while using the table name as the table name. 
+
+
+		---> Another difference is that @Table contains some arguments that can be used for purposes relating to things such as table schema. 
+
+
+	---> @Id is used to mark the primary key of the table.  
+
+	---> @Column is used to mark explicitly mark the name of the column to which a field of the model corresponds to. 
+
+		---> The default is the field name, but this is overcome by specifyin a name as an argument to the annotation. 
+
+
+	---> @GeneratedValue() is used to define auto-generated values. 
+		
+		---> In a relational DB, there are several ways to auto-generate values, which is accounted for by the Strategy design pattern used as a component for this annotation. 
+
+		---> In the above example, the strategy / algorithm corresponds with auto-incrementing. 
+
+
+---> The above counts for a simple model <-> table mapping.  What follows is the style needed for more complex mappings consisting of nested objects to hierarchal table structures. 
+
+
+
+
+Setting up models to correspond to hierarchal data: 
+
+---> This deals with the concept of constructing relationships between unrelated entities. 
+
+	---> For tables with no foreign key constraints (ie references used to link the tables together), then it is possible to programmatically define relationships in the application layer of the system with Hibernate / JPA. 
+
+	---> This means that joins will not need to be defined in the application layer. 
+
+
+---> In order to specify this kind of relationship in a model, the following example can be considered: 
+
+
+   	@OneToOne(fetch = FetchType.LAZY)
+    	@JoinColumn(name "menuItemId")
+    	private Recipe recipe;
+
+	
+	---> @OneToOne => This defines a one-to-one relationship that can exist between entities / models. 
+
+		---> This logic also applies to the @OneToMany, @ManyToMany, @ManyToOne annotations.
+
+		---> fetch = FetchType.LAZY => This requires that only the necessary child classes are fetched while the parent class is loading. 
+
+			---> Fetching is used by Hibernate in order to be able to fetch data that exhibits relationships / associations with other data.  
+
+			---> Lazy fetching allows for the data to be fetched such that computational effort and resources are conserved, allowing performance to be improved. 
+
+
+
+	---> @JoinColumn => This annotation creates a pseudo foreign key relationship between 2 entities and allows for a programmatic level join to be used for these tables. 
+
+		---> The name argument refers to the name of the foreign key column for a specific reference entity. 
+
+			---> Ie the "foreign key" of the entity to be joined is the primary key of the entity being referenced. 
+
+
+		---> In the above example, the "menuItemId" name refers to the name of the primary key column of the reference entity / table. 
+
+ 
+
+	
