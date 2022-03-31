@@ -1,0 +1,14 @@
+Associations / Mapping Relationship Principles in SQL. 
+
+
+One-To-Many relationships: 
+
+---> A one-to-many relationship specifies the number of one entity in relation to another entity. 
+
+	---> Conceptually, this type of mapping shows that one entity can be related in some way to many other entities. 
+
+	---> Practically, this is defined as a concept of ownership between the 2 entities. 
+
+		---> The entity that is on the "many" side of the one-to-many relationship owns the foreign key of the "one" entity. 
+
+		---> This means that the many entity contains the foreign key in the relationship, which maintains the reference between the 2 entities. 

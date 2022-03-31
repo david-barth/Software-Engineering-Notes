@@ -1,0 +1,31 @@
+Spring Theory 8: Introduction to Hibernate
+
+
+Basic Introduction: 
+
+---> Hibernate is a framework that implements the Java Persistence API specification and is used to persist objects in a database.        
+
+	---> Hibernate acts as a wrapper around JDBC code that would otherwise need to be written in order to handle querying databases. 
+
+
+
+---> In functionality, Hibernate uses Object-to-Relational Mapping (ORM) in order to query and persist data into / out of databases. 
+
+	---> The ORM approach allows a developer to define a mapping between a Java class to a database tables based on the following analogies: 
+
+		A. Class <-> Table
+
+		B. Field (Primitive) <-> Column => This applies to primitive values only (e.g. int <-> int, String <-> carchar, etc)
+
+		---> The Class <-> Table mapping also applies to nested objects that are part of a field of an encapsulating object in a similar sense to how a foreign key in one table references a column in another table, associating the 2 tables together in some way. 
+
+
+	---> Under the hood, Hibernate automatically implements SQL code to write an object to a database or to read data from the database based on the relational mappings defined in the entity objects. 
+
+
+Overview of Hibernate Configuration: 
+
+---> This is not necessary for SpringBoot configurations, but the configuration process in Spring will detail the primary classes that are used in Hibernate in order to make it function properly. 
+
+---> 
+ 		

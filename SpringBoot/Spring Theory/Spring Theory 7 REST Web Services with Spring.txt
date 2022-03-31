@@ -257,7 +257,7 @@ Spring REST Exception Handling:
 
 
 	@ExceptionHandler
-	public ResponeEntity<StudentErrorResponse> handleException(StudentNotFoundException exception) {
+	public ResponseEntity<StudentErrorResponse> handleException(StudentNotFoundException exception) {
 
 		StudentErrorResponse error = new StudentErrorResponse(); 
 
@@ -277,5 +277,86 @@ Spring REST Exception Handling:
 			---> Therefore, these 2 values must be considered as separate in error handling situations. 
 
 
-         
- 
+
+Global Exception Handling for Spring REST: 
+
+---> In bigger enterpise level projects, it is necessary to use global exception handling, which can be reused with multiple controllers. 
+
+	---> GLboal exception handling allows for reuse of exception handlers and centralizes the exception handling that exists in an application. 
+
+
+---> Spring REST accomplishes this through the use of a piece of Aspect Oriented Programming via an annotation called @ControllerAdvice. 
+
+	---> @ControllerAdvice acts as an interceptor / filter that allows for pre-processing of requests to controllers or post-processing of responses from controllers. 
+
+	---> In other words requests are intercepted and examined before they reach other parts of the controller code and responses from controller inner layers are examined before being sent back to the client. 
+
+	---> @ControllerAdvice adds an extra layer on top of the REST resource layer and effectively contains the exception handling code. 
+
+		---> The exception is thrown from the REST resource itself and caught by the @ControllerAdvice layer. 
+
+
+---> An example for creating an @ControllerAdvice based handling strategy is shown: 
+
+	@ControllerAdvice
+	public class StudentRestExceptionHandler {
+
+		@ExceptionHandler 
+		public ResponseEntity<StudentErrorResponse> handleException(StudentNotFoundException exc) {
+
+			StudentErrorResponse error = new StudentErrorResponse(); 
+			
+			error.setStatus(HttpStatus.NOT_FOUND.value());
+			error.setMessage(exc.getMessage()));
+
+			return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);  
+		}
+	
+	}
+
+	---> @ControllerAdvice is a class level annotation for the exception handler class. 
+
+	---> The @ExceptionHandler annotated method is placed into the @ControllerAdvice class in order to make the exception handling code available globally to the application for reuse. 
+
+
+---> The @ControllerAdvice approach is a best practice approach to writing exception handling code for Spring and SpringBoot based applications. 
+
+	---> @ControllerAdvice will automatically intercept any exceptions thrown in the resource layers that are defined with the @ControllerAdvice annotated class. 
+
+	---> This allows related custom exceptions to be caught without needing to write an excessive number of try-catch blocks around the resource code. 
+
+	---> For future: Investigating the use cases of try-catch blocks vs @ControllerAdvice exception handling strategies. 
+
+
+Spring REST API Design Best Practices: 
+
+---> REST API endpoints are best named according to several conventions or best practices: 
+
+	A. Resource naming => A resource that provides data related to a particular entity needs to the first unique part of a REST API endpoint: 
+
+		---> e.g. A customer is the entity concerned.  Therefore the convention is to use the plural form of the entity: ie "customers" 
+
+		---> In API endpoint form: /api/customers => "api" marks the endpoint as being part of the larger REST API, while customers it the class level @RequestMapping value. 
+
+
+	B. Endpoint specifications by HTTP verb => A resource's primary endpoint can be further broken down into different mappings based on HTTP verb. 
+
+		---> e.g. /api/customers (GET) vs /api/customers (POST)
+
+		---> The endpoints can be implicitly left like this and the @GetMapping and @PostMapping annotations can be used to help the controller route the request to its correct controller method. 
+
+	
+	C. Anti-Pattern => Do not include the HTTP action (POST, GET, PUT, etc) into the rest endpoint.  The HTTP methods are used to assign the action to the controller method. 
+
+		---> e.g. /api/deleteCustomer or /api/addCustomer 
+
+		---> The verbs of "delete" or "add" are indicative of the HTTP verbs used, but this should be made implicit by the HTTP methods that are used to access the endpoint and not by the endpoint itself. 
+
+		---> Therefore, implicit naming is preferred to explicit naming. 
+
+		---> No behavior is placed into the endpoint path itself. 
+
+
+---> The reason for the above naming conventions is that the API endpoint is meant to reflect the location of a particular resource and not the action used to retrieve it. 
+
+	---> The action is defined on a programmatic level via the HTTP method used. 

@@ -58,45 +58,59 @@ Basics to Hibernate Model <-> DB Interactions:
 
 
 
+Defining a relationship between entities: 
 
-Setting up models to correspond to hierarchal data: 
-
----> This deals with the concept of constructing relationships between unrelated entities. 
-
-	---> For tables with no foreign key constraints (ie references used to link the tables together), then it is possible to programmatically define relationships in the application layer of the system with Hibernate / JPA. 
-
-	---> This means that joins will not need to be defined in the application layer. 
+---> Internally this is accomplished by using joins and foreign keys to help define the mappings that occur in relationships between database entities. 
 
 
----> In order to specify this kind of relationship in a model, the following example can be considered: 
+---> In SQL, there are 2 sides to the relationship: 
+
+	A. The owner => This is the entity posessing the foreign key. 
+
+	B. The child / referee => This is the entity being referenced by the foreign key. 
 
 
-   	@OneToOne(fetch = FetchType.LAZY)
-    	@JoinColumn(name "menuItemId")
-    	private Recipe recipe;
+---> In the next level of the relationship, there is also a sense of directionality: 
 
-	
-	---> @OneToOne => This defines a one-to-one relationship that can exist between entities / models. 
+	A. Unidirectional => Only one entity has a property that refers to the other entity. 
 
-		---> This logic also applies to the @OneToMany, @ManyToMany, @ManyToOne annotations.
-
-		---> fetch = FetchType.LAZY => This requires that only the necessary child classes are fetched while the parent class is loading. 
-
-			---> Fetching is used by Hibernate in order to be able to fetch data that exhibits relationships / associations with other data.  
-
-			---> Lazy fetching allows for the data to be fetched such that computational effort and resources are conserved, allowing performance to be improved. 
+		---> This occurs with when the owning entity is the only one that has a foreign key referencing the other entity in the relationship.  
 
 
+	B. Bidirectiinal => Both entities have a referencing field to the other.  
 
-	---> @JoinColumn => This annotation creates a pseudo foreign key relationship between 2 entities and allows for a programmatic level join to be used for these tables. 
+		---> This occurs in a few ways: 
 
-		---> The name argument refers to the name of the foreign key column for a specific reference entity. 
+			A. Each entity has a foreign key to the other. 
 
-			---> Ie the "foreign key" of the entity to be joined is the primary key of the entity being referenced. 
+			B. There is a "join table" that encapsulates both the foreign keys of the entities in a separate table.  
 
 
-		---> In the above example, the "menuItemId" name refers to the name of the primary key column of the reference entity / table. 
 
+---> This conceptual schematic translates as follows in Hibernate: 
+
+
+	A. @JoinColumn(name = "FK_ID") => This annotation specifies the foreign key that is used as a join point on the OWNING entity of the relationship. 
+
+		---> This defines a unidirectional mapping to the owning side. 
+
+		---> Note: @JoinColumn will replace @Column as the annotation to define the nested object as a column. 
+
+			---> This annotation targets the actual foreign key column in the owning entity and is literally a column that "joins" to another column. 
+		
  
+
+	B. @OneToMany(..., mappedBy = "someEntity") => The property of "mappedBy" specifies the name of the field on the owning side that corresponds with the entity that is being referenced to. 
+
+		---> In a direct relationship, this will define a bidirectional relationship between the 2 entities. 
+
+
+	---> However, in the case of a join table, only @JoinColumn needs to be used because the presence of a join table implies an indirect bi-directional table between two entities, with the join table as an intermediary. 
+
+
+
+
+
+
 
 	
