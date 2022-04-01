@@ -109,6 +109,25 @@ Defining a relationship between entities:
 
 
 
+Entity Manager: Persisting Objects with the Entity Manager. 
+
+---> The EntityManager is a wrapper around the Hibernate session object and therefore takes on the role of session when managing transactions to the database. 
+
+	---> EntityManager is defined in line with the JPA standard, while Hibernate's Session object is a specific implementation to Hibernate. 
+
+	---> EntityManager is effectively the "interface" that is implemented by the Hibernate Session class. 
+
+	---> The same things can be said about the Factory classes that correspond to the 2 types of objects. 
+
+
+---> Assuming Hibernate is being used as the JPA implementation, EntityManager will actually be Session effectively. 
+
+	---> But other implementations of JPA can be used over Hibernate and EntityManager will therefore have Session swapped out for a similar transaction management class. 
+
+
+---> The similarity in these 2 classes (EntityManager vs Session) can be seen in their configuration files in that they account for various data source properties such the JDBC connection,  connectors to the data source, etc. 
+
+
 
 
 

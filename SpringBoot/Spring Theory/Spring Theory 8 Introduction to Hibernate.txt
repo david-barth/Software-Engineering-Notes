@@ -23,9 +23,131 @@ Basic Introduction:
 	---> Under the hood, Hibernate automatically implements SQL code to write an object to a database or to read data from the database based on the relational mappings defined in the entity objects. 
 
 
-Overview of Hibernate Configuration: 
+Hibernate Annotations: 
 
----> This is not necessary for SpringBoot configurations, but the configuration process in Spring will detail the primary classes that are used in Hibernate in order to make it function properly. 
+---> In Hibernate, the modern approach to ORM is via the use of annotations.  
 
----> 
- 		
+---> There are several key annotations to consider: 
+
+`	A. @Entity => A class level annotation that specifies to Hibernate that this class will ultimately map to a table in the database. 
+
+	B. @Table => A class level annotation that is used with @Entity to specify which table in the database the table maps to. 
+
+	---> @Entity will by default map to a potential table with a default name that is a lowercase version of the class name.
+
+	---> @Table specifies the name of the table to be mapped to explicitly (via the name property) and also includes other aspects related to the table schema (to be explored). 
+
+
+	C. @Id => This specifies a field of a class as mapping to the primary key column of a database. 
+
+	D. @Column => This allows an explicit mapping to be defined between the property and the column via the explicit column name in the database should the field name differ from the column name. 
+
+		---> This is best used to explicitly map the field to the column name and is considered a best practice. 
+
+
+---> Note: It is important that getters / setters + a constructor exists for the entity class so that informatin can be mapped to and from the field when interacting with the database. 
+
+---> Note 2: The above annotations constitute as JPA annotations which are considered best practice for use with Hibernate. 
+
+	---> Hibernate is an implementation of JPA, which is a standard specification.  Therefore Hibernate implements the JPA annotations internally, allowing them to be used without a problem. 
+
+
+
+Hibernate: CRUD Operations. 
+
+---> In normal considerations, an application must always open up a connection to a database in order to perform transactions with it. 
+
+	---> These database connections are analgous to HTTP transactions in some ways given that they represent a unit of work, but these connections also have a higher level of "safety compliances" by (ideally) obeying ACID principles. 
+
+
+---> In Hibernate, on the bean level the above concept is represented as follows: 
+
+	A. Session => This is a short-lived object that acts as a wrapper around a JDBC connection to a database. 
+
+		---> It it through a session (and hence a database connection) that transactional work can be done. 
+
+		---> It is shortlived and exists primarily to write / read objects from an underlying database. 
+
+
+	B. SessionFactory => This class produces Session objects to be used with Hibernate for transactional work and implements a factory design pattern. 
+
+		---> The SessionFactory is long lived and exists throughout the lifecycle of the application instance. 
+
+		---> The information from the hibernate config file is read by the SessionFactory in order to configure the Session objects properly (ie configure the underlying JDBC connections). 
+
+
+---> The configuration for the SessionFactory is shown below: 
+
+
+	SessionFactory factory = new Configuration()
+				.configure("hibernate.cfg.xml")
+				.addAnnotatedClass(Student.class)
+				.buildSessionFactory(); 
+
+	Session session = factory.getCurrentSession(); 
+	
+	try {
+
+		Student tempStudent = new Student();
+		session.beginTransaction(); 
+		session.save(tempStudent);
+		session.getTransaction().commit();  
+
+	}  finally {
+		factory.close(); 
+	}	
+
+
+	---> The above configuration is likely placed into a Spring configuration file in order to configure SessionFactory and Session beans. 
+
+		---> The SessionFactory and the Session object are both beans.  
+
+			---> The SessionFactory is a Singleton scope bean whereas the Session object is potentially a prototype scope bean since it is created with every new request to query an object. 
+
+
+	---> Note: The try - finally block can be used to handle th eopening of a connection and then the closing of a connection (regardless of exception catches) in order to free up resources. 
+
+		---> This appears to be a common usage pattern in application development. 
+
+
+	---> The session object contains all the necessary methods for transactions. 
+
+		---> session.beginTrasnaction() opens up a transaction and any query-like operations that are used here can be used within the transaction. 
+
+			---> Reminder: The transaction represents the fundamental unit of work for application - database interactions. 
+
+
+		---> session.getTransaction().commit() allows all work in the transaction to be committed, such that the transaction is considered closed. 
+
+
+
+Hibernate and Primary Keys: 
+
+---> Notes have already been included in practical notes for databases regarding the practical usages of primary keys in databases. 
+
+---> In Hibernate, as mentioned above, the primary key is defined on the entity class by using the @Id annotation the desired field value. 
+
+---> The primary key itself can be generated, inside of a database, through the use of different "strategies" or algorithm: 
+
+	A. Auto-incrementing => This involves using an identity column to uniquely assign primary keys to records upon creation. A new record recieves an incremented key (incremented by 1). 
+
+	B. Sequences => This involves using a sequence to provide primary key generation, which is popular in PL/SQL (oracle DB). 
+
+	C. Table => This uses an underlying database table to assign primary keys to ensure unqiueness. 
+ 
+
+---> In Hibernate, each of these primary key generation methods are captured in the @GeneratedValue(strategy = "...") annotation, which has 3 variations mapping on to the above: 
+
+
+	A. GenerationType.IDENTITY => Auto-incrementing 
+
+	B. GenerationType.SEQUENCE => Sequences
+
+	C. GenerationType.TABLE => Table
+
+	D. GenerationType.AUTO => This determines the most appopriate strategy for a particular database given configurational situations. 
+
+	---> The enums of A-C are used to insert the desired value generation mechanism that Hibernate implements when an object is saved to the database. 
+
+	---> It is also possible to create a custom strategy, but this is beyond the scope of these notes here. 
+
