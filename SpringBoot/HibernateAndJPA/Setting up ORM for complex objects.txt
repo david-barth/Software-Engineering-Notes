@@ -128,6 +128,12 @@ Entity Manager: Persisting Objects with the Entity Manager.
 ---> The similarity in these 2 classes (EntityManager vs Session) can be seen in their configuration files in that they account for various data source properties such the JDBC connection,  connectors to the data source, etc. 
 
 
+Defining Cascading Types for Entity Classes: 
+
+---> 
+
+
+
 
 
 

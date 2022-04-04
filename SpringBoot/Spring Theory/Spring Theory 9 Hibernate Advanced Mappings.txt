@@ -1,0 +1,66 @@
+Advanced Mapping Concepts: Hibernate (with SQL notes where necessary) 
+
+
+Introduction to Advanced Mappings in Hibernate: 
+
+---> Advanced mappings cover the cases of multiple tables in a database having relationships between each other. 
+
+---> Reminder: Relationships are usually defined via the use of a foreign key (e.g. a primary key of a table) being present in another table. 
+
+	---> The foreign key refers to the partner table and is therefore what binds tables together in a logical relationship. 
+
+
+---> There are many different ways to consider the relationship including complex usages like relationship directionality, but the 4 main relationships here are: 
+
+
+	A. One-to-One
+
+	B. One-to-Many
+
+	C. Many-to-One
+
+	D. Many-to-Many
+
+	---> Each can have different usages of foreign keys.  
+
+	---> Important: A-C are effectively tree data structures while Many-to-Many is a graph data structure. 
+
+
+Reinforcement of Database Concepts: 
+
+---> Basic notes on the use cases of foreign keys and primary keys can be found in the SQL notes. 
+
+---> Here the focus is on cascading, which is a term describing the same operation being applied to the same entities. 
+
+	---> Ie if an entity A is updated and a cascade exists between A and B, then entity B will also be saved.  
+
+	---> This is also equally the case for deleting entities in a relationship too, but the use case for deletion cascades must be carefully considered. 
+
+
+---> Another concept that is considered is loading: 
+
+	---> This determines whether all data related to an entity is retrieved all at once or on request: 
+	
+	---> There are 2 types of loading: 
+
+		A. Eager loading => This type of loading retrieves every entity that is associated with an entity being retrieved. 
+
+			---> This type of loading has performance implications due to the volume of data that is retrieved, especially in the case many-to-many relationships. 
+
+	
+		B. Lazy loading => This type of loading retrieves related entities only on request.  
+
+			---> Lazy loading is more efficient performance wise for applications. 
+
+
+---> Directionality is also a consideration between 2 entities: 
+
+	A. Uni-directional => This implies a one way relationship between entities A and B in which entity A can access entity B, but not the other way around. 
+
+	B. Bi-directional => This implies a two way relationship between entities A and B in which either entity can access the other via references. 
+
+
+
+One-to-One Relationships in Hibernate: 
+
+---> 

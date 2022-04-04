@@ -151,3 +151,178 @@ Hibernate and Primary Keys:
 
 	---> It is also possible to create a custom strategy, but this is beyond the scope of these notes here. 
 
+	---> It is noted that MySQL server is responsible for the auto-increment of values. 
+
+
+---> Note: The auto-increment starting value of a primary key can be changed via the following SQL statement: 
+
+	ALTER TABLE tableName AUTO_INCREMENT=3000; 
+
+	---> This alter statement targets a variable called AUTO_iNCREMENT
+
+
+---> Note 2: To delete database rows and to reset the primary key value to 0: 
+
+	TRUNCATE Database.tableName; 
+
+	---> The TRUNCATE keyword acts as a reset button for the database, deleting all rows from all tables and resetting the primary key values to 0. 
+
+	---> The syntax of Database.tableName can be used to access tables from databases, even when inside of my database already. 
+
+		---> Note the similarity to object dot notation in Java. 
+
+
+Reading Objects with Hibernate: 
+
+---> The Session object of Hibernate is responsible for facilitating all CRUD operations that can be performed from the application to the DB. 
+
+---> The following example shows how the session object does this with read operations: 
+
+	session.get(SomeObject.class, theStudent.getId()); 
+
+	---> The class is used in order to create an object, which is filled by information from a record find by retrieving the primary key of the database record. 
+
+	---> The following represents the equivalent operation via the JPA EntityManager class: 
+
+	entityManager.find(someObject.class, ...query criteria...);
+
+	---> The JPA entityManager will use the find() method in an analogous manner. 
+
+
+ Querying Objects with Hibernate: 
+
+---> Queries can also be performed either natively using HQL (or a JPA query language) or using a native query.  
+
+---> The following represents examples from Hibernate and JPA: 
+
+	1. JPA: Using the query language in JPA: 
+ 
+		entityManager.createQuery(...query in JPQL); 
+		
+
+	2. JPA: Using a native query: 
+
+		entityManager.createNativeQuery("Select * from tableName"); 
+
+	
+`	---> The same methods can also be analgously applied to Hibernate Session objects too. 
+
+
+	3. JPA Spring Data => Using @Query with a repository method or field: 
+
+	@Query(
+		value = "SELECT * FROM Table", 
+		nativeQuery = true; 
+	)
+
+	---> @Query allows a query to be defined either using JPQL or SQL to perform the query. 
+ 	
+	---> Note: @Query is used with repository interfaces that inherit from the CrudRepository or JpaRepository interfaces. 
+
+		---> For custom repo classes, the EntityManager / Session methods are used instead. 
+
+
+---> Note: It is important to collect the resulting data structure that comes from the query method. 
+
+---> This responds to the following: 
+
+	session.createNativeQuery("select * from Table").getResultList(); 
+
+	---> This extracts the list that is obtained from the query itself. 
+
+
+Updating Objects in JPA / Hibernate: 
+
+---> There are a few ways to update an object in Hibernate or JPA: 
+
+	A. Updating the entity class via setter method and committing the object. 
+
+		Student myStudent = session.get(Student.cclass, studentId); 
+		myStudent.setFirstName("Something"); 
+		session.getTransaction().commit(); 
+		
+		---> The above represents an example of updating the object by setting a value and setting a value to one of those fields. 
+	
+		---> Reason => The object retrieved is a persistent object and so recommitting it will update the object because its mapped version has changed. 
+
+
+	B. A query can also be programmtically created to update many different objects or a complex combination of objects: 
+
+		session.createNativeQuery("UPDATE table_name set column1 = someValue, column2 = some Value, WHERE condition")
+		       .executeUpdate();
+
+
+		---> The above executeUpdate() method is also used with the EntityManager class. 
+
+			---> Important => Outside of basic read / write operations, many query based methods (e.g. createNativeQuery(), createQuery(), etc) are shared by Hibernate and the JPA specification. 
+
+			---> Reason => Hibernate is an IMPLEMENTATION of JPA.  
+
+
+		---> The above also applies for createQuery(), but using HQL / JPQL instead of SQL. 
+
+
+Deleting Objects with Hibernate: 
+
+---> Similar to updating, deleting objects is also divided into 2 possibilities: 
+ 
+	A. Deleting a single object via delete() (Hibernate) or remove() (JPA EntityManager): 
+
+		entityManager.remove(someObject); 
+
+		or 
+
+		Student myStudent = session.get(Student.class, studentId); 
+		session.delete(myStudent);
+		session.getTransaction().commit(); 
+
+		---> Under either of these examples, the object is retrieved from the DB and then deleted using remove() / delete(). 
+
+		---> Note about transactions: 
+
+			---> For JPA, @Transactional will automatically delegate the transaction management to Spring for the annotated DAO / Repo class. 
+
+			---> In explicit Hibernate (and JDBC), transaction management may need to be managed manually with explicit handling of the session object, if proper lifecycle methods are not used (@PreDestroy and @PostConstruct)
+
+
+	B.  Deleting multiple objects or complex deletions can once again be achieved via a query or native query: 
+
+		entityManager.createNativeQuery("DELETE FROM table_name where condition")
+			     .executeUpdate(); 
+
+		---> Once more, executeUpdate() is used because update and update operations both represent "update" writes to the database and so are handled with the same method name in Hibernate / JPA Spring Data. 
+
+		---> Note on SQL => DELETE statements require a WHERE clause in order to selectively delete records.  
+
+			---> More information on this will be found in SQL notes (practical and theoretical). 
+
+
+		---> Like with update operations, this is all done in the context of a transaction. 
+
+
+Review of Basic CRUD functionality for Hibernate vs JPA: 
+
+---> Reminder => JPA is the specification and there are multiple implementations of it, including Spring Data JPA and Hibernate. 
+
+---> In terms of differences: 
+
+	A. Query methods: For the most part, basic query methods such as createQuery(), createNamedQuery(), and createNativeQuery() are quite similar between Hibernate and JPA. 
+
+		---> The differences are mostly in the query languages used for non-native queries, which is HQL vs JPQL. 
+
+
+	B. Basic CRUD methods: There are naming differences in the basic CRUD methods between JPA and Hibernate: 
+
+		---> persist() vs save()
+
+		---> remove() vs delete() 
+
+		---> find() vs get()
+
+		---> All the above are the JPA vs Hibernate methods. 
+
+
+
+
+ 
+
