@@ -63,4 +63,132 @@ Reinforcement of Database Concepts:
 
 One-to-One Relationships in Hibernate: 
 
----> 
+---> A foreign key relationship is meant to do 2 things: 
+
+	A. Link tables together into a relationship. 
+
+	B. Allow parent-child tables to be joined together in join operations for queries. 
+
+	C. Maintain referential integrity between the 2 tables. 
+
+	---> In other words, 2 tables linked together by a foreign key are protected from operations that would destroy that relationship. 
+
+	---> Only valid data is inserted into the foreign key column, which is usually the primary key of the other table (ie parent table). 
+
+
+---> In Hibernate, an entity also has a life cycle that is similar to a bean.  There are 5 operations associated with the entity lifecycle: 
+
+	A. Detach => Allows an entity to be detached or dissociated from a Hibernate session. 
+
+	B. Merge => Assoicates a detached entity to a session. 
+
+	C. Persist => This transitions entities to a managed state, which allows the entity to be saved in the DB on the net flush / commit. 
+
+	D. Remove => Transitions a managed entity to be removed such that the next flush / commit will delete the entity from the DB. 
+
+	E. Refresh => Reloads / Resynchronizes data the entity with data from the DB preventing stale data. 
+
+
+	---> Each of these operations also corresponds with a CRUD method that is associated with the EntityManager of the JPA specification. 
+
+	---> Note: "Flushing" means to synchronize the temporary state of application data with the permanent state of data from a database or hard disk. 
+
+		---> This is almost the inverse of committing in which application data is used to update the state of corresponding data in the datanase. 
+
+
+	---> In the Hibernate entity lifecycle, there is an implicit set of states and thus locations for an entity: 
+
+
+		A. Client Code (Application Code) => The application business layer is the "client" code that makes use of the API provided by the persistence context in order to interact with the database. 
+
+			---> Here is where entities in a "detached" state occur and detached entities are not tracked by the persistence context. 
+
+			---> Detached entities can be merged to the persistence context in order to become a managed entity. 
+
+				---> The detached entity is simply a POJO that has an identity value corresponding to a database row. 
+
+				---> The Id is all that is necessary in order to allow the persistence context to connect the detached entity to its corresponding data in the database. 
+
+
+			---> Transient entities are also found in the application / client code, but have no Id corresponding to an identity in a database record. 
+
+				---> These are simply objects that have been created in application code (e.g. as DTOs), which could be made persistent via persistence context methods.  
+
+
+
+
+		B. Persistence Context => This is a staging area where persistent data and entities are interconverted amongst each other during transactions. 
+
+			---> This is an implementation of the Unit of Work design pattern and is similar in concept to the git staging area. 
+
+			---> Here, changes to the data are tracked and these changes are synchronized to the database at the end of a transaction. 
+
+			---> EntityManager and Session are implementations of the persistence context. 
+
+			---> All entities that are managed by the persistence context are "merged" with it, as described above. 
+
+				---> Therefore, merged entities have changes tracked.  
+
+			---> In this sense, the persistence context acts as a container for entities in a similar way as the Spring Container / context does for beans. 
+ 
+			---> Managed entities are always persistent in that each has a database identifier, even if it doesn't exist in the database just yet. 
+
+			---> An entity that has a "deleted" state is marked for deletion and therefore removal from the DB via the persistence context.  
+
+				---> The deleted state entities are still attached to the persistence context.    
+
+
+		C. Data Store => This is where the persistent data is found and the ORM interacts with this layer.  
+
+
+---> Additional note: A transaction is called a "unit of work" and here both client code + SQL operations can be performed in the overall application architecture. 
+
+	---> This work includes any persistence context operations 
+
+	---> When a transaction is opened, all code execution in that period of time is devoted to the interaction of database with the persistence context and the client code.
+
+	---> There are 2 conclusions of a transaction: 
+
+		A. Commit => Used to save changes of a current transaction in a permanent way. 
+
+		B. Rollback => Used to undo changes made on the curren transaction. 
+
+	
+
+--->  The following example uses 2 classes and 2 tables: Instructor + Instructor_detail (InstructorDetail in entity form)
+
+
+	@Entity
+	@Table(name = "instructor")
+	public class Instructor {
+
+		@OneToOne
+		@JoinColumn(name="instructor_detail_id", cascade = CascadeType.ALL)
+		private InstructorDetail instructorDetail; 
+	}   
+
+
+	---> @OneToOne => This annotation marks the Instructor class and the Instructor_Detail tables as being in a one-to-one relationship.
+
+		---> Cascade types can also be applied to the @OneToOne and other annotation mappings: 
+
+			---> PERSIST, REMOVE, REFRESH, DETACH, and MERGE enum values all correspond to the different states of entities described above. 
+
+			---> Defining the "cascade" property as any of these transfers the state to child classes in the relationship. 
+
+			---> The ALL enum value specifies all states to be transferred between relationships. 
+
+			---> Cascade needs to be explicitly defined in the relationship annotations. 
+
+
+
+	---> @JoinColumn => This annotation provides a references to the foreign key in the Instructor class. 
+
+		---> There is no foreign key field that is explicitly defined here. 
+
+
+	---> Reminder: 
+
+		---> The child class / table owns the foreign key. 
+
+		---> The parent class / table contains the primary key that is being referenced by the foreign key of the child class.  

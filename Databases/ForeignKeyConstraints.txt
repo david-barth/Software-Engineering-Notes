@@ -29,6 +29,24 @@ Foreign Key Constraints:
 		);
 
 
+		(Alternative) 
+
+		CREATE TABLE Orders(
+
+			...
+			KEY 'FK_DETAIL_idx' ('instructor_detail_id'), 
+			CONSTRAINT 'FK_DETAIL' FOREIGN KEY ('instructor_detail_id) 
+			REFERENCES 'instructor_detail' ('id')
+		) 
+
+		---> The first part of this statement involves adding an index called FK_DETAIL_idx. 
+
+		---> Note: The foreign key constraint used here ensures that only the primary id of a parent table can be used as a reference to it. 
+
+			---> This is used in order to ensure referential integrity of the 2 tables in a relationship. 
+		
+
+
 	B. Table modification: 
 
 		ALTER TABLE Orders
