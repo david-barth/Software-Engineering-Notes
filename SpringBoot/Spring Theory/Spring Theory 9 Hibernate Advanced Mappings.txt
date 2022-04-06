@@ -191,4 +191,191 @@ One-to-One Relationships in Hibernate:
 
 		---> The child class / table owns the foreign key. 
 
-		---> The parent class / table contains the primary key that is being referenced by the foreign key of the child class.  
+		---> The parent class / table contains the primary key that is being referenced by the foreign key of the child class. 
+
+
+
+Bi-directional One-to-One Mappings:
+
+---> In a bi-directional relationship, it is possible to get both entities from the other entity via a persistence context operation. 
+
+	---> E.g. We can get entity A from B and entity B from A, regardless of who is the parent or child in the relationship. 
+
+	---> This is akin to a double linked list prev and next reference set where both nodes can be accessed from each other. 
+
+		---> Important: It is always important to draw analogies to data structures that are constructed via OOP and situations that arise from technologies such as frameworks and libraries. 
+
+			---> In this case, the "reference" to an entity is the @OneToOne, @OneToMany, etc annotations that are used with the field associated to the other entity. 
+
+			---> These will define the "parent" or "child" in the class.  
+
+
+---> Example => InstructorDetail and Instructor entity classes:
+
+	@Entity
+	@Table(name = "instructor_detail")
+	public class InstructorDetail {
+
+		@OneToOne(mappedBy = "instructorDetail", cascade = CascadeType.ALL)
+		private Instructor instructor; 
+	}
+	
+
+	@Entity 
+	@Table(name = "")
+	public class Instructor {
+
+		@OneToOne(cascade=CascadeType.ALL)
+		@JoinColumn(name = "instructor_detail_id")
+		private InstructorDetail instructorDetail; 
+	}
+	
+
+
+	---> A @OneToOne annotation is added to the second entity class in order to give it a reference to the first class. 
+
+		---> The mappedBy argument refers to the the corresponding field that the entity occupies in the other class. 
+
+		---> mappedBy instructs hibernate to look at the specified property of entity B (2nd entity in relationship) that exists within entity A. 
+
+			---> After locating the property in class A, the infromation provided by @JoinColumn (ie the specified foreign key) is used to find entity A. 
+
+
+		---> The above sequence of events is assumed to start from a query that executes with respect to class B and needs to access the reference to class A. 
+
+		---> Cascading can be added to the @OneToOne annotation in class B in order to allow operations to flow from B to A in the second directional. 
+
+			---> Note: This is the concept of "directionality" at work in entity / table relationships. 
+
+			---> Operations, within a certain scope, flow in one (uni) or both (bi) directions between entities. 
+
+			---> This represents the causal quality that exists in entity relationships. 
+
+
+	---> Example of applying a bi-directional relationship: 
+
+		InstructorDetail tempInstructorDetail = session.get(InstructorDetail.class, theId); 
+		Instructor instructor = tempInstructorDetail.getInstructor(); 
+
+		---> Under the hood, getInstructor() will be able to access the underlying Instructor database table in order to get the information related to the instructor associated to the InstructorDetail instance used here. 
+
+
+---> Note on deleting associated entities: 
+
+	---> Selective deletion of A or B only => This involves needing to set the cascade type of eht entity to be deleted to exclude removal cascades, so that only itself is deleted. 
+
+		---> Additionally, the object to be deleted must be dissociated (via setting its partner's field for it to null for example) so that errors will not occur during deletion. 
+
+
+	---> Therefore, objects in advanced mapping situations need to have their entity fields carefully managed in order to ensure that writes and reads are properly done. 
+
+		---> This is done programmatically.  		
+		
+
+
+
+Bi-directional One-to-Many Relationships: 
+
+---> As with one-to-one relationships, one-to-many and many-to-one relationships are ubiquitous in entity-entity relationships. 
+
+---> Inside of this relationship, the following standard is used: 
+
+	A. Parent => This is the primary key holder, ie the "One". 
+
+	B. Child / Children => This is the foreign key holder, ie the "Many".
+
+	C. Owner => The owners of this are the children since they hold the foreign key. 
+
+
+---> The following represents a bi-directional setup for this mapping in Hibernate / JPA: 
+
+	
+	A. Parent class: 
+
+	@Entity
+	@Table(name = "instructor")
+	public class Instructor {
+
+		@OneToMany(mappedBy = "instructor", 
+			   cascade = {CascadeType.PERSIST, CascadeType.MERGE, 
+				       CascadeType.DETACH, CascadeType.REFRESH})
+		private List<Course> courses; 
+	}
+
+	---> @OneToMany defines the parent, with mappedBy being told to look at the relevant property in the child class. 
+
+		---> The information in the @JoinColumn name is use to locate the foreign key in the child class and use said key to search for all children records in the database. 
+
+		---> This helps to retrieve the children instances with the parent instance within the relationship. 
+ 
+
+	B. Child class: 
+
+	@Entity
+	@Table(name = "course")
+	public class Course {
+
+		@ManyToOne
+		@JoinColumn(name = "instructor_id", 
+			    cascade = {CascadeType.PERSIST, CascadeType.MERGE, 
+				       CascadeType.DETACH, CascadeType.REFRESH})
+		private Instructor instructor; 
+	}
+
+	---> @ManyToOne defines the child class and @JoinColumn defines the foreign key that is owned by the class. 
+
+	---> Cascading behavior is defined in a more fine grained way to exclude cascading deletes from both parent and child entities. 
+
+		---> Delete behaviors are a situation that must be considered carefully when applying ORM mappings. 	
+
+
+---> Reminder: It is important to make sure in-memory associations are set between the entities in a relationship before committing during transactional work, otherwise the full relationship will not be defined. 
+
+
+
+Fetch Types: Eager vs Lazy. 
+
+---> Data fetching is synonomous with loading data from the database. 
+
+---> In data fetching there are 2 types of loading: 
+
+	A. Eager loading => Loads all dependent entities inside of a relationship. 
+
+		---> E.g. One-to-Many relationship for A-B => All of children B and parent A will load. 
+
+		---> This can have large performance drawbacks if the load on database requests is very high. 
+
+			---> This is especially true for Many-to-Many relationships, where a graph of data is retrieved and can contain many different components / nodes. 
+
+		---> Therefore, eager loading is not considered a performance best practice in development and lazy loading is preferred.
+
+
+	B. Lazy loading => Loads only the main entity, asked for by the application code, first and then will only load the dependent / associated entities "on demand". 
+
+		---> Lazy loading requires a continously open Hibernate session / persistence context in order to maintain a database connection that allows data loading at a later time when the request for the data ia created. 
+
+			---> Closed sessions / persistence contexts will result in exceptions being thrown in the application. 
+
+		
+		---> Lazy loading can be implemented either using session.get() and the appropriate getter methods on the main retrieved entity, which selectively call the dependent objects in the relationship. 
+
+			---> With lazy loading other object fields will likely be null until the getter methods are used.
+
+		---> Another way is via HQL or SQL in createQuery() / createNativeQuery() methods. 
+
+
+---> Use cases determine whether or not eager vs lazy loading is to be used.  
+
+	---> In certain views / pages, all the information encompensed by a relationship needs to be presented so eager loading should be used to load the main entity and its dependent entities. 
+
+	---> In other views, a selective presentation of information implies a use for lazy loading to only load the main entity in a relationship. 
+
+
+---> Default fetch types exist for different relationship mappings: 
+
+	A. 1-1 + *-1 => This uses eager loading since the dependent entity is only 1 in number. 
+
+	B. *-* + 1-* => This uses lazy loading since the dependent entities are many in number. 
+
+	---> Fetch types are explicitly overrided in the @OneToOne, @OneToMany, etc relationship annotations with the fetch property (examples defined elsewhere). 
+

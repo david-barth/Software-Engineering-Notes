@@ -98,6 +98,10 @@ Defining a relationship between entities:
 
 			---> This annotation targets the actual foreign key column in the owning entity and is literally a column that "joins" to another column. 
 		
+		---> Note that Hibernate will generate a foreign key column use a SQL notation for table names such as contributor_group_id. 
+
+			---> _ is placed in between each word when mapping from camelcase to SQL notation. 
+
  
 
 	B. @OneToMany(..., mappedBy = "someEntity") => The property of "mappedBy" specifies the name of the field on the owning side that corresponds with the entity that is being referenced to. 
@@ -128,14 +132,144 @@ Entity Manager: Persisting Objects with the Entity Manager.
 ---> The similarity in these 2 classes (EntityManager vs Session) can be seen in their configuration files in that they account for various data source properties such the JDBC connection,  connectors to the data source, etc. 
 
 
-Defining Cascading Types for Entity Classes: 
-
----> 
+Setting up Relatonships: Example For one-to-many relationships. 
 
 
+---> An example shows how this is done for a uni-directional relationship: 
+
+	@Entity
+	@Table(name = "A")
+	public class A {
+		
+		@OneToMany
+		@JoinColumn(name = "A_id")
+		private List<B> BCollection; 	
+	}
 
 
+	@Entity
+	@Table(name = "B") 
+	public class B {
 
+		...
+	}
+
+	---> In a uni-directional relationship, only the @OneToMany annotation needs to be added to point to the parent class over the collection of children objects. 
+
+		---> Reminder: @OneToMany, @ManyToMany, etc all act as pointers to the fields that they annotate.  
+
+		---> The @JoinColumn will also be placed on the parent class, with the "name" argument referring to the foreign key on the child class / table. 
+
+			---> Note: Hibernate will transform the name supplied from CamelCase to a SQL table notation (e.g. camel_case). 
+
+			---> Therefore, foreign key names must be done in SQL notation in order to avoid having a default column created. 
 
 
 	
+
+---> The next example focuses on a bi-directional one-to-many relationship: 
+
+	@Entity 
+	@Table(name = "A") 
+	public class A {
+
+		@OneToMany(mappedBy = "entityA)
+		private List<B> BCollection; 
+	}
+
+
+	@Entity
+	@Table(name = "B")
+	public class B {
+		@ManyToOne
+		@JoinColumn(name = "a_id")
+		private A entityA; 
+	}
+	
+
+	---> In this case, @JoinColumn is placed onto the child class field reference to the parent class (ie on A). 
+
+		---> A @ManyToOne mapping is specified for the child class and acts as a backward reference to the parent class. 
+
+	---> The @OneToMany annotation has the mappedBy argument which is used to specify the connection to the child class by mapping the parent class to its respective field on the child class. 
+
+	---> IMPORTANT: The parent -> child association is automatically present during the mapping process of JPA / Hibernate, but the child -> Parent association needs to be manually set either via a helper method or similar code within the Repository / DAO.   
+
+		---> Example: 
+
+		entityB.set(EntityA); 
+		entityManager.persist(entityA);
+
+		---> The above code applies to one-to-one relationships, but a looped version applies to setting the parent to the children of the one-to-many variation. 
+
+		---> This must be done before persisting the relationship + committing, otherwise the foreign key of the child table records will be null since the parent was not set to the child. 
+
+
+	---> Note: For data that is serialized / deserialized by Jackson, an infinite recursion will occur when trying to persist the relationship. 
+
+
+
+Extra: The Sequence of events for Hibernate. 
+
+---> This section focuses on a brief examination of the 2 stage process that occurs from Hibernate to the database. 
+
+	---> For further notes on the complete version of the Hibernate entity lifecycle, see the relevant theory notes. 
+
+
+---> Hibernate processing occurs in 2 stages: 
+
+	1. Persistence Context => When application code calls upon the persistence context object (e.g. EntityManager or Session), the composite objects and their relationships are taken into the context. 
+
+		---> Inside of the context, the relationships are taken as a snapshot, which forms the basis for the mapping. 
+
+		---> Therefore, objects that are set to each other are taken as the in-memory form of the table relationships in the database. 
+
+	
+	2. Mapping to the database => The persistence code will then do in-memory operations necessary in order to prepare the objects and their relationships for mapping into the database. 
+
+		---> When the necessary data structures (e.g. a tree) is formed, then the "snapshot" is translated into SQL statements. 
+
+
+
+Extra 2: Dealing with JSON derived Data for Advanced Relationship Mappings. 
+
+---> As referenced above, this deals with the infinite recursion issue that occurs for data that has been deserialized by Jackson, when it is being mapped by Hibenate to the database. 
+
+---> The situation is remedied by adding 2 annotations from the Jackson library to the entities:
+
+
+	@Entity 
+	@Table(name = "A") 
+	public class A {
+
+		@OneToMany(mappedBy = "entityA)
+		@JsonManagedReference
+		private List<B> BCollection; 
+	}
+
+
+	@Entity
+	@Table(name = "B")
+	public class B {
+		@ManyToOne
+		@JoinColumn(name = "a_id")
+		@JsonBackReference
+		private A entityA; 
+	}
+
+	---> In bi-directional relationships, Jackson will encounter an issue of cyclic dependence in the serialization of the 2 objects. 
+
+	---> Jackson will attempt to serialize Entity A and then use the reference to Entity B to go to B and serialize it. 
+
+	---> After serializing B, Jackson will then go back to serialize A.  This cyclic process of serialization will occur repeatedly until a stack overflow occurs, using up the available memory due to an infinite recursion. 
+
+	---> This is solved via the use of the @JsonManagedReference and @JsonBackReference annotations, which do the following: 
+
+
+		A. @JsonManagedReference => This tells the annotated field (ie the forward reference) to be serialized during a process called Marshalling. 
+
+		B. @JsonBackReference => This tells the annotated field (ie the back reference) to be left unserialized and the relationship will be reconstructed during the unmarshalling / deserialization process of the forward reference. 
+
+
+
+	 	

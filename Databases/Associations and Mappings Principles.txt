@@ -1,6 +1,24 @@
 Associations / Mapping Relationship Principles in SQL. 
 
 
+
+Parent-Child + Ownership: 
+
+---> Conceptually, entities A and B are in a relationship and the following terms describe them based on which one has the foreign key: 
+
+	A. Parent entity => This is the entity that owns the primary key being referred to in the foreign key of the other entity. 
+
+	B. Child entity => This is the entity that owns the foreign key referring to the primary key. 
+
+	C. Owner => The "owner" of the relationship is the owner of the foreign key in the relationship. 
+
+	---> Important: The child entity and the owner are the same thing in the context of related / associated entities. 
+
+	---> The labels of these terms are important in defining how mappings are configured in ORM contexts between entity classes. 
+
+
+
+
 One-To-Many relationships: 
 
 ---> A one-to-many relationship specifies the number of one entity in relation to another entity. 
