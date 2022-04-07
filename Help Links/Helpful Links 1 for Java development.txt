@@ -1,0 +1,8 @@
+Helpful Sites for Indepth Articles on Java and Backend Development. 
+
+
+1. https://allaroundjava.com/
+
+	=> Provides detailed articles on various parts of the Java ecosystem (JDBC, Hibernate, Spring, etc). 
+
+	
