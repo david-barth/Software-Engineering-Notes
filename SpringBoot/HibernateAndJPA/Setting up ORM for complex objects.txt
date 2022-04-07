@@ -272,4 +272,83 @@ Extra 2: Dealing with JSON derived Data for Advanced Relationship Mappings.
 
 
 
+Extra 3: Persisting a composite entity with multiple levels of nesting using Eager fetching.  
+
+---> A composite entity that has multiple one-to-many / many-to-many relationships contain nested components that each use Lists as a type. 
+
+---> An issue arises when multiple lists, with eager fetching defined, occurs: 
+
+	---> Note: A list type forming a "many" part of a relationship is referred to as a bag. 
+
+	---> Therefore, an exception called "MultipleBagFetchException" occurs.  
+
+	---> Each @OneToMany, @OneToOne, etc relationship annotations corresponds to a join operation (likely a left outer join). 
+
+		---> Multiple left joins produce an overall result that contains duplicate entries, which would produce anomalous results. 
+
+		---> The origin of the issue occurs because the left joins produce a cartesian product (ie a multiplication of a list of values with another list of values). 
+
+			---> The result is a set of records / combination of values, which represent all possible combinations of values. 
+
+			---> Practical result => Duplicate / redundant records are generated from the left join operations. 
+
+		---> To remove the records, deduplication of the redundant records must occur, taking up considerable resources and ultimately giving performance issues. 
+
+		---> This is why Hibernate prevents Lists (ie unordered collections) from being used in this manner by throwing an exception. 
+
+	---> Relationship to eager fetching: Eager fetching produces underlying join operations on data which has already been fetched previously.
+
+		---> The ultimate result is data which is effectively joined onto itself in some way producing a redundant result.  
+
+
+---> A surface fix is to change the List interface for the field entry to a Set interface. 
+
+	---> Rationale => Lists represent unordered collections that can contain duplicates. 
+
+		---> Under the hood, Hibernate will perform operations using Lists that are corresponding to a join, which will produce the duplicate results mentioned above. 
+
+
+	---> A set is a collection that only has distinct values to it, eliminating the duplicate results from the returned resulting data collection. 
+
+	---> This surface issue still does not eliminate the cartesian product issue. 
+
+		---> Ie the redundancy will still cause unnecessary resource consumption and performance issues. 
+
+
+---> A real fix to this concentrates on limiting the data fetching to their respective collections rather than redundantly having the fetches occur, as the eager case would involve. 
+
+	---> One concrete solution to this is using independent selects with eager fetching enabled for each bag / collection based field. 
+
+	---> An example is shown: 
+
+ 	@OneToMany(mappedBy = "doctor", fetch = FetchType.EAGER)
+    	@org.hibernate.annotations.Fetch(FetchMode.SELECT)
+    	private Set appointments;
+
+    	@OneToMany(mappedBy = "leadingDoctor", fetch = FetchType.EAGER)
+    	@org.hibernate.annotations.Fetch(FetchMode.SELECT)
+    	private Set patients;
+
+	---> This example applies purely for Hibernate and involves using an annotation to add granularity to the fetch method by telling it to use independent selects from each other. 
+
+	---> End Result => This isolates the fetching to one SQL query per associated collection. 
+
+
+---> This problem is one important reason why lazy fetching is encouraged over eager fetching: 
+
+	---> Lazy fetching involves "on-demand" data loading, which means one retrieval occurs per demand. 
+
+	---> Lazy fetching naturally resolves the issue stated above. 
+
+
+---> Another possibility to solve this problem is to specify individual queries to isolate the fetching to one distinct fetch per collection.  
+
+---> For persisting objects initially, a fetch will not be performed as there is no data to load from the data source for a new record. 
+
+	---> But Hibernate still throws the exception when it encounters a composite entity that consists of "multiple bags" / non-set collections. 
+ 
+
+
+
+
 	 	

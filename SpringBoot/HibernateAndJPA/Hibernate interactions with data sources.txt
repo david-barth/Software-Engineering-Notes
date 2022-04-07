@@ -1,0 +1,6 @@
+Hibernate Interactions with underlying data sources. 
+
+
+---> Reminder: Hibernate will automatically create tables for entity classes marked with @Entity and @Table annotations, using default names provided by the name arguments. 
+
+	---> This is done by default unless tables with the same names already exist. 

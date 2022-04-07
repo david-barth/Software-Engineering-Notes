@@ -1,0 +1,45 @@
+Spring Theory 10: Combining Spring (MVC) and Hibernate. 
+
+
+Minor Note on Configuration for Spring + Hibernate: 
+
+---> As an ORM framework, Hibernate will require configuration from the following components of an application: 
+
+
+	1. A data source + connection pool => A database / data source represents the bottomost layer where data from other sources is persisted for future use. 
+
+		---> Application code sits on top of the data source and uses Hibernate to interact with it programmatically. 
+
+		---> Therefore, Hibernate requires the data source to be configured. 
+
+		---> The data source usually sits outside of the application location in memory itself and so Hibernate requires information to form a connection to this. 
+
+		---> The following information is needed in order to form the connection: 
+
+			A. Database URI => This is a URI that is used with JDBC in order to form the connection. 
+
+				---> Example: jdbc:mysql://localhost:3306/initialDB
+
+				---> This works in a similar sense with normal URLs. 
+
+					---> jdbc:mysql: effectively acts in a similar way to the protocol definition for defining how to connect with the resource connected to the URI. 
+
+					---> localhost:3306 and everything after defines the location of the machine that the data source is on and then the path needed to get to the resource / data source. 
+
+
+			B. Username + password => This the authentication information needed to access the underlying data source with a certain amount of rights granted to a user as a result of permissions. 
+
+
+		---> Finally, a connection pool is a part of the database in which a set of connections that are kept cached in memory to allow for reuse of database connections when requests come in. 
+
+			---> Hibernate requires this information in order to fully form a connection to the application's underlying data source. 
+
+
+ 	2. The global session factory => This is configured with Spring to allow automatic creation of the session factory and configuration of it. 
+
+	3. Transaction manager => This allows for automatic management of opening / closing transactions. 
+
+	4. Transactional annotations => These annotations are provided by Hibernate's transaction manager, which is what provides the full automated transaction management behavior. 
+
+		---> Here is where annotations such as @Transactional are used for transaction management.
+

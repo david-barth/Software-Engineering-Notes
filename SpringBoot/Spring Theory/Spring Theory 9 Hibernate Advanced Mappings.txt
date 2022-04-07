@@ -363,6 +363,11 @@ Fetch Types: Eager vs Lazy.
 
 		---> Another way is via HQL or SQL in createQuery() / createNativeQuery() methods. 
 
+`		---> Note: On-demand / on-request means that the dependent entities are programmtically asked for in application code. 
+
+			---> Breakpoints can be used with a debugger to see the "on-demand" quality that occurs with lazy loading. 
+
+
 
 ---> Use cases determine whether or not eager vs lazy loading is to be used.  
 
@@ -378,4 +383,237 @@ Fetch Types: Eager vs Lazy.
 	B. *-* + 1-* => This uses lazy loading since the dependent entities are many in number. 
 
 	---> Fetch types are explicitly overrided in the @OneToOne, @OneToMany, etc relationship annotations with the fetch property (examples defined elsewhere). 
+
+
+---> Note: Data from a lazy loaded object can be obtained and retained after the persistence context closes using one of 2 ways: 
+
+	A. Using a getter method to copy the data over to a variable that is retained after the session is closed. 
+
+	B. Using a query object to execute either an HQL / JPQL query or a native query in order to fetch the data. 
+
+	---> An example of the query method is shown below: 
+
+	 entityManager.createNativeQuery(
+		"SELECT something FROM somethingCOLUMN where something.name = something")
+		.setMaxResults(10)
+		.getResultList(); 
+
+
+	---> The query is created with the entity manager for the case of JPA. 
+
+	---> A query object can be created itself if using Hibernate directly. 
+
+		---> This will allow the query itself to be used as a variable. 
+
+	---> Note that the data can be extracted either via getter or via query to variables in order to retain a local copy of their use for later. 
+
+
+One-To-Many Uni-Directional Mappings: 
+
+---> In addition to the bi-directional format, it is important consider the case of uni-directional one-to-many relationships. 
+
+
+---> Below is how to set this up for two entity classes: 
+
+
+	A. Parent: 
+
+	@Entity
+	@Table(name = "course")
+	public class Course {
+
+		@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+		@JoinColumn(name = "course_id")
+		private List<Review> reviews; 
+
+	} 
+
+
+	---> Note: The @JoinColumn annotation is defined on the parent side of the relationship in order to refer to the foreign key in the child entity class. 
+
+		---> See notes below for why this is the case (@JoinColumn theory). 
+
+	---> FetchType.LAZY defines lazy loading to be used for the child entities that are associated to the parent. 
+
+	
+
+	C. Child: 
+	
+	@Entity 
+	@Table(name = "reviews") 
+	public class Reviews {
+
+		...no reference to parent entity defined as a field...
+
+	} 
+
+	---> Theory => Every object type field in a class is a reference (ie "pointer) to another object that is placed inside of it. 
+
+		---> This concept is what allows class instances to "point" to each other forming more complex data structures.               
+
+		---> The idea of a "node" is simply replaced by another class / type.  
+
+		---> Hence compositions of classes are ultimately data structures of variosu types.                
+
+
+	---> In this example, since this is a uni-directional relationship, no references to the parent occurs, resulting in a one way link.                 
+
+
+
+Extra: @JoinColumn theory: @JoinColumn is defined in either the parent or child class depending on the directionality of the relationship. 
+
+		---> The foreign key location, in the context of the ORM mapping, can be dependent on the context of the situation. 
+
+		---> There can be different contexts: 
+
+			A. Unidirectional OneToMany => The foreign key location is in the "target" entity (ie the parent).
+
+			B. Bidirectional OneToMany => The foreign key location is in the "source" entity (ie the child) 
+ 
+
+		---> Note: Joins can flow in different directions. 
+
+			---> A left or right join involves a source table set of columns being merged with a target table set of columns. 
+
+			---> Therefore, the columns move from "left to right" or "right to left" depending on the join specified. 
+
+			---> In Hibernate, this notion also translates for @JoinColumn to denote foreign key locations. 
+
+				---> The location of the foreign key is dependent on the "strategy" that is used. 
+
+				---> The term "strategy" is defined as the approach used to join tables, which has several possibilities: 
+
+					A. Foreign key mapping strategy => Use a foreign key reference in a child table to refer to the primary key in the parent. 
+
+						---> This facilitates direct joins between both tables.   
+
+					B. Join table strategy => This uses an intermediate table containing the foreign keys of both tables / entities. 
+
+						---> This facilitates joins from both tables to the intermediate table and can be used as a way to enforce bidirectional relationships. 
+
+						---> The join stable strategy also form the basis for more advanced data modeling techniques such adjacency lists and nested sets. 
+
+
+			---> The definitions of "source" and "target" in terms of primary and foreign key holders are as follows: 
+
+				A. Source => Holder of the primary key being referenced to in the relationship. 
+
+				B. Target => Holder of the foreign key.  
+
+	
+			---> The relationship annotations and their usage between 2 entities in a relationship will inform Hibernate on the implicit strategy to be used for joins. 
+
+				---> This in turn will influence the location that Hibernate places the foreign key reference, and hence the location of the @JoinColumn annotation in the parent - child relationship. 
+
+
+
+
+Many-to-Many Relationships in Hibernate: 
+
+---> A many-to-many relationship is one in which an entity of one table can have a relationship with an entity of another table and vice versa. 
+
+	---> Entity A can be associated with many of Entity B. 
+
+	---> Entity B can be associated with many of Entity A. 
+
+
+---> Fundamentally, this is best represented by a graph data structure in-memory when considering entity objects. 
+
+---> For many-to-many relationships, a common join strategy is to use a join table (as denoted above). 
+
+	---> The join table is an intermediary table that provides a mapping between tables A and B via foreign keys. 
+
+	---> The primary keys of each table are included as foreign key columns on the table. 
+
+	---> A join table effectively defines a bi-directional relationship between 2 tables. 
+
+ 	---> An example of join table logic is presented below: 
+
+		1. Joining a column in table A to the join table. 
+
+		2. Then joining a column in table B to the join table. 
+
+		3. Both are joined on the same row because their primary keys are fixed to the same row in the join table. 
+
+		4. The data is now represented on one row. 
+
+		---> More will be written on the DML SQL syntax needed in order to make such queries. 
+
+	
+	---> Note: In order to ensure that the mapping between A and B are complete, the primary key of the join table must be a composite primary key. 
+
+		---> The composite primary key consists of foreign key columns corresponding to the primary keys in tables A and B. 
+
+		---> This is done to ensure that unique mappings between A and B are created. 
+
+		---> The mappings can be adjusted by combining foreign keys in desired combinations. 
+
+		---> The concept of a join table doesn't necessarily need to be between just 2 tables, but more tables. 
+
+			---> This is present in the case of complex data modeling strategies such as nested sets and adjacency tables. 
+
+
+---> A developed example is given below: 
+
+	@Entity
+	@Table(name = "course") 
+	public class Course {
+
+		@ManyToMany
+		@JoinTable(
+			name = "course_student", 
+			joincolumns = @JoinColumn(name = "course_id"), 
+			inverseJoinColumns = @JoinColumn(name = "student_id") 
+			)
+		private List<Student> students;  
+	}
+
+
+	@Entity 
+	@Table(name = "student") 
+	public class Student {
+
+		@ManyToMany
+		@JoinTable(
+			name = "course_student", 
+			joincolumns = @JoinColumn(name = "student_id"), 
+			inverseJoinColumns = @JoinColumn(name = "course_id")
+		)
+		private List<Course> courses; 
+	}
+
+
+	---> The @ManyToMany annotation specifies the relationship mapping to Hibernate. 
+
+	---> If a join table strategy is being used, then the @JoinTable annotation must be specified in order to instruct Hibernate to work with the underlying join table in the data source: 
+
+
+		A. name => This refers to the name of the join table. 
+
+		B. joinColumns => This refers to the names of the foreign keys that are on one side of a mapping in a join table. 
+
+		C. inverseJoinColumns => This refers to the names of the foreign keys which are on the other side of a mapping. 
+
+		---> Note: The join and inverse join columns are defined with respect to which entity is being considered in the relationship (ie which entity @JoinTable is being defined for). 
+
+			---> Consequently, the column definitions will change. 
+
+		---> A mapping can be quite complex, but typically it is a two ended construct. 
+
+			---> More complex mappings will require collections of join and inverse join columns to be defined in these arguments, using @JoinColumn with {}.
+
+			---> The mapping represents the relationship between the tables themselves. 
+
+		---> Therefore, the join column and inverse join column represent the "target" and "source" ends of a mapping, which is represented by a join table. 
+
+		---> @JoinTable is similar to @JoinColumn because it represents the underlying table without explicitly needing to represent the join table as an entity class in the application code. 
+
+
+	---> Note: @JoinTable must be defined for the other entity in the many-to-many relationship, but with the join columns and inverse join columns reversed. 
+
+		---> This is because this is the other side of the relationship.  		
+	
+
+
+
 
