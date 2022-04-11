@@ -222,6 +222,22 @@ Part A. Notes on various Commands.
 	---> A new message can also be specified with -m and a message. 	
 
 
+---> git lfs track [FilePath] => This allows git large file storage to track files in order to upload to github repos. 
+
+	---> The following process is used for this: 
+
+		1. git lfs track "*.psd"
+
+		2. git add .gitattributes
+
+		3. git lfs track [FilePath] 
+
+		4. Commit + Push
+
+		---> Steps 3-4 need to be done in cases where .gitattributes is already present. 
+
+		---> Note that this process assumes that git lfs is already added. 
+
 
 Part B. Notes on various concepts in Git. 
 
