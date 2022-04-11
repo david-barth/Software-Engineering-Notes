@@ -115,3 +115,27 @@ Focus: Spring Controllers
 
  
 
+
+Additional Concepts on HTTP Request Verbs: 
+
+---> Between a GET and POST request there are a few different concepts to consider for use cases: 
+
+
+	A. GET => A GET request has no request body and the only data that can be sent is through headers and query parameters (path variables and query string). 
+
+		---> Therefore, there is a limit to the data that can sent for an HTTP GET request, without the additional request body. 
+
+		---> This is good for debugging purposes. 
+
+
+	B.  POST => A POST request has a request body in addition to the headers and query parameters, which allows it to be used for different use cases. 
+
+		---> There is practical limit to the data that can be sent via a POST method and so complex data can be sent in the request body for a POST method. 
+
+			---> This can include complex JSON structures, form data, and other types of data. 
+
+
+		---> Binary data can also be sent with POST requests, allowing things like certain file formats to be sent in an HTTP transaction. 
+
+
+

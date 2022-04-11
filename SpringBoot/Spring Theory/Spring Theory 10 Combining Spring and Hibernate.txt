@@ -43,3 +43,164 @@ Minor Note on Configuration for Spring + Hibernate:
 
 		---> Here is where annotations such as @Transactional are used for transaction management.
 
+
+
+Basic Considerations for Spring / Hibernate Application Architecture: 
+
+---> It is common for enterprise applications to use a backend architecture with Hibernate with some of the following elements: 
+
+
+	A. Controller / Resource => This manages the reception of requests from clients and contains the deeper programming layers necessary for completing the request. 
+
+	B. Service => This orchestrates the different operations that need to be performed to complete the request. 
+
+		---> This includes requests to data sources or messaging other system components in order to get the data as necessary. 
+
+		---> This orchestration also includes different potential data validations that need to be performed in order to prepare the proper response for the request. 
+
+
+	C. DAO / Repository => This layer is purely responsible for lower level application interactions with the database, which primarily include querying the database for data needed to answer the request.  
+
+		---> A DAO is a common design pattern that is used with enterprise development for applicaton database interactions. 
+
+
+	---> This resource <-> service <-> DAO pattern is overall a very common design pattern in enterprise applications. 
+
+	---> The pattern allows a very good separation of concerns and can apply itself in many overall larger architectures: 
+
+		A. Microservices
+
+		B. Monoliths
+
+		C. Self-Contianed-Systems
+
+		---> All of these architectures can contain this design pattern for their backends. 
+
+
+---> Note:  Entities are scanned by the Session Factory bean that is present in Hibernate. 
+
+	---> It is noted that the Session Factory is what is used to create persistent Sessions for DAO operations. 
+
+
+
+Basics on DAOs and Database Connections: 
+
+---> The following represents the actual layers that exist between a DAO and the actual database: 
+
+
+	A. DAO => The DAO is the part of the application code that receives the Session object and uses it to peform transactions with the database. 
+
+	B. Session Factory => The Session factory uses information from the data source (ie database connection info) to create Session objects that are injected into the DAO. 
+
+		---> Reminder: The Session object is simply Hibernate's wrapper around the JDBC code that focuses on the database connection.  
+
+
+
+	C. Data Source => The data source is what defines the information needed for forming underlying connections between the database and the application layers. 
+
+		---> On a bean level, the data source actually is composed of the following components: 
+
+			A. The JDBC driver for the database type. 
+
+			B. The JDBC connection URL needed to connect to the database. 
+
+			C. The username / password combination needed to access the database. 
+
+
+	D. Database => The actual store of persistent data that is used to power the application. 
+
+
+---> It is common for the DAO (and services) to be split into concrete implementations and interfaces. 
+
+	---> The concrete implementations are injected with a singleton scoped bean of SessionFactory in order to produce Sessions for the DAO. 
+
+	---> Note: This is an older style of implementation. 
+
+	---> In SpringBoot, with JPA, the EntityManager can be directly autowired into the DAO / Repository class because the Factory class for it is already configured in the SpringBoot Starter JPA dependency. 
+
+
+---> Spring provides a specialized version of @Component called @Repository. 
+
+	---> @Repository allows for component scanning to be used on the DAO class that it annotates. 
+
+	---> The annotation also allows Spring to proide translation of JDBC related exceptions that could occur for code being executed in this class. 
+
+		---> Ie translation for thrown checked exceptions to be translated to unchecked exceptions.
+
+
+---> Note on exception translation in Spring @Repository: 
+
+	---> Persistence exception translation refers to the process of converting low level persistence exceptions into high level Spring exceptions. 
+
+	---> Common ORM tools (e.g. Hibernate) have low level exceptions that are converted into common runtime DataAccessException variations (ie in an inheritance hierarchy). 
+
+	---> The main high level benefit of this exception translation is that a unified exception hierarchy exists regardless of methodology or technology (ie Oracle vs MysQL or JPA vs JDBC). 
+
+		---> The same exceptions are thrown for the same type of errors (e.g. DataAccessException). 
+
+		---> In other words, Hibernate, JDBC, JPA, and other ORM implementations can all provide different exceptions, which are translated by Spring to a common framework of exceptions. 
+
+
+	---> In practical terms, checked exceptions are converted to runtime exceptions (unchecked exceptions), which eliminates the need to declare what kind of exceptions can be thrown from DAO methods. 
+
+	---> Example: 
+
+		 public SomeEntity getEntity() throws DataAccessException {
+			...
+		 }
+
+	-	---> "throws DataAccessException" => This is declared in the method signature and is used to indicate what kind of exception could potentially be thrown from the method. 
+
+		---> In the above example, the "throws" keyword indicates that a DataAccessException can be thrown from the getEntity() method and therefore, potential exception handling methods should be written to include this. 
+
+		---> The "throws" keyword also delegates the responsibility of catching and handling the exception to the caller of the method. 
+
+		---> This type of error throwing applies to checked exceptions that are caught when the project is building. 
+
+		---> End Result => "throws" forces the programmer to write proper code to handle potential compile time exceptions around sensitive methods, but doesn't provide functionality to deal with unchecked exceptions or abnormal program terminations. 
+
+
+	---> End Result => Using persistence translation with @Repository allows programmers to save syntax for using "throws SomeException" and try / catch blocks devoted to technology specific exceptions. 
+
+		---> The class annotated with @Repository will have persistence translation applied to it such that all technology specific exceptions can be dealt with in a unified manner that minimizes syntax usage and still handles common exceptional circumstances.    
+
+
+
+Motivation for using a Service Layer: @Service
+
+
+---> Reminder: The service layer acts as an intermediate layer for implementing custom business logic for data transformation / validation purposes or to integrate data from multiple data sources (DAO / repositories). 
+
+	---> This service layer implements a design pattern called Service Facade. 
+
+
+---> Given the use cases, the service layer / component can be seen as an orchestrator of data from multiple sources. 
+
+	---> Data can be pulled in from multiple data sources and combined into a single view or form in order to be transmitted back to the client. 
+
+	---> For integrating these into a view, the Service layer will also touch the view engine in order to create the combined view, before serving this back to the resource layer. 
+
+	
+---> @Service is the stereotype annotation that is used for designating classes as services, within the Spring Context. 
+
+	---> This enables Spring to register a service implementation and inject it via component scanning + auto wiring. 
+
+
+---> A service can be defined via the combination of interface + concrete implementation. 
+
+---> Furthermore, the "injection hierarchy" consists of the following for DAOs / Repositories, Services, and Resources: 
+
+
+	Resource <-- Service <--- DAO / Repository
+
+	---> This means that a DAO / Respository is injected into the Service and the Service in turn (with the DAO) is injected into the Resource. 
+
+
+---> Note: That a transaction unit (for DB interactions) is defined with respect to the Service layer in many cases. 
+
+	---> Therefore, service layer implementations can have @Transactional at the method level for all methods that query a DB. 
+
+	---> This can be changed according to the use case and context within the project. 
+
+
+
