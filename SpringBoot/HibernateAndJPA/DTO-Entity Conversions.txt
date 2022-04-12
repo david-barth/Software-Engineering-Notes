@@ -1,0 +1,113 @@
+DTO <-> Entity Conversion in the Application Layer. 
+
+---> Often an application will receive complicated data from other sources. 
+
+---> In many cases, the database that the application uses to store and retrieve information will have a data model that does not correspond to the data encoding / structure of the recieved data. 
+
+	---> Example => A relational table vs a document based JSON encoding. 
+
+
+---> Such cases will involve complications and errors in the application backend if an attempt is made to store the data into the database. 
+
+	---> Aside from validations, it is necessary to transform data into a form that is consistent with the data model of its underlying data source. 
+
+
+---> The transformation of data can take place between the use of different "model" objects, which can be broken down into 2 types: 
+
+
+	A. Data Transfer Objects (DTO) => This object is used to encapsulate the data based on the structure that arrives to the application. 
+
+		---> A DTO's structure will be convenient for the deserialization of the data into the application and so its structure can match the structure of the incoming data encoding. 
+
+		---> E.g. A DTO model can be a class with several layers of nesting to match the structure of a complex JSON structure. 
+
+
+	B. Entity => An entity is an object that is used to encapsulate data based on the structure of the data model of the underlying data source. 
+
+		---> An entity's structure will be convenient for the mapping of a database record's structure into the application and so its structure will match the underlying record's structure. 
+
+		---> E.g. An entity model can be a class with fields that match the columns in a SQL database table. 
+
+			---> In the case of relational tables, the structure of the entity is less hierarchal (tree like) and flatter, which is the ideal case for relational models. 
+
+
+---> In order to mediate the transformation of inconvenient data formats to convenient data formats, DTOs and entities must usually be interconverted in an application. 
+
+	---> This interconversion can be done via a mapper, which is explained as follows. 
+
+
+
+Using a mapper to interconvert between DTOs and Entities: 
+
+---> A mapping framework is what contains a mapper, which allows for the interconversions of DTOs and entities.  
+
+---> These are responsible for mapping the structure of a DTO to the structure of an entity and vice versa. 
+
+---> There are 2 main frameworks that can be used for this purpose: 
+
+	A. MapStruct
+
+	B. ModelMapper 
+
+
+---> The following example will focus on ModelMapper. 
+
+---> In mapping there are 2 terms defined for the DTO and the entity: 
+
+
+	A. Source object => This is the object that the data is being mapped from. 
+
+	B. Target object => This is the object that the data is being mapped onto from the source object. 
+
+	---> The DTO and the entity can be on either side depending on the direction of the conversion. 
+
+
+---> Important note: In a project structure, an entity is considered a "domain object", but not a DTO.  
+
+	---> Therefore, it is important to separate these from each other in the project structure.  
+
+
+
+ModelMapper Example Analysis: Using deep mappings for complex object mappings. 
+
+---> Model mapper uses Mapper objects in order to accomplish its mappings. 
+
+---> In a simple example, the mapper can map between different property names during DTO <-> entity interconversions: 
+
+	 // setup
+    	TypeMap<Game, GameDTO> propertyMapper = this.mapper.createTypeMap(Game.class, GameDTO.class);
+    	propertyMapper.addMapping(Game::getTimestamp, GameDTO::setCreationTime);
+    
+    	// when field names are different
+    	Game game = new Game(1L, "Game 1");
+    	game.setTimestamp(Instant.now().getEpochSecond());
+    	GameDTO gameDTO = this.mapper.map(game, GameDTO.class);
+
+	---> In this case, a TypeMap object is created taking in the DTO and the entity object as parameterizations. 
+
+	---> Mappings are added, which define mappings between the different properties: 
+
+		---> The source object has its getter method added in as an argument. 
+
+		---> The destination object has its setter method used as an argument. 
+
+		---> Important note: :: is used as a resolution operator (cf C++), which allows an object to a class type to resolve to a method and use that method as an object). 
+
+			---> In this case, the method is used as an object input for the addMapping() method. 
+
+		---> Therefore, mappings are added per field in the case of property mappings between source and target objects. 
+
+	
+	---> A mapped object is created by using the map() method that is attached to the mapper. 
+
+		---> The map() method takes an instance of existing source object and the class definition of the target object. 
+
+		---> The source object has its properties mapped to the class definition of the target object and the target object is internally instantiated.  
+
+		---> The conversion is internally performed field wise via the supplied getter and setter methods. 
+
+
+
+---> However, in complex nested object cases a more complex type of mapper is needed: 
+
+

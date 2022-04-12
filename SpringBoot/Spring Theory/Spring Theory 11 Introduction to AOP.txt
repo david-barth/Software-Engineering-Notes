@@ -1,0 +1,300 @@
+Spring Theory 11: Introduction to Aspect Oriented Programming (AOP)
+
+
+Introduction to Aspect Oriented Programming: 
+
+---> Aspect oriented programming (AOP) is a programming technique based on the concept of an Aspect.  
+
+---> An aspect is something that encapsulates cross-cutting logic, which primarily deals with cross-cutting concerns: 
+
+	---> A cross cutting concern is a functionality that spans "horizontally" across the application. 
+
+	---> Ie the functionality can underly several business specific parts of the application. 
+
+	---> Examples of cross-cutting concerns include things such as security, logging, instrumentation, etc. 
+
+	---> All of these examples exist in multiple parts or modules of the application. 
+
+ 	---> Overall, a cross-cutting concern deals with the programmatic "infrastructure" of an application that is non-business specific and spans across layers of the application. 
+
+
+---> An aspect deals with addressing cross cutting concerns and is essentially a class that can be reused at multiple locations for various purposes such as security, logging, and more. 
+
+	---> The same class is applied in each location based on configuration. 
+
+
+---> Spring's usage of AOP involves using a design pattern called the "proxy" pattern: 
+
+	---> The proxy pattern involves using a proxy class to listen to the communication between the main application and a target object. 
+
+	---> In Spring, there is an AOP proxy that listens to the communication and will take action based on the communication sent to the target object. 
+
+	---> This proxy may then delegate this action to an Aspect class which will perform the specific cross-cutting concern action, such as security or logging. 
+
+
+---> AOP has several benefits that are assigned to it: 
+
+	---> The code for an aspect is defined in a single class promoting reuse and easier changeability within the application. 
+
+	---> AOP usage also reduces code complexity by encapsulating away cross-cutting concerns logic, giving cleaner business code. 
+
+	---> Aspects are also configurable allowing for them to be applied selectively to different parts of the application. 
+
+
+---> Some use cases of AOP include the following: 
+
+	---> Logging
+
+	---> Security 
+
+	---> Transactions 
+
+	---> Exception Handling
+
+	---> API Management and Analytics 
+
+
+---> The disadvantages of AOP arise when too many aspect classes are used in the application and mainly concern: 
+
+	A. Flow and readability issues => Using too many aspects will make it harder to follow the primary logic / execution flows that exist inside of the application. 
+
+	B. Performance imapcts => A large number of aspects will create performance issues due to AOP using runtime weaving.
+
+		---> Runtime weaving is when aspects are applied to a target object to create a new proxied object. 
+
+`		---> The aspects are applied to target objects at several possible points in the target class's lifecycle called "joinpoints". 
+
+			---> Examples of joinpoints include compile time, classload time, and runtime. 
+
+			---> The main joinpoint for aspects is runtime, but compile time and classload joinpoints are also possible if special compilers / class loaders are used. 
+
+
+		---> Runtime weaving can have performance lag issues if there are a large number of aspects that need to be applied to target objects.  
+
+		---> It is noted that performance-wise runtime weaving is the slowest type of weaving. 
+
+
+
+Introduction to AOP Terminology:
+
+---> The following represents important terms in AOP: 
+
+	A. Aspect => This is the class / module of code that addresses a cross-cutting concern such as logging, security, and exception handling. 
+
+	B. Advice => This defines what kind of action is taken and when the action should be applied. 
+
+		---> There are several different advice types that define when aspect code is run with respect to when a target class method is run. 
+
+		---> Types include before a target method is run, after a target method is run, and running based on whether the method was successfully executed or not. 
+			
+		---> These will be detailed later.
+
+
+	C. Join Point => This defines the point at which aspect code is "weaved" with the target class code. 
+
+	D. Pointcut => A predicate expression for where advice should be applied (ie which point of code the advice is applied). 
+
+	
+	
+Comparing Spring and AspectJ: 
+
+---> AspectJ is a framework that provides full support for AOP, whereas Spring AOP provides a simpler version of AOP. 
+
+---> Spring AOP is generally simpler to use than AspectJ and possesses the following differences: 
+
+	A. Simplicity => Spring AOP is simpler than AspectJ and offers less expansive features consequently. 
+
+		---> Overall, AspectJ has greater complexity in syntax and in the support of different types of weaving that are available. 
+
+	B. Migration => Spring AOP can be migrated to AspectJ via @Aspect. 
+
+	C. Weaving => AspectJ offers runtime, compile time, and class loading time support for weaving, while Spring only supports runtime weaving, which is the slwoest form of weaving. 
+
+	D. Applicability to target classes => Spring AOP only applies aspects to beans created in the Spring Container. 
+
+		---> AspectJ can be applied to POJOs and beans. 
+
+
+	E. Join point support => Spring AOP only offers method-level join points. 
+
+		---> AspectJ allow for all types of join points to be supported (e.g. field level, constructor level) and not just method level. 
+
+
+	---> Note: Spring AOP borrows some classes and annotations from AspectJ, which is why the AspectJ JAR file needs to be included in the application dependencies. 
+
+
+@Before Advice type: 
+
+---> The "Before" advice type runs before a method in the target class executes. 
+
+---> The advice is applied using the @Before annotation in order to apply custom code before the target method runs. 
+
+---> Some use cases for @Before includes logging, audit logging, security, and database transactions. 
+
+
+---> An example is shown as follows: 
+
+	1. Enabling Spring AOP proxy support (Allowing proxy objects to be created) in a Spring config file: 
+
+	@Configuration
+	@EnableAspectJAutoProxy
+	@ComponentScan("SomeBasePackage")
+	public Class SomeConfig {
+		...
+	}
+
+	---> @EnableAspectJAutoProxy adds the Spring AOP proxy support with help from the AspectJ JAR file classes + annotations. 
+
+	
+	2. The following is an example of a basic logging aspect class: 
+
+	
+	@Aspect
+	@Component
+	public class MyDemoLoggingAspect {
+
+		
+		@Before("execution(public void addAccount())")
+		public void beforeAddAccountAdvice() {
+			...Custom Logging Code...
+		}
+	}
+
+	---> An aspect is marked with the @Aspect annotation, which instructs the Spring context to treat the class as an aspect. 
+
+		---> As an aspect, the class is now subjected to the weaving process that AOP uses. 
+
+		---> Consequently, the Spring AOP proxy will now use this class and its relevant method when listening in on communications between target methods the main applications. 
+
+	
+	---> The @Before annotation defines the method level advice that Spring will use in order to perform AOP. 
+
+		---> The string "execute(public void AddAccount())" is the pointcut expression which defines a couple things: 
+
+			A. Where the advice is applied => The expression takes in a method signature in order to have a reference to any class to a method that matches that signature.  
+
+				---> This signature can even be defined in different classes, via overloaded, and overidden methods, which demosntrates the efficacy of the cross-cutting nature of AOP.   
+
+
+			B. A "verb" or predicate expression => This part of the pointcut expression determines upon which action the advice method will trigger when the method is called. 
+
+				---> In this case, it is upon execution or calling of the method that the advice will be relevant, as shown by the verb "execute", which takes in a parameter that matches the desired method signature. 
+
+
+---> Overall, advice method code should be small and quick. 
+
+	---> Expensive / slow operations should not be performed. 
+
+
+
+Overview of Pointcut Expressions: 
+
+---> Reminder: A pointcut expression is a predicate expression for where advice code should be applied. 
+
+	---> More precisely, the expression denotes that a specific advice code should be applied when specific conditions are met. 
+
+
+---> Pointcut expressions use a specific pointcut expression language, which AspectJ implements.  This langauge is borrowed by Spring AOP: 
+
+	---> In the pointcut expression, a specific pointcut denotes a specific condition under which the advice will execute for a certain method (ie with Spring AOP method level joinpoints). 
+
+	---> This section will focus on the "execution" pointcut, that specifies a condition for running advice code upon the execution of a specific method. 
+
+	---> Overall, the pointcut defines the "predicate" term that is used in the pointcut expression, which is an argument to the advice annotation such as @Before
+
+
+---> The execution pointcut has the following usage style: 
+
+	"execution(patterns)"
+
+	---> The pattern is the type of pattern that is used to match the pointcut and the advice code to a particular method.  There are several matching patterns: 
+
+	A. modifiers-pattern? => Matching based on modifiers (e.g. access modifiers) used in the method definition. 
+
+	B. return-type-pattern? => Matching based on method return type. 
+
+	C. Declaring-type-pattern? => Matching based on the class name (type) for the given method. 	
+
+	D. method-name-pattern(param pattern) => Matching based on the method name and its inputs.  
+
+	E. throws-pattern? => Matching based on the types of exceptions defined with the "throws" keyword. 
+
+	---> All patterns with ? are optional to include in the overall patterns expression. 
+
+	---> Each pattern matching in A-E can be combined into an overall patterns expression that builds up the method signature that is used to match the advice code to the desired method(s). 
+
+	---> Some examples include: 
+
+		@Before("execution(public void com.package.someClass.someMethod)")
+
+		---> This pointcut expression includes the modifier, return type, and declaring type method matching patterns. 
+
+		---> The declaring type matching pattern involves the package name that leads up to the class name itself. 
+			
+		---> This specific matching pattern restricts the matching of the advice code to a specific class. 
+
+		
+		@Before("execution(public void addAccount())")
+
+		---> This uses the return type, the modifier, and the method name patterns to match to a method of the specified name in any class. 
+
+		---> No declaring type is specified in this case, allowing for matching to any class. 
+
+
+		@Before("execution(public void add*())")
+		
+		---> * denotes the use of a wildcard.  Here, add* specifies a method name pattern matching for any method that begins with the name "add". 
+
+		
+		@Before("execution(public * processCreditCard())")
+
+		---> The wildcard star can also be used for return types, allowing for any return type to be matched for the overall matching pattern used. 
+
+		
+
+Pointcut Declarations in AOP: 	
+
+---> In order to avoid repeatedly declaring pointcut expressions for different advices, it is possible to use a pointcut expression. 
+
+---> An example is given as follows: 
+
+	@Pointcut("execution(public void someMethod())")
+	private void forSomeMethod(); 
+
+	---> The @Pointcut annotation is used to specify the pointcut expression as a declaration, which can be reused. 
+
+	---> It annotates a method that can be called in a way that treats it almost like a variable. 
+
+	---> By calling the annotated method, the pointcut expression specified in the annotation can be applied to an advice if called with the advice annotation.  
+
+	---> An example of using a pointcut declaration is given: 
+
+	@Before("forSomeMethod()")
+
+	---> The name of the @Pointcut annotated method is used as an argument to the advice annotation (@Before here). 
+
+
+---> By using pointcut declarations, it is easy to combine pointcut expressions into composite pointcut expressions using the logical operators (&&, ||, !). 
+
+---> Some examples of this are shown: 
+
+	@Before("One() && Two()")
+	@Before("One() || Two()") 
+
+	---> Above are two examples that use the AND and OR operators to combine the pointcut expressions of One() and Two(). 
+
+	---> The composite pointcut expressions are placed into the @Before advice annotation as arguments and the logical operators ensure that the composite expression acts in a similar way to an if statement: 
+
+		A. One() AND Two() criteria must be met in order for the @Before advice code to match to the method of the target class. 
+
+		B. One() OR Two() criteria must be met in order for @Before advice code to be triggered. 
+
+	
+	---> The exclusion or NOT operator is also shown: 
+
+	@Before("!One()")
+
+	---> This advice will execute for any method that does not match the criteria specified in the pointcut declaration. 
+
+ 
+	

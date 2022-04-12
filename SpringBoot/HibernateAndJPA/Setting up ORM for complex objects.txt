@@ -349,6 +349,34 @@ Extra 3: Persisting a composite entity with multiple levels of nesting using Eag
  
 
 
+Misc 1: Good practices for setting up entity maps. 
+
+---> 
+
+
+
+Observations: Primary Key generation Strategies. 
+
+---> For entity fields that are marked with @Id (ie primary keys), the fields will ultimately be null when being translated to the database table. 
+
+---> The reason for this is that even though there is a value potentially present in the field, the @Id annotation will correspond to a different set of instructions when mapping to a primary key than a normal field. 
+
+---> In the database, there will be no generated value for the primary key, which is one of several strategies used to generate primary keys. 
+
+---> In response to this, there are several ways to overcome the issue: 
+
+	1. Use @GeneratedValue to choose a strategy to generate a primary key in the application layer, but this means a custom primary key cannot be set. 
+
+	2. Set a primary key in the application layer using some form of pre-existing data, which allows custom primary key creation according to contextual desires. 
+
+	3. Generate a primary key programmatically using something like a UUID or another similar method, allowing for custom primary key generation. 
+
+		---> The downside is that contextualized primary key generation cannot be accounted for in this case. 
+
+  
+
+
+
 
 
 	 	
