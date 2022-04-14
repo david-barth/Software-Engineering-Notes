@@ -50,7 +50,7 @@ Using a mapper to interconvert between DTOs and Entities:
 	B. ModelMapper 
 
 
----> The following example will focus on ModelMapper. 
+---> The following example will focus on creating a custom mapper.  
 
 ---> In mapping there are 2 terms defined for the DTO and the entity: 
 
@@ -68,8 +68,31 @@ Using a mapper to interconvert between DTOs and Entities:
 
 
 
-ModelStruct Example Analysis: Using MapStruct complex object mappings. 
+Quick Side Note: Using Lombok to Annotate DTOs. 
+
+---> A DTO is a simple POJO and Lombok contains the @Data annotation, which handles the following annotations: 
+
+	A. @Getter
+
+	B. @Setter
+
+	C. @ToString
+
+	D. @EqualsAndHashCode
+
+	E. @RequiredArgsConstructor
+
+	---> These are the basic qualities of a POJO that are needed for simple usage for DTO puposes.  
+
+	---> This is the standard boiler plate that would be needed for most DTOs, but further annotations can be used if needed. 
+
+
+
+
+
+Approach 1: Custom Mapping Classes and its principles 
 
 ---> 
 
----> 
+
+ 
