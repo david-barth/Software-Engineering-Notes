@@ -1,0 +1,162 @@
+Maven Crash Course: Solidifying the Basics. 
+
+
+Basic Maven Overview: 
+
+---> Maven is a project management tool for Java projects that can be used to build projects and manage dependencies. 
+
+---> Without Maven, the normal process of adding dependencies to a project is as follows: 
+
+	1. Download JAR files from their respective sources online. 
+
+	2. Add them to the project classpath to allow them to be included in the project.
+
+	3. Use them. 
+
+	---> This process is automated by Maven via the pom.xml, which is told what dependencies need to be downloaded and added to the classpath. 
+
+	---> Maven downloads the JAR files from a central repository: 
+
+		---> This could be the actual Maven central repository, which holds publicly available open source JAR files. 
+
+		---> Or this could be enterprise maintained repostories, which require additional permissions in order to access. 
+
+			---> Enterprise maintained repositories comprise the Java code base that is used for a company.  
+
+
+---> The basic under the hood process for Maven is as follows: 
+
+	A. Maven will read + process the pom.xml file (ie the project "config" file). 
+
+	B. First, Maven will check a Maven local repository on the machine to see if the dependencies for the project can be found here. 
+
+		---> This local repo acts as a cache for JARs. 
+
+
+	C. If any dependencies are not found on the Maven local repository, then Maven will attempt to download the dependency JARs from a remote Maven central repository.  
+
+		---> Maven will also retrieve supporting / transitive dependencies for a direct dependency of the project in this step. 
+
+
+	D. Maven will then store any new dependencies back into the local repository. 
+
+	E. Maven will then build and run the application. 
+
+		---> Maven will automatically add JARs to the classpath when executing a build of the project based on the pom.xml. 
+
+
+Maven Project Directory Structure: 
+
+---> Maven projects have the following standard directory structure: 
+
+
+RootApp
+	pom.xml
+	src
+		main
+			java
+			resources
+			webapp
+		test
+			java 
+			resources
+	target
+
+
+	---> src/main/java => This path is where the Java source code files go. 
+
+		---> This is where package structure is contained. 
+
+
+	---> src/main/resources => Properties (.properties, .yml) files and other configuration files (scripts, SQL init scripts, etc) go.
+
+	---> src/main/webapp => JSP files, web config files, web assets (images, css, jc, etc) all go here.  
+
+		---> This is exclusive to web based projects. 
+
+
+`	---> src/test => Unit testing code and properties go here. 
+
+		---> This test directory usually mimics the main directory in structure in order to execute tests properly. 
+	
+
+	---> src/target => This is the destination directory for compiled code. 
+
+		---> This uses the "source" / "destination" style terminology and is equivalent to the "dist" directory seen in other technology directory structures. 
+
+		---> mvn clean removes the target directory. 
+
+
+Maven Key Concepts: pom.xml and Coordinates
+
+---> The pom.xml file is the primary project configuration file for the project. 
+
+	---> pom => This stands for Project Object Model. 
+
+	---> The pom.xml file is always located in the root directory of a project or module (for multi-module projects). 
+
+
+---> The pom.xml file is composed of the following structure: 
+
+	A. Project meta data: This includes information such as project name, version, output file type (JAR, WAR, etc) and more. 
+
+	B. Dependencies: This is the list of dependencies JARs that the current project depends upon. 
+
+	C. Plugins: This is the lsit of additional custom tasks to run. 
+
+		---> A "plugin" in this context refers to a "plugged in" piece of Java code that can be run as a task during compile + build time in order to perform some operation on source code files. 
+
+		---> An example can be to create mapper files from annotated model / DTO files using a MapStruct processor.  
+
+		---> Examples of plugin usage can be found in other examples in project work. 
+
+		---> Project compile / build time is also counted as the "runtime" for plugin code execution. 
+
+
+---> Among the project meta data, the most important pieces are the project coordinates, which are marked by the following XML tags: 
+
+	<groupId>com.luv2code</groupId>
+	<artifactId>projectName</artifactId>
+	<version>1.0-SNAPSHOT</version> 
+
+	---> The group ID refers to the name of a company, group or individual.  
+
+		---> The reverse domain name is used such as com.swissquote
+
+		---> It can occasionally also refer to a larger thematic grouping in a codebase under which the project falls. 
+
+	
+	---> The artifact ID refers to the name of the project itself. 
+
+	---> The version is the specific release of the project. 
+
+		---> This version can be obtained from the project via using resource filtering provided by Maven (to be specified in a separate set of notes). 
+
+		---> A project under active development can have the word "SNAPSHOT" attached to the current version. 
+
+
+	---> Overall nomenclature can defer from company to company in many cases. 
+
+	---> Altogether, the project coordinates are referred to as GAV. 
+	
+
+---> Dependencies are added to a pom.xml by adding the project coordinates to the <dependencies> tag and with the coordinates enclosed in a <dependency> tag. 
+
+
+	<dependencies> 
+		<dependency> 
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.0.0.RELEASE</version> 
+		</dependency> 
+	</dependencies> 
+
+	---> Note: The <version> tag can be omitted, which will force Maven to choose the latest released version from the Maven local or central remote repository for the dependency. 
+
+		---> The best practice is to include the version of the dependency for repeatable builds. 
+
+
+
+Maven Archetypes: 
+
+---> 

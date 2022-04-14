@@ -298,3 +298,376 @@ Pointcut Declarations in AOP:
 
  
 	
+Ordering Aspects: 
+
+---> In Spring AOP, there is no default order that is specified for executing the aspects when several advices, with the same annotation (e.g. @Before), match the same method. 
+
+	---> Spring will effectively pick an advice to execute at random. 
+
+	---> This can be a problem depending on the aspects that are lined up to be executed. 
+
+
+---> The way to control ordering of aspect execution is based on the following principles: 
+
+
+	1. Place advices into spearate Aspect classes to provide better granularity. 
+
+	2. Use the @Order annotation to impose a guaranteed ordering to the aspects. 
+
+
+---> An example of the @Order annotation is shown below: 
+
+
+	@Order(1) 
+	public class MyCloudLogAspect {
+
+	}
+
+	---> @Order is a class level annotation that indicates an order of priority among Aspect classes for execution.
+
+	---> A lower number indicates a higher priority in the order and hence earlier execution. 
+
+	---> Therefore, if advices from different aspects trigger, then the ordering will ensure that higher priority Aspect advice methods execute first. 
+
+	---> There are also some additional considerations to the numbers that can be supplied to @Order: 
+
+		A. The maximum range accepted by @Order is the range that is possible with int values. 
+
+		B. Negative numbers are allowed. 
+
+		C. The numbers do not have to be consecutive.  
+
+		---> As mentioned previously, the lower numbers indicate higher priority, so negative numbers will take on higher priority than positive numbers. 
+
+		---> It is best to define discrete numbers to @Order for Aspects rather than labeling any aspect with the same number. 
+
+			---> Same number usages (e.g. @Order(5) for 2 aspects) will mark an undefined order for both Aspects wherein no order of execution is known. 
+
+			---> However, relative ordering among different aspects is still maintained. 
+
+
+
+More on JoinPoints: Reading Method Arguments with JoinPoints. 
+
+---> A JoinPoint can be used as an object for different advice methods in an Aspect. 
+
+---> One type of usage is accessing method metadata: 
+
+	A. Accessing the method signatue for a target class method: 
+
+	@Before("...")
+	public void beforeAddAccountAdvice(JoinPoint theJoinPoint) {
+
+		MethodSignature methodSig = (MethodSignature) theJoinPoint.getSignature(); 
+	} 
+
+	---> The JoinPoint is an object that can be added as an argument to the advice method. 
+
+	---> Metadata for the method, such as the method signature (with the fully qualified name of the method, ie the package structure leading up to the method) will be present in this object. 
+
+	---> In this example, the JoinPoint can be downcasted to a MethodSignature object to obtain method signature information instead.
+
+		---> Note downcasting means to cast the type of an object down the inheritance hierarchy from parent class to inheriting child class. 
+
+	
+	B. Accessing and displaying method arguments: 
+
+	@Before("...")
+	public void beforeAddAccountAdvice(JoinPoint theJoinPoint) {
+		
+		Object[] args = theJoinPoint.getArgs(); 
+
+	}
+
+	---> The getArgs() method is a getter method that will also fetch an array of objects / values that are the real runtime arguments to a method when it executes. 
+
+		---> Reminder: The advice method is part of an interceptor design pattern, so it can intercept the arguments of the method that the advice is matched to. 
+
+			---> This allows real time metadata to be fetched. 
+
+
+	---> Note: Objects need to be downcast to their actual type in order to allow the argument values to be used properly in the case of non-primitive values. 
+
+
+---> Relevance => The use of method metadata can be useful for many different purposes such as logging for debugging purposes or catching pieces of data at different method calls throughout the application. 
+
+	---> This is why JoinPoint objects can be used in a useful way if necessary. 
+
+
+---> Relation to theory => The Joinpoint is the "point" at which Aspect code is "merged" or woven into the target object uring runtime.  
+
+	---> At the method level, this means the target method's runtime representation can be accessed via the JoinPoint object.  
+
+
+
+@AfterReturning Advice: 
+
+---> The @AfterReturning advice annotation specifically deals with executing advice code from an Aspect after the successful execution of the target method, without any exceptions or errors thrown. 
+
+---> Some use cases for the @AfterReturning advice include: 
+
+	A. Logging 
+	
+	B. Security 
+
+	C. Audit Logging
+
+	D. Post-processing data => This involves processing data that is returned from the target method (by retrieving the data from the JoinPoint?). 
+
+		---> This can be used for further enrichment or formatting of the data. 
+
+
+---> An example of @AfterReturning is shown below: 
+
+	@AfterReturning("execution(* com.somePackage.findAccounts(..))")
+	public void afterReturningFindAccountsAdvice() {
+		...Some code...
+	}
+
+	---> The structure is the same as with @Before, using a pointcut expression and a method matching pattern to determine the different target methods that can be matched to the advice. 
+
+	
+
+	---> The following is how to access the return value of an account: 
+
+
+	@AfterReturning(
+			pointcut = "execution(* com.somePakage.someMethod(..))",
+			returning = "result")
+	public void afterReturningFindAccountsAdvice(JoinPoint theJoinPoint, List<Account> result) {
+		...some code...
+	}
+
+	---> In order to access the return type, additional arguments to the @AfterReturning argument can be specified. 
+
+		---> pointcut defines the pointcut expression that is used for method matching. 
+
+		---> returning defines the returned value from the method to be intercepted. 
+
+
+	---> The string supplied to "returning" must match the name of the argument that is used for denoting the returned result from the target method. 
+
+		---> Here, both are named "result".  This consistency must be maintained. 
+
+		---> Furthermore, the type of the result argument must be consistent with the return type of the target method. 
+
+		---> From the advice method, it is then possible to modify the data further for various purposes. 
+
+			---> Caveat: It is important for the development team to be aware of Advices + Aspects that do functionalities like these in order to be aware of where changes to data could be happening and to avoid bugs. 
+
+
+@AfterThrowing advice: 
+
+---> The @AfterThrowing advice will trigger upon the exit of a target method only if an exception is thrown, which causes the method exit.
+
+---> In a rough sequential fashion this is how the process works: 
+
+	1. The main application context makes a call to a method. 
+
+	2. The call is intercepted by the AOP proxy. 
+
+	3. The AOP proxy delegates the call to the proper Aspect instance based on method pattern matching. 
+
+	4. In runtime, the Aspect's advice code is weaved together with the target method. 
+
+	5. The weaving allows the @AfterThrowing advice method to trigger when an exception is thrown from the target method. 
+
+	---> This process also occurs for the other advice types and is a general pattern used in Spring AOP. 
+
+
+---> The @AfterThrowing advice is useful for gaining exceptions in a unified and reusable way. This can include: 
+
+	A. Logging exception
+
+	B. Auditing the exception
+
+	C. Other none-handling uses
+
+
+---> An example is shown, with the ability to access the exception: 
+
+	@AfterThrowing(
+		pointcut="execution(* com.somePackage.someClass.someMethod(..))", 
+		throwing="theExc")
+	public void afterThrowingFindAccountsAdvice(JoinPoint theJoinPoint, Throwable theExc) {
+
+		...Exception handling code...
+	}
+
+	---> As with @AfterReturning, the main object that the advice deals with, the exception, can be accessed for error handling purposes. 
+
+		---> The name of the "throwing" argument in the annotation must be consistent with the name specified in the argument input of the advice method. 
+
+
+
+---> Note: Exception propagation from the target method to Spring AOP to the main application context will stay occur. 
+
+	---> @AfterThrows is not the correct advice for dealing with exception handling, but merely for gaining information on the exception or to inform others about the occurrence of an exception. 
+
+	---> @Around is necessary to use proper exception handling with Spring AOP. 
+
+		---> A normal try-catch block would be needed in order to properly handle the exception if @AfterThrowing is used. 
+
+
+@After Advice: 
+
+---> @After is an annotation that is used to indicate that an advice method should be applied to a target method after its execution, regardless of the outcome (ie successful return or throwing an error). 
+
+	---> As of a recent version of Spring, @After will run after @AfterThrowing and @AfterReturning advice methods if they are in the same Aspect. 
+
+
+---> Some use cases include: 
+
+	A. Logging exceptions
+
+	B. Running code to close or clean resources
+
+	C. Encapsulate functionalities in an AOP Aspect for easy reuse. 
+
+	
+---> An example is shown: 
+
+	@After("execution(* com.packageName.SomeDAO.someMethod(..))")
+	public void afterFinallyFindAccountsAdvice() {
+		...
+	}
+
+	---> This applies as with other advice annotations with using the pointcut expression with the appropriate matching pattern. 
+
+	---> The @After advice annotation does not allow an advice method to have access to an exception object.  This capability belongs to @AfterThrowing. 
+
+	---> @After advice methods should be able to run regardless of success or failure in the method. 
+
+
+
+@Around advice: 
+
+---> @Around is an advice type that allows an advice method to trigger before method execution and after method execution. 
+
+	---> This is similar to combining @Before and @After. 
+
+	---> The returned object (e.g. a successful object or an exception object) can also be accessed in the @After portion of the execution. 
+
+
+
+--->  The use cases for @Around are as follows: 
+
+	A. Logging
+
+	B. Auditing 
+
+	C. Security
+
+	D. Pre/post-processing of data
+
+	E. Instrumentation / profiling code => Allowing for gauging performance aspects such as how long it takes for a method to run. 
+
+	F. Managing Exceptions => This includes swallowing, handling or stopping exceptions rather than propagating them to the highest point of a call stack. 
+
+	
+
+---> @Around has a special type of JoinPoint object associated to it called the ProceedingJoinPoint, which acts as a handle to the target method.  
+
+---> The following example gives an example to how this works: 
+
+	@Around("execution(* com.somePackage.SomeClass.SomeMethod(..))")
+	public Object afterGetFortune throws Throwable (
+			ProceedingJoinPoint theProceedingJoinPoint) throws Throwable {
+
+		...Pre-Processing codeCode...
+		
+		Object result = theProceedingJoinPoint.proceed(); 
+
+		...Post processing code...
+		
+		return result; 
+	}
+	
+	---> The structure of @Around requires that the ProceedingJoinPoint object be used to execute the method in the advice method body. 
+
+		---> This is done by using the proceed() method which executes the advice. 
+
+
+	---> Thoeretical speculation => It is likely that reflection is used under the hood to obtain a reference to the method object so that the advice can execute the target method. 
+
+	---> The before code and after code are literally before and after the method handle being used to execute the method. 
+
+	---> This allows the @Around advice to execute before and after the actual target method. 
+
+
+---> Misc Note: It is important to ensure that one logger is used in the application instance otherwise the order of logging outputs can be disrupted. 
+
+	---> Example is using System.out.println() + an underlying logger in Spring
+
+	---> System.out represents a standard out output stream, which is emitted from the application as a separate stream of information vs the usage of a logger in Spring. 
+
+	---> The use of 2 output streams mans that the order of the outputs is not synchronized. 
+
+	---> To change this issue, only a single logging should be used as a form of output for the application. 
+
+
+ @Around: Handling Exceptions with this advice. 
+
+---> The ProceedingJoinPoint object can be used for handling, swallowing, or stopping an exception. 
+
+	---> The exception is returned from the method invoked by proceed(). 
+
+	---> This allows it to be handled within the advice code. 
+
+
+---> A basic example is shown here: 
+
+	@Around("exception(* com.package.SomeClass.someMethod(..))")
+	public Object afterGetFortune(
+		ProceedingJoinPoint theProceedingJoinPoint) throws Throwable {
+
+		...pre-processing code...
+		
+		try {
+			result = theProceedingJoinPoint.proceed(); 
+		} catch (Exception exc) {
+			
+			...Error handling code...
+		}
+
+		return result; 
+	}
+
+	---> Here, a simple try-catch block is used with the proceed() method being used to invoke the target method.	
+
+	---> Any exceptions emitted from the target method are handled via the catch block (or some variation of this). 
+
+	---> The exception can be handled as desired or even rethrown to a higher level in the application call stack. 
+
+	---> The situation depends on the severity of the source behind the exception: 
+
+		A. Low severity => The exception can be handled directly in the advice code and a default response can be given back to the application context. 
+
+			---> This can happen due to the interceptor capability of the Spring AOP proxy, which is functionally equivalent to what is provided by the interceptor design pattern. 
+
+			---> Via this functionality, the default value reaches the main application context and not the exception, preventing the end user from knowing that an exception or error had occurred. 
+
+
+		B. High Severity => The exception should likely be passed off to the main application or some other part to be handled if the source of the exception is a systematic error in the code of a high severity. 
+
+			---> In cases like this, it is important that @Around advice does not handle the exception, but rather that the exception become visible for those using the application. 
+
+			---> This forces the error to be fixed and prevents a code smell from happening. 
+
+
+	---> For the case of rethrowing the exception to the calling program / application context, the following modification can be used for the try-catch block in the advice: 
+
+	try {
+		Object result = theProceedingJoinPoin.prcoeed(); 
+		return result; 
+	} catch (Exception exc) {
+		throw exc; 
+	}
+	
+	---> The "throw" keyword can be used in the catch block to propagate the exception back to the higher levels of the applciation. 
+
+
+	
+Spring AOP used with Spring MVC: 
+
+---> 			

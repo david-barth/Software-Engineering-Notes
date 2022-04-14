@@ -1,0 +1,47 @@
+Learning Roadmap for Mentorship Sessions. 
+Project Architecture: 
+
+---> A microservice backend that is based on SpringBoot. 
+
+---> Flow of data: 
+
+	1. Feign client recieves information from a data layer + relational database in the form of JSON. 
+
+	2. The data is converted to a desired DTO structure via a custom mapper. 
+
+	3. DTO / desired structure is handed to a template engine. 
+
+	4. The template engine maps the DTO data to a prepared JSON template. 
+
+	5. The JSON document is sent to the frontend from the controller. 
+
+
+	---> Follows the structure of: Input(Sophia) -> Output (DTO) -> JSON template (Response)
+
+	---> No Hibernate or direct querying used. 
+
+
+---> Important topics from this: 
+
+
+	1. Jackson Library 
+
+	2. Swagger + Open API
+
+	3. FeignClient 
+
+	4. CorreoClient (?) 
+
+	5. yml files - Configuring CI / CD environments
+
+	6. Annotations - Creating custom annotation
+
+	7. Reflection (potentially) 
+
+	8. APIGee
+
+	9. Jenkins 
+
+	10. Relevant Scripting for serverside (TBD) 
+
+	11. Spring Template Engine for JSON (Groovy?) 
