@@ -113,6 +113,35 @@ Maven Key Concepts: pom.xml and Coordinates
 		---> Project compile / build time is also counted as the "runtime" for plugin code execution. 
 
 
+---> Additionally, there is also a properties section after the project metadata, which allows for several possibilities: 
+
+
+	A. Specifying compiler source and target Java versions: 
+
+	<properties> 
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source> 
+	</properties> 
+
+	---> As shown above, the compiler.target specifies the Java version compatability that generated .class files will work with.  
+
+	---> The compiler.source files specify what Java version of source code can be accepted. 
+
+	---> 1.8 refers to Java 8 in this case and is simply a shorthand. Similar logic applies to Java 1.5, which refers to Java 5. 
+
+
+	B. Specifying properties of dependencies: 
+
+
+	<properties> 
+		<dep1>1.3.4</dep1>
+		<dep2>1.3.3</dep2>
+	</properties> 
+
+	---> This is also a short cut that can be used to provide a single shorthand source fo all dependency properties, rather than listing the version number in the dependency part of the pom.xml. 
+
+
+
 ---> Among the project meta data, the most important pieces are the project coordinates, which are marked by the following XML tags: 
 
 	<groupId>com.luv2code</groupId>
@@ -159,4 +188,57 @@ Maven Key Concepts: pom.xml and Coordinates
 
 Maven Archetypes: 
 
----> 
+---> A maven archetype is effectively a template for common project structures that exist. 
+
+	---> Ie it is effectively a starter project for a project. 
+
+	---> It can be thought of as a collection of starter files which contain template files for a given Maven project. 
+
+
+---> Maven archetypes can be created using either the commandline with Maven or from an IDE. 
+
+---> One example of a common Maven Archetype is the Webapp archetype, which ahs the following directory structure: 
+
+
+	projectRoot
+		pom.xml
+		src/main/webapp/index.jsp
+		src/main/webapp/WEB-INF/web.xml
+
+	---> The index.jsp presence indicates that the Webapp archetype uses a template engine and serverside rendering in order to prepare the frontend. 
+
+	---> web.xml contains information potentially relating to things like the dispatcher servlet and other configurational matters. 
+
+
+
+Maven Repositories:  Private Repositories  
+
+---> A maven repository represents a construct that is similar in concept to a GitHub repository, but it stores JAR and other Java files exclusively. 
+
+---> A private repository is used for private enterprise use cases:
+
+	---> Proprietary code is stored on such private repositories. 
+
+	---> Examples include: 
+
+		A. Nexus => SwissQuote
+
+		B. Artifactory => Swisscom
+
+		---> Note: Artifactory and Nexus are commercial Maven Repository Manager products. 
+
+		---> Their use is purchased from the companies that run them. 
+
+
+	---> Such repositories exist so that developers can easily share, update, and pull code between each other within a company. 
+
+	---> Private repositories are secured with credential and other authentication requirements. 
+
+	---> They are also usually hosted onsite for a company in a dedicated data storage site. 
+
+	---> Services like Nexus and Artifactory are used for internally hosted Maven private repositories, but cloud hosted solutions also exist as an alternative. 
+
+
+
+
+

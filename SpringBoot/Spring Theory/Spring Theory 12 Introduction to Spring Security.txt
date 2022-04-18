@@ -1,0 +1,287 @@
+Spring Thery 12: Introduction to Spring Security. 
+
+
+Basic Introduction to Spring Security: 
+
+---> Spring Security deals with the security of applications, especially web applications, provided by Spring.  
+
+---> The main security model for Spring is based on the following: 
+
+
+	A. Spring Security is implemented by using Servelt filters in the background. 
+
+		---> Servlet filters allow for pre-processing and post-processing web requests (HTTP requests). 
+
+		---> Servlet filters can route web requests based on programmed security logic. 
+
+		---> The majority of Spring Security is based on Servlet filters. 
+
+
+	B. Spring security uses a declarative and programmatic (imperative) approach to securing an app. 
+
+
+---> Spring Security servlet filters act as an intermediary layer on top of the resource layer of an application. 
+
+	---> The resource is therefore a protected resource.  
+
+	---> There are two main sub-components to the security layer: 
+
+		A. Application security configuration 
+
+		B. User roles, passwords, etc. 
+
+
+---> Spring Security filters work according to 3 stages of filtering: 
+
+	A. Protected / non-protected resource ? => This filter checks to see if the resource is proctected or not. 
+
+	B. User authentication filter => This filter checks to see if the user is authenticated yet. 
+
+		---> If not authenticated, then the user is required to perform authentication (e.g. username / password, two-factor, etc). 
+
+
+	C. User authorization filter => This filter checks if the user is associated to the correct user role in order to access the resource.
+
+	---> Under most conditions, all 3 main stages of filtering must be passed in order for a user to be given access to a protected resource serverside. 
+
+	---> Note: In SQ, the use of web filters is likely based on the same principle of using Servlet filters in order to perform various security procedures. 
+
+	
+---> Reminder on basic security terminology: 
+
+	A. Authentication => Check to see if a user id / password combination match with credentials stored in the database or application. 
+
+	B. Authorization => Check to see if a user is associated with a user role that is allowed to access the desired resource. 
+
+	---> Authentication and authorization can be implemented through various approaches: 
+
+		A. In-memory
+
+		B. Database use => This can involve retrievals of various authentication and rights authorizations from the DB. 
+
+			---> A complicated use case involves the RMS from SQ. 
+
+		C. LDAP (Lightweight Directory Access Protocol) => This can be researched more when relevant. 
+
+		D. Other custom approaches
+
+
+
+---> On the 2 different approaches to programming security in Spring: 
+
+	A. Declarative security => This uses a configurational approach to defining application security. 
+
+		---> Note: Declarative approaches and configuration are synonomous in such a context because configuration involves "declaring" configurational aspects of something. 
+
+		---> The configurational approach can either be via Java (@Configuration) or via XML configuration. 
+
+		---> This allows for a proper separation between application code and security related code.  
+
+
+	B. Programmatic Security => This approach involves using an API to extend or customize the existing security framework in Spring to meet specific security / business requirements.   
+
+
+---> Note: It is important to ensure that the version of Spring Security is compatible with the current version of Spring used. 
+
+	---> The Spring Core framework and the Spring Security framework are not fully synchronized with each other and so it is important to ensure that compatible versions are used. 
+
+
+
+An Aside on Spring Customization: 
+
+---> Many processes in Spring, such as the Spring MVC based processes, can be customized in different ways. 
+
+---> Some examples can be seen in the Corrado mentorship videos, but an example is also provided in Spring MVC configuration: 
+
+
+	---> AbstractAnnotationConfigDispatcherServletInitializer => This abstract base class can be extended, with the proper method overridden as needed. 
+
+	---> This class in particular specifies servlet mappings and the location fo the app config. 
+
+	---> More importantly, this class is an example of a common pattern wherein different classes or interfaces can be extended or implemented in Spring in order to override default processes in Spring. 
+
+	---> This can apply to other classes such as interceptor classes. 
+
+
+
+Basic Security: Username / Password Combinations + User Roles. 
+
+---> Spring Security filters are registered through the AbstractSecurityWebApplicationInitializer abstract class. 
+
+	---> Like with the dispatcher servlet initializer, this class can be extended in order to provide custom configuration properties to its relevant part of the Spring Framework, which in this case is Spring Security. 
+
+	---> This class is necessary for the configuration of the Spring security filters. 
+
+	---> All that it necessary is to extend this base abstract class with no need to override any methods. 
+
+
+---> In order to configure Spring Security, the following config file must be used: 
+
+	@Configuration
+	@EnableWebSecurity
+	public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
+
+		@Override 
+		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+			
+			UserBuilder users = User.withDefaultPasswordEncoder(); 
+			
+			auth.inMemoryAuthentication()
+				.withUSer(users.username("John").password("SomePW").roles("Admin"));
+		}
+	}        
+
+	---> As with all config files, @Configuration needs to be used in order to specify this as a config file. 
+
+	---> @EnableWebSecurity is the annotation used to allow Spring Core to recognize beans that are associated with Spring Security. 
+
+		---> It is a pattern in Spring config files, with other components of the Spring ecosystem, to use an annotation of the nomenclature @EnableSomething in order to recognize beans that are associated with that cpart of Spring. 
+
+		---> E.g. This also applies to Spring MVC and other more niche parts of Spring. 
+
+
+	---> The above configure() method configures an in-memory authentication approach. 
+
+		---> Compared to more rigorous approaches, this is likely no a best practice. 
+
+		---> Note: The roles() method can accept anything as a role, but best practice likely uses an enum for a defined set of roles. 
+
+
+	---> Within the WebSecurityConfigurerAdapter base class there are different overloaded configure() methods that can be used for different security configurations, including HTTP based security and web security. 
+
+
+	---> Also note: withDefaultPasswordEncoder() is considered deprecated. 	
+
+
+---> Use case for in-memory authentication: 
+
+	---> In-memory authentication is not a recommended best practice for security purposes.  
+
+	---> Instead, it is best used for tutorial and learning purposes. 
+
+	---> Best practice => Use a persistent form of authentication that involves database retrievals. 
+
+	---> Practical usage for in-memory use cases usually involve some form of caching, such as an embedded / in-memory database (e.g. Redis, H2) or other caching forms used to optimize performance. 
+
+
+
+---> The following shows an example of setting up HTTP security in Spring Security: 
+
+	---> This involves using configure() for a class called HttpSecurity, which is responsible for configuring security for resource endpoints. 
+
+		---> configure(AuthenticationManagerBuilder) is used for configuring users via in-memory, LDAP, and database approaches. 
+
+		---> Each of the overloaded configure() methods is responsible for a different aspect of security. 
+
+
+	@Configuration
+	@EnableWebSecurity
+	public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
+
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			
+			http.authorizeRequests()
+				.anyRequest().authenticated()
+				.and()
+				.formLogin()
+				.loginPage("/showMyLoginPage")
+				.loginProcessingUrl("/authenticateTheUser")
+				.permitAll();
+		}
+	}
+	
+
+	---> The above overrided method shows how to configure a login form requirement for all in-bound HTTP requests to the server side. 
+
+	---> The following is the breakdown for the method chain:
+
+		A. authorizeRequests() => This restricts access based on the HttpServletRequest type object.
+
+		B. anyRequest().authenticated() => This portion specifies that all in-bound requests must be authenticated / logged in to proceed further. 
+
+		C. and().formLogin().loginPage().loginProcessingURL() => This specifies that a custom login form and process is being used. 
+
+			---> loginPage() refers to the endpoint that is used to access the login page resource. 
+
+			---> loginProcessingUrl() refers to the endpoint used to process login details in order to complete the actual authentication process. 
+
+
+		D. permitAll() => This method allows all users to see the login page. 
+
+
+	---> A controller does need to be implemented for this however, with @GetMapping used to specify the endpoint. 
+
+
+---> Important => The overall login process mechanism boils down to this: 
+
+	1. A user sends an HTTP request for a resource towards a resource endpoint. 
+
+	2. The Spring filter servlet intercepts the incoming request for security purposes. 
+
+	3. The servlet redirects the user to a login page / authentication portion of the app. 
+
+	4. The user provides credentials for the authentication and sends these details to a specific endpoint for authentication processing. 
+
+	5. Two things can happen based on the outcome of the authentication processing: 
+
+		A. Successful outcome => The user's request is let through to the protected endpoint and ethe desired resource is returned, producing a redirect to the desired resource (and its corresponding UI). 
+
+		B. Unsuccessful outcome => The user's request is blocked and the user is redirected back to the login page for a further attempt. 
+
+			---> In this case, there is also an error message that comes with this to inform the user that the authentication failed. 
+
+
+
+Focusing on the Logout Process: 
+
+---> In between successful authentication and logout, the following ends up occurring: 
+
+	1. A new HTTP session object is created upon login, which is used clientside as a way to represent a user's interaction with protected endpoint content. 
+
+	2. The session also contains a signature / flag that is used to show that successful login has occurred (this can be contained on a cookie). 
+
+		---> Such signatures are created by session cookies which are attached to an HTTP session.
+ 
+
+	3. Upon triggering the logout process, the session object is destroyed and this necessitates the need for a new authentication process. 
+
+
+---> In the HttpSecurity base configure method for Spring Security configuration the basic functionality for a logout is as follows: 
+
+
+	@Override 
+	protected void configure(HttpSecurity http) throws Exception {
+
+		htptp.authorizeRequests()
+			.anyRequest().authenticated()
+			.and()
+			.formLogin()
+			.loginPage("/customPage")
+			.loginProcessingUrl("authenticateTheUser")
+			.permitAll()
+			.and()
+			.logout()
+			.permitAll();
+	}
+
+	---> logout() sends data to a default logout URL in order to initiate the logout process. 
+
+	---> The default logout URL will trigger the invalidation and potential destruction of the session cookies and the HTTP session itself (assuming non-persistent sessions).  
+
+	---> After the invalidation of cookies and session, the user is redirected to the logout page and the response from the logout endpoint includes a "logout" parameter to indicate the change to a logged out state.  
+
+		---> Logging out is a POST request and not a GET request, likely because an HTTP body is needed to contain information to logout the correct user. 
+
+
+
+
+Cross-site Request Forgery: 
+
+---> 
+
+
+
+
+
+
