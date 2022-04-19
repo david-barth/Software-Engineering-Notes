@@ -1,3 +1,117 @@
 Unit Testing For Spring + SpringBoot. 
 
 
+---> Unit testing is the first level of testing that occurs when trying to ensure quality code, either in production in a CI / CD pipeline. 
+
+---> Inside of a SpringBoot project, unit tests are automatically run when triggering the build process via Maven or Gradle.  
+
+---> It is normal in such projects to keep tests separated inside of a separate testing package whose structure resembles the package structure of the actual project.  
+
+---> Important: Unit testing reflects the use of tests to test small "units" of code.  
+
+	---> The focus is to test the smallest functioning pieces of code in an application to ensure that they produce the expected outputs for a given set of test cases. 
+
+	---> In practice it is a good idea to aim for 80+% test coverage of application code with tests that cover useful cases in an application. 
+
+
+
+Good Principles for Unit Testing: 
+
+
+1. Prefer simple test cases => Simple hard coded test cases can be valuable to have over production logic based values. 
+
+	---> Production logic should be minimized in such cases. 
+
+	---> But there are limits to hard coding in cases involving magic number. 
+
+
+2. Using appropriate assertions => Distinct assertions should be used in order to test different aspects of a function output. 
+
+	---> E.g. Assert.assertEquals and Assert.assertNotEquals can be used 
+
+	---> E.g. AssertNotNull, AssertNotSame can also be used
+
+
+3. Keeping test Scenarios Separate => Asserts should be geared towards one test case and not cover multiple test cases. 
+
+	---> E.g. Testing for a null value and testing for a present value in 2 separate tests. 
+
+
+4. Aiming to test production scenarios => Real Scenarios that could occur in production are more worth testing than trivial scenarios. 
+
+	---> Some ideas: 
+
+		A. Data not found scenarios 
+
+		B. Abnormal objecs 
+
+		(Needs more research) 
+
+5. External services should be mocked => In testing some more complex classes / objects, which rely on external services, it is helpful to mock these external services on a logical level. 
+
+	---> E.g. A Service class that depends on a Repository class. 
+
+		---> The repository class is mocked on a logical level by having specific outputs be returned upon execution of a "method". 
+
+		---> This can be done via a library such as Mockito, which can create mock objects for such purposes. 
+
+
+6. Using testing lirbary annotations => @BeforeEach, @BeforeAll, etc can be used to create data and arrange objects before the execution of tests in order to improve performance and keep test cases separated from each other. 
+
+
+
+Unit testing flavor 1: Using complete mock data + objects. 
+
+---> In this flavor, a test is written in such a way that mock data and objects are used in order to perform the unit tests. 
+
+---> For example, a test Repository class can be a dependency of a Service class being tested. 
+
+	---> It can be expensive to start the Spring context for everytime a test class is run.  
+
+	---> Instead, it could be sufficient to mock the behavior of the Repository dependency by creating a mock object that simulates the expected outcomes of the actual mock repository. 
+
+
+---> The main concept is as follows: 
+
+	@ExtendWith(MockitoExtension.class)                         
+	class ServiceTest {
+
+    	@Mock
+    	Database databaseMock;                                  
+
+    	@Test
+    	public void testQuery()  {
+ 	      		assertNotNull(databaseMock);
+        		when(databaseMock.isAvailable()).thenReturn(true);  
+        		Service t  = new Service(databaseMock);             
+        		boolean check = t.query("* from t");                
+        		assertTrue(check);
+    		}
+	}  
+
+	---> As seen above, the databaseMock is a mock object created via the use of the @Mock annotation in Mockito. 
+
+		---> @Mock likely receives the type Database as a blueprint for use in creating a proxy Database object that has the necessary methods needed for assigning invoking behavior to upon being called. 
+
+		---> This is a likely use of the proxy design pattern. 		
+
+
+	---> Mockito then uses a series of methods: when() and thenReturn(), to define the behavior that a method is supposed to adopt upon invocation. 
+
+		---> In this case, when isAvailable() is called, then  the value of true is returned from the mock object method. 
+
+		---> This behavior is therefore mocking only the intended output of the isAvailable() method. 
+
+
+	---> It is assumed that isAvailable() is called in the query() method at some point, which triggers the invocation behavior defined above. 
+
+	---> Overall, the true source code of the dependency is not being tested, but merely its known behavior is being replicated. 
+
+		---> The basis of this mocking approach allows for a less expensive testing process, with realistic results. 
+
+		---> However, this still does not fully test out production scenarios or leverages Springboot's full capabilities for testing. 
+
+			---> This flavor will be explored next. 
+
+ 
+

@@ -253,7 +253,7 @@ Focusing on the Logout Process:
 	@Override 
 	protected void configure(HttpSecurity http) throws Exception {
 
-		htptp.authorizeRequests()
+		http.authorizeRequests()
 			.anyRequest().authenticated()
 			.and()
 			.formLogin()
@@ -278,10 +278,122 @@ Focusing on the Logout Process:
 
 Cross-site Request Forgery: 
 
+---> CSRF is a security attack in which a website tricks a user into executing an action on a web app that the user is currently logged into. 
+
+---> In order to protect against CSRF attacks, it is necessary to embed additional authentication data / a token into HTML forms. 
+
+	---> The token needs to be verified before the form is submitted or processed on the backend. 
+
+
+---> Spring Security CSRF protection is handled through Spring Security filters. 
+
+---> To implement CSRF protection, the synchronizer token pattern is used: 
+
+	A. A request includes a session cookie and a randomly generated token. 
+
+	B. Before a request is processed at its relevant endpoint, the token must be verified by the Spring Security filters. 
+
+
+---> CSRF protection is enabled by default for an application (if using <form:form>) and is recommended for use for normal web browser web requests. 
+
+	---> But for non-browser clients, CSRF can be disabled in some carefully considered cases. 
+
+	---> Note: CSRF must be included in form submission via a POST request in order to be used in the application. 
+
+
+---> Note: It is also possible to manually add the CSRF token without <form:form> (JSP form tag), but this will not be covered here. 
+
+
+
+Restricting Access based on User Role: 
+
+---> It is possible to restrict user access to endpoints to certain user roles.  
+
+---> This is possible through the HttpSecurity based configure() method in the Spring Security configuration file: 
+
+
+
+	@Override 
+	protected void configure(HttpSecurity http) throws Exception {
+
+		http.authorizeRequests()
+			.antMatchers("/").hasRole("Role1")
+			.antMatchers(".leaders/**").hasRole("Role2")
+			.and()
+			.formLogin()
+			.loginPage("/customPage")
+			.loginProcessingUrl("authenticateTheUser")
+			.permitAll()
+			.and()
+			.logout()
+			.permitAll();
+	}
+
+	---> The anyRequest().authenticated() line is replaced with lines of the form: antMatchers().hasRole(). 
+
+		---> antMatchers() => This is a SpringBoot HTTP method that is used to match onto a specific URL or URL pattern and only permit requests based on that match to be accepted. 
+
+		---> hasRole() => This is another filter that applies on top of the antMatchers() filter in order to further filter URLs based on the user role of the client that submitted the request. 
+
+		---> These are both examples of "filters", which are used to filter HTTP requests. 
+
+
+	---> Sections of the method chain act as filters to all possible HTTP requests that enter the chain.
+
+	---> Important reminder: The following represents the chain of events that likely occurs when the antMatchers() filter code is integrated into the application for protecting an endpoint based on user role: 
+
+		1. A user attempts to click a UI element that triggers a request to the backend for a particular resource at a particular endpoint (e.g. via form submission + link). 
+
+		2. The request is intercepted first by the Spring Security layer.
+
+		3. The request goes through a method chain of classes configured by methods relating to different parts of the HttpSecurity instance in the related config file. 
+
+		4. The request will go through various filters including matchers (user role / authorization) or authentication based filters. 
+
+		5. Based on the nature of the submitted request and its interaction with the filters, one of the following will happen: 
+
+			A. The filters block the request and filter it out, returning a 403 unauthorized or similar code.  This occurs if the request doesn't have the appropriate authentication or authorization details. 
+
+				---> The filters will pass the request to a supporting controller in order to handle the issue of failed authentication or unauthorized access. 
+				
+				---> This controller code can be customized in a granular fashion in the controller class.  
+
+
+			B. The request passes through the filters and continues forward to the protected endpoint, allowing the resource to be retrieved. 
+
+
+		---> and() => This represents a way to chain together the methods of different Configurer classes together.  
+
+			---> Each of these sections between and() act to configure different classes in the Spring Security filters, which are all triggered during different contexts for HTTP transactions. 
+
+				---> Portions of filters are triggered during authentication (e.g. formLogin() or logout()) or authorization (antMatcher().hasRole()) based HTTP transactions. 
+
+
+
+
+
+			---> Therefore, the above code DOES NOT represent a sequential series of events with respect to one HTTP transaction. 
+	
+					
+---> The above sequence of events refers to securing resource endpoints in their entirety based on authorization. 
+
+	---> It is also possible to secure pieces of UI based on user role as well, but this can vary depending on the approach to UI adopted for the application. 
+
+	---> In template engine + serverside view rendering based applications, individual UI can be restricted by access role via certain tags (e.g. in JSP) that programmatically restrict access based on user role. 
+
+	---> In client side rendering (e.g. Angular, React, Vue), a different mechanism is in place, likely via the use of some form of conditional rendering based on user role header indications or some sort of signature (e.g. tokens / cookies). 
+
+		---> In larger enterprise settings, the authentication + authorization programming is taken care of in different parts of the architecture. 
+
+		---> Lower level "plugins" are integrated into the overall scaffolding allowing for a separation of concerns with respect to that particular artifact. 
+
+		---> In this sense, UI authorization based rendering is minimized in most cases.  
+
+
+	---> Overall, the approach depends on the context. 
+
+
+
+Database based Authentication + Authorization Approaches: 
+
 ---> 
-
-
-
-
-
-
