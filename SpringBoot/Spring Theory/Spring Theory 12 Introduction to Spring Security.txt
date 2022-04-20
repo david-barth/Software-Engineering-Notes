@@ -396,4 +396,186 @@ Restricting Access based on User Role:
 
 Database based Authentication + Authorization Approaches: 
 
----> 
+---> Database retrieval of user account rights and credentials is a far more common method of approaching authentication than in-memory. 
+
+---> This approach can be implemented in Spring Security with predefined table schemas that can be modified. 
+
+	---> There is still a need to write the application code that will handle the queries, which is handled by JDBC and Hibernate. 
+
+
+---> The default Spring Security database schema is based as follows: 
+
+	Table A => users:
+
+		---> username
+		---> password
+		---> enabled
+
+		---> enabled => This column determines if a user can log in or not. 
+
+
+	Table B => authorities:
+
+		---> username
+		---> authority
+
+
+	---> The authorities table corresponds to user roles. 
+
+		---> Authorities / user roles must be unique constraints that consist of a combination of the username / authority column. 
+
+		---> The username column in authorities ends up being the foreign key that connects the two above tables.
+
+		---> Spring Security uses the prefix format of "ROLE_SomeRole" in order to define a user role in the authorities table. 
+
+
+	---> Note the column and table names must be the same as defined here in order for the default Spring Security configuration to work. 
+
+
+
+
+---> It is necessary to run an init SQL script in order to setup the underlying tables for Spring Security to use. 
+
+
+---> Note: Passwords are stored in a specific format: {id}encodedPassword
+
+	---> The encoded password is the password that is either encoded as an encrypted form or as plain text. 
+
+	---> The {id} refers to the encoding / encryption algorithm that is used to convert the password from plain text into a hashed form. 
+
+		---> Options include "noop" for plain text, bcrypt, and more. 
+
+		---> Encrypted forms are usually hashed passwords. 
+
+		---> An example:  "{noop}test123" or "{bcrypt}test123"
+
+			---> {bcrypt} is an id string that will tell the underlying Spring Security code to use the bcrypt hashing algorithm. 
+
+
+
+---> A note on configuration: In non-springboot based configurations, the JDBC connection must be configured using either yaml or properties files. 
+
+	---> An example is shown: 
+
+	@Configuration
+	@EnableWebMvc
+	@ComponentScan
+	@PropertySource("persistence-mysql.properties")
+	public class DemoAppConfig {
+
+
+		@Autowired
+		private Environment env; 
+
+		@Bean
+		public DataSoruce securityDataSource() {
+
+			//Create connection pool: 
+			ComboPooledDataSource securityDataSource = new ComboPooledDataSource(); 
+
+			//Setup jdbc driver: 
+			try {
+				securityDataSource.setDriverClass(env.getProperty("jdbc.driver"));
+			} catch (PropertyVetoException exc) {
+
+				throw new RuntimeException(exc); 
+			}
+
+			//Other setter methods for connection properties (JDBC url, user + password for DB access) and connection pool properties (min + max pool sizes, etc)
+		}
+		
+	}
+
+	---> During the build process, files within the src/main/resources folder are automatically copied to the classpath at build time. 
+
+	---> The @PropertySource annotation tells the compiler to read the specified file on the classpath and inject the property values into their relevant beans during dependency injection and setup. 
+
+	---> Reminder: Properties files and yaml files are used to hold environmental variables, which in enterprise settings are not hard coded as a best practice. 
+
+		---> Spring has an Environment class that reads and holds the data from the properties / yaml files for use in the configuration of beans. 
+
+	
+	---> A DataSource class indicates a different data source / database that the application interacts with: 
+
+		---> Note that the data source itself is not just the database, but an abstraction that includes constructs such as the database + the connection pool. 
+
+		---> The DataSource class minimally requires the database connection props and ideally the connection pool props (for best practice + performance optimization). 
+
+
+---> Within the configure() method of the WebSecurityConfigurerAdapter subclass, it is necessary to do the following to enable JDBC authentication: 
+
+
+	@Configuration
+	@EnableWebSecurity
+	public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
+
+		@Autowired
+		private DataSource securityDataSource; 
+
+		@Override 
+		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+			auth.jdbcAuthentication().dataSource(securityDataSource);
+		}
+	}
+
+
+	---> The configured data source acts as a dependency to the security configuration class. 
+
+	---> Note: configure() handles the configuration of different security configuration objects: 
+
+
+		A. HttpSecurity => The configuration of this object acts as a class that configures a set of class instances relating to security (authentication + authorization) from the HTTP transaction perspective. 
+
+		B. AuthenticationManagerBuilder => The configuration of this object configures the authentication approach that is used by the app.
+
+			---> This builder can help to create the families of class instances needed for various authentication approaches such as JDBC authentication, LDAP, in-memory and more. 
+
+			---> In the JDBC authentication approach, the security data source is given here. 
+
+
+	---> Users don't need to be hard coded and if the predefined schema is followed, then it is possible for retrievals of users and rights to be automated.  
+			
+		---> If other schemas are used, then manual coding of the appropriate DAO based accesses would need to occur with the appropriate entity model. 
+
+
+Password Encryption in Spring Security: 
+
+---> It is not a best practice to store passwords as plain text in a database. 
+
+	---> Hashing based encryption or some other encryption method is desirable for production level security standards. 
+
+
+---> A recommended form of encryption is the bcrypt algorithm: 
+
+	---> bcrypt is a one-way hashing encryption algorithm that also adds a randomly generated portion of characters to the end of the hashed password called a "salt" for additional protection.
+
+	---> This and other mechanisms included in bcrypt help to provide defense against bruteforce attacks. 
+
+
+---> The Spring security filter relating to JDBC authentication use the following rough rpocess in order to perform the password based authentication: 
+
+	A. The password for the user is retrieved from the DB.
+
+	B. The encoding algorithm ID ({bcrypt} in this case) is read.
+
+	C. The salt is taken from the DB password and appended to a hashed version of the password from the form submitted password. 
+
+	D. The encrypted form password is compared with the DB stored password. 
+
+	E. Two things can happen depending on the results of that comparison: 
+
+		A. If a match occurs, a successful authentication occurs. 
+
+		B. If a match doesn't occur, then authentication fails. 
+
+
+	F. Depending on the results of the match comparison, the classes relating to the HttpSecurity object will then either redirect the user to the desired endpoint or the user will be redirected to try authenticating again (or blocked). 
+
+	---> Note: The DB password is never decrypted since bcrypt is a one-way encryption algorithm. 
+
+
+
+
+
+

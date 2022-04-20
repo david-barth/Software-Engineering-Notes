@@ -1,4 +1,4 @@
-Unit Testing For Spring + SpringBoot. 
+Testing For Spring + SpringBoot. 
 
 
 ---> Unit testing is the first level of testing that occurs when trying to ensure quality code, either in production in a CI / CD pipeline. 
@@ -12,6 +12,16 @@ Unit Testing For Spring + SpringBoot.
 	---> The focus is to test the smallest functioning pieces of code in an application to ensure that they produce the expected outputs for a given set of test cases. 
 
 	---> In practice it is a good idea to aim for 80+% test coverage of application code with tests that cover useful cases in an application. 
+
+
+---> This will also cover more advanced testing such as integration testing and smoke testing. 
+
+	---> Important => JUnit can be used for unit testing, integration testing, and more complex testing. 
+
+		---> It just simply depends on how the tests are composed based on the flavor / approach used in the individual test. 
+
+		---> Some of these flavors are covered below. 
+
 
 
 
@@ -114,4 +124,89 @@ Unit testing flavor 1: Using complete mock data + objects.
 			---> This flavor will be explored next. 
 
  
+
+Unit Testing Flavor 2: Using the Spring Context to Test Objects. 
+
+---> This can apply for Spring beans such as Services, Repositories, and even Controllers potentially. 
+
+---> This approach becomes less of "unit testing" and closer to integration testing, which focuses on testing combinations of classes that work together.  
+
+	---> E.g. Testing a service through initializing the Spring context and having an actual repository class that can potentially fetch the required objects from the database. 
+
+	---> By comparison a unit test for such a service would involve using the mock testing approach. 
+
+	---> This form of "integration test" is resistent against internal refactorings of individual classes, which a mock based unit testing approach can break against in some cases. 
+
+		---> The reason this is considered an integration test is because different components: a database, a service class, and a repository are involved in composing the test. 
+
+		---> Therefore, the test is based on integrating the components together in order to test a flow between the components. 
+
+		---> Official => The integration test is defined as a test that uses 2 or more REAL parts to test code and not mock objects with prepared behaviors. 
+
+			---> This is also called testing a slice of Spring context, as a portion of the spring application is being test. 
+
+
+
+
+
+
+---> This approach involves using the Spring context in order to create the integration tests. 
+
+---> A simple example of a smoke test is shown as follows with using the Spring context for testing: 
+
+	@SpringBootTest
+	public class SmokeTest {
+
+		@Autowired
+		private HomeController controller;
+
+		@Test
+		public void contextLoads() throws Exception {
+			assertThat(controller).isNotNull();
+		}
+	}
+
+	---> @SpringBootTest is an annotation that can be used for looking for a main configuration class (e.g. one with @SpringBootApplication for SpringBoot applications). 
+
+		---> This annotation will start a Spring context. 
+
+	
+	---> The purpose of the smoke test is simply a test that is used to test for simple, but fundamental and severe failure possibilities. 
+
+		---> These are aimed at addressing questions such as "Does the program run?" and other basic fundamental situations needed for the application to function properly. 
+
+		---> In this case, the smoke test is referring to whether a controller is created or not.  
+
+
+	---> Since a Spring context is started, that means autowiring is present in order to inject the tested class into the testing class. 
+
+	---> More specific version of @SpringBootTest include the following annotations, which are designed for testing different layers of the application: 
+
+		A. @WebMvcTest => To effectively test your web-layer with MockMvc
+		
+		B. @DataJpaTest => To effectively test your persistence layer
+
+		C. @JsonTest => To verify JSON serialization and deserialization
+		
+		D. @RestClientTest => To test the RestTemplate.
+
+
+
+Links to good articles on best practices: 
+
+	1. https://phauer.com/2019/modern-best-practices-testing-java/
+
+		---> A comprehensive guide to best practice testing concepts for testing in Java. 
+
+		---> Covers both backend integration tests and unit tests. 
+
+
+	2. https://spring.io/guides/gs/testing-web/
+
+		---> Introduction into some aspects of Spring Context based integration testing. 
+
+
+	3. https://www.vogella.com/tutorials/Mockito/article.html
+
+		---> A good overview of the different Mockito approaches available. 
 
