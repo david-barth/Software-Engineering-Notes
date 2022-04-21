@@ -1,0 +1,15 @@
+Spring Theory 13: SpringBoot Basics. 
+
+
+Overview of what SpringBoot is:
+
+---> Reminder: SpringBoot follows convention over configuration in that it is a configuration that defines a standard by which Spring projects can follow. 
+
+	---> SpringBoot has auto-configuration, which allows for automatic configuration based on props files and files on the classpath. 
+
+	---> SpringBooot also has an embedded HTTP server (Tomcat, Jetty, etc) which allows for the application to run on a local machine. 
+
+
+
+---> SpringBoot is 
+	

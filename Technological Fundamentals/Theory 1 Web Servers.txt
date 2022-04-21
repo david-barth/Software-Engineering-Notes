@@ -1,0 +1,126 @@
+Fundamental Theory 1: Web Servers. 
+
+
+The Server Program: Web Servers and Application Servers. 
+
+---> A "server" or server side can be divided into 2 different distinct entities: 
+
+	A. Hardware server =>  This is the physical machine that the software resides on. 
+
+	B. Application Server => This is the software that exists on the machine that exists to perform the functionalities of the hardware server at a higher level. 
+
+
+---> The application server is an abstraction over the system level programming that exists on a hardware server. 
+
+	---> This abstraction contains the application and other critical services that are hosted on the hardware server machine. 
+
+	---> In this sense, the application server is the abstraction of the runtime environment on which an application can be deployed. 
+
+
+---> The application server performs the following critical functionalities: 
+
+	A. Backend application logic
+
+	B. Programming to handle incoming requests / response transactions
+
+	C. Internal services
+
+	D. Dynamic interactions with databases. 
+
+	---> In the abstraction picture, the application server is the container for these functionalities and more. 
+
+
+---> An application server can can also contain a "web server", which is a subset type of application server that deals with the handling of static content. 
+
+	---> A web server can be a part of an application server or as a standalone, but it remains a type of application server, but specialized over static content and HTTP. 
+
+	---> By contrast a fully fledged application server is capable of "multi-channel communication": 
+
+		---> Multi-channel communication => This refers to the ability to support more than 1 high level networking protocol (HTTP + more). 
+
+
+	---> Application servers handle functionalities on the network and security level for example. 
+
+		---> This can include parsing requests and responses. 
+
+		---> This can also security features based on lower level aspects of HTTP protocols such as TCP / UDP and more. 
+
+		---> This can also involve leveraging larger constructs of systems programming (e.g. processes) to initialize application instances and more. 
+
+
+
+---> Careful note: An application server represents one level of abstraction higher than an operating system, which manages the system level calls to control hardware semi-directly. 
+
+	---> Operating system constructs such as processes and threads are used by higher level methods of the application server software to perform its own functionalities. 
+
+
+
+
+
+Application / Web Servers in Java: Components and Sub-components. 
+
+---> The main portion of a Java based application server that is important to consider is the web container. 
+
+	---> The web container is a runtime environment where the lifecycle of Java objects called "servlets" are managed. 
+
+	---> This is a component of a web server that is responsible for interacting with and managing servlets. 
+
+
+---> A servlet is a Java class that extends a functionality of the web server that it is located in. 
+
+	---> More specifically, a servlet is an object that handles, processes, and produces an output response from a request. 
+
+	---> A servlet object is what effectively generates the dynamic content that is required by a request, such as an HTTP request. 
+
+	---> In Java, a servlet is an interface that can be implemented and its contract defines 3 abstract lifecycle methods: 
+
+		A. init() => The initialization method for a servlet. 
+
+		B. service() => The main functionality that is performed by the servlet in handling the request. 
+
+		C. destroy() => The method that handles the destruction of the servlet. 
+
+	
+	---> Every servlet instance is managed by the web container and therefore a servlet context. 
+
+	---> It is noted that every request is managed by a thread and a servlet object can serve multiple threads the same time, hence being type safe. 
+
+
+---> The web / servlet container deploys and laods all web applications that are hosted on it. 
+
+	---> A servlet context is created once per application and is kept in-memory within the application server. 
+
+	---> The servlet context is an object that contains a set of methods that servlet uses to interact with the web container. 
+
+	---> Therefore, the servlet context provides an API for a servlet to interact with the web container. 
+
+	---> Methods such as this include behaviors such as: 
+
+		A. Dispatching requests
+
+		B. Logging to a file
+
+		C. Getting MIME types
+
+	
+---> Within a servlet that handles HTTP requests, 2 important objects are created for an HTTP request: 
+
+
+	A. HttpServletRequest => This represents the request object as seen by the servlet. 
+
+		---> This acts as a container for all information relating to the HTTP request such as headers, URL and body. 
+
+
+
+	B. HttpServletResponse => This represents the response object as seen by the servlet. 		
+
+		---> This object contains the ability to form the HTTP response and to send it. 
+
+		---> Examples include the ability to modify the headers of the HTTP response, and more. 
+
+
+	----> These objects are all processed in the same thread. 
+
+
+---> An example of a web container + web server is Apache Tomcat. 
+	

@@ -123,6 +123,20 @@ Unit testing flavor 1: Using complete mock data + objects.
 
 			---> This flavor will be explored next. 
 
+
+---> Important note: It is best practice to mock objects that are created in the application source code by the developer and not already from well verified 3rd party libraries. 
+
+	---> Practical example: Mocking an EntityManager class is not a particularly effective approach as it is already a well used and documented class. 
+
+		---> Therefore, creating tests for the repository level is not altogether important. 
+
+		---> Instead, it can be recommended to mock the Repository level when testing the Service level. 
+
+		---> This allows for a proper testing of custom code. 
+
+ 
+
+
  
 
 Unit Testing Flavor 2: Using the Spring Context to Test Objects. 
