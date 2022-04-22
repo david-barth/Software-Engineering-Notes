@@ -11,5 +11,137 @@ Overview of what SpringBoot is:
 
 
 
----> SpringBoot is 
+---> SpringBoot uses the standard Maven directory structure in order to compose its own directory structure. 
+
+	---> There are a couple of files that are called Maven Wrapper files: 
+
+		A. mvnw.sh => This runs a Maven project on Linux / Mac. 
+
+		B. mvnw.cmd => This runs a Maven project on Windoes. 
+
+		---> Both of these files act as wrappers for the command: mvnw clean compile test
+
+		---> The files will automatically install the correct version of Maven on the machine if the proper version is not found. 
+
+		---> This is only used for if Maven is not installed locally on the computer. 
+
+
+---> Within the SpringBoot pom.xml, SpringBoot defines starter files that are used to package different JARs together under themes: 
+
+	---> e.g. spring-boot-starter-web => This is a collection of dependencies such as spring-web, spring-webmvc, tomcat, etc in order to allow web dependencies to be easily downloaded and used in the project. 
+
+		---> Effectively the starter dependencies have all their inner dependencies as transitive dependencies. 
+
+		---> This also helps to keep the version of individual dependencies compatible and up to date. 
+
+
+---> There is also a Maven plugin for Springboot called spring-boot-maven-plugin.  This plugin has the following responsibilities: 
+
+	---> This can package the project into an executable JAR / WAR file (to be run by the Java runtime) with mvn package
+
+	---> This can also run the actual application itself with mvn springboot:run
+
+	---> Note: A JAR file is a compressed file containing all Java (.class files + metadata + resources) project files into one compressed (cf Zip) file that can be executed in a Java runtime. 
+
 	
+---> The application.properties file is where the configuration values of the SpringBoot application are stored. 
+
+	---> Values injected into classes via @Value("${someProp.value}") are done so from the application.properties file. 
+
+	---> SpringBoot's approach to this allows for the centralization of properties data and the way SpringBoot is set up, there is no need to use @PropertySource to inject it. 
+
+	
+---> Warning => If the application is packaged as a JAR, then a src/main/webapp package will be silently ignored by build tools such as Maven.
+
+	---> webapp will be included if the project is packaged as a WAR file. 
+
+
+---> Important: A Maven parent pom is a pom that is located either in the local Maven repository or in a remote repository (e.g. Nexus or Artifactory) and ontains the common dependencies, properties, and other Maven based configurational aspects inside of a central pom.
+
+	---> All other project pom files inherit the values of this parent pom and Maven effectively merges this parent pom with inheriting pom files. 
+
+	---> In SpringBoot, a parent pom is called spring-boot-starter-parent in which all individual dependencies (ie starter dependencies) will inherit important information such as version numbers from it. 
+
+		---> This prevents the explicit need to list out dependencies for individual starter projects. 
+		
+		---> This also defines the default SpringBoot Maven plugin. 
+
+		---> Other information given by the parent pom are Java version numbers used and the type of source encoding used. 
+
+
+
+SpringBoot Dev Tools: 
+
+---> SpringBoot dev tools allow for a wide variety of utilities to be given to a SpringBoot project, including hot reloading, which reloads an application upon change to the source code. 
+
+	---> The dependency specified is: 
+
+	<dependency> 
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-devtools</artifactId>
+	</dependency> 
+
+
+	
+SpringBoot Actuator: 
+
+---> SpringBoot actuator is a component of SpringBoot that exposes REST endpoints that enable an application to be monitored and managed. 
+
+	---> This provides DevOps functionality with SpringBoot automatically.
+
+
+---> The dependency just needs to be added to the pom file and then REST endpoints are automatically added to the application. 
+
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-actuator</artifactId>
+	</dependency> 
+
+	
+---> All SpringBoot Actuator endpoints start with the base of /actuator
+
+---> Some commonly used SpringBoot actuator endpoints are: 
+
+	A. /health => Provides information on the health of the application
+
+		---> Explicitly this checks the status (up or down) of the application.
+
+
+	B. /info => Gives information on the project.
+
+		---> Information of the project can be specified via the application.properties file: 
+
+			info.app.name = "something"
+			info.app.description = "something"
+			info.app.version = "1.0.0"
+
+			---> All of this information is included in the JSON response from the actuator endpoint.
+
+	C. /mappings => Gives all @RequestMapping paths. 
+
+	D. /beans => Gives all beans registered in the Spring context. 
+
+	E. /auditevents => Allows for auditing events in the application. 
+
+
+	---> Only the health endpoint is exposed.  To expose specific endpoints or all endpoints the following property must be included in the application.properties file: 
+
+		management.endpoints.web.exposure.include=*
+		management.info.env.enabled = true
+
+		---> The * wildcard exposes all endpoints. 
+
+		---> "Enabled" must be true in order to allow for the /info endpoint to be exposed. 
+
+
+---> Spring Security can be added to the SpringBoot application in order to secure the actuator endpoints. 
+
+	---> The default is using a username / password combination, which Spring Security generates for this purpose. 
+
+	---> However, database authentication can also be set up in order to customize the authentication approach.  This follows the same rules as the Spring Security configuration process detailed in the previous theory set of notes. 
+
+	---> As an alternative, it is also possible to exclude endpoint exposure.  This can be done by looking up the relevant property to put into application.properties (look this up from docs). 
+
+
+
+

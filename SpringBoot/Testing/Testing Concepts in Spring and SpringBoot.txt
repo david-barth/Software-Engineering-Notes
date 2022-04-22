@@ -204,6 +204,13 @@ Unit Testing Flavor 2: Using the Spring Context to Test Objects.
 		
 		D. @RestClientTest => To test the RestTemplate.
 
+ 
+---> It is also a good practice to keep integration tests separated from the unit tests when running them. 
+
+	---> By using an active profile to separate the integration tests from the unit tests, it is possible to only run unit tests rather than integration tests + unit tests. 
+
+	---> Since integration tests can test over several layers in the backend, this can be quite consuming compared to running the tests separately.  
+
 
 
 Links to good articles on best practices: 
@@ -224,3 +231,7 @@ Links to good articles on best practices:
 
 		---> A good overview of the different Mockito approaches available. 
 
+
+	4. https://reflectoring.io/spring-boot-test/
+
+		---> A good overview of SpringBoot oriented integration testing. 
