@@ -1,0 +1,141 @@
+Optimal Usage of Certain Java Concepts. 
+
+
+Correct Usages of Optional for replacing null references: 
+
+---> The optional class is a class that is used to provide a type level solution for optional values instead of null references. 
+
+---> Optional is a class that encapsulates an optional value: 
+
+	---> The optional value encapsulated by an Optional class such as: 
+
+		Optional<SomeType>; 
+
+		---> The value or object corresponding with SomeType is now in a state where it can now be present or absent. 
+
+		---> In other words, Optional<SomeType> can either be a proper value or it can be a null reference. 
+
+		---> The Optional class therefore provides a way to comprehensibly design APIs that show that certain values can potentially be null / optional in exceptional circumstances. 
+
+		---> The case of the NullPointerException is dealt with in a more intelligent way. 
+
+
+
+---> There are 2 ways to create an Optional instance that wraps around an object: 
+
+
+	1. Optional<SomeObject> optSomeObject = Optional.of(SomeObject); => This is used for non-null values. 
+
+		---> This results in a NullPointerException immediately being thrown if there is a null value for the encapsulated object. 
+
+
+	2. Optional<SomeObject> optSomeObject = Optional.ofNullable(SomeObject); => This is used for objects where there would be a potential null value. 
+
+		---> This results in an empty object if the encapsulated value is null.  
+
+
+---> The isPresent() value can be used with the Optional wrapped instance in order to check if a value is present or not. 
+
+---> get() can be used with the Optional wrapped instance to return the encapsulated object. 
+
+---> One typical pattern is to return a default value if the encapsulated value is null, which can be done as shown: 
+
+
+	Optional<SomeObject> optSomeObject = Optional.ofNullable(SomeObjectInstance);
+	SomeObject someDefault = optSomeObject.orElse(new SomeObject()).get();
+
+	---> orElse() will allow for the creation of a default object if the SomeObjectInstance is null. 
+
+	---> Alternatively the OrElseThrow() method can be used to throw a more specific exception: 
+
+	SomeObject optSomeObject = Optional.ofNullable(SomeObjectInstance)
+						.orElseThrow(IllegalStateException::new); 
+
+	---> Note that :: is like the scope resolution operator in C++ in which the operator is used to resolve to and call a stated method based on the method name given. 
+
+
+---> Optional also contains a map() method which is implemented for optional values: 
+
+	Optional<USB> usb = maybeSoundcard.map(Soundcard::getUSB); 
+
+	---> With the map() method here, the value is passed into the lamdba function of map() and transformed according to the function or, if the value is null, then nothing happens. 
+
+	---> This allows for a more flexible way to deal with null values in the map() process. 
+
+	---> There is a comparable method implemented for Java streams. 
+
+	---> The resulting value from map() can also have other methods applied to it, such as filter(), if it is appropriate. 
+
+
+---> flatMap() is also supported by the Optional class, but this will be explored in another point. 
+
+---> There are more ways to use optionals, but these can be explored in another time. 
+
+---> There are also some piftalls and issues that come with using Optional: 
+
+	1. Using Optional as a parameter to a method can involve using potential null checks at the start of the method if the argument passed in is also null. 
+
+		---> The best practice is to use Optional to deal with return values and not as input arguments. 
+
+		---> Optional is not meant to be used as a field either
+	
+
+	2. Using Optional as a serializable class will result in a NotSerializableException, which originates from a library like Jackson not having code to unwrap the original value from the Optional class for serialization. 
+
+		---> This is especially the case for when fields are serialized. 
+
+
+
+
+Correct Usages of Functional Interfaces and Functional<>: 
+
+---> A lambda function is an anonymous function in Java that allows a method to be treated as a first class citizen in Java: 
+
+	1. Functions can be bound to variables.  
+
+	2. Functions can be passed as arguments to methods / other functions. 
+
+	3. Functions can be defined inline. 
+
+
+---> A lot of the overhead that comes with defining a class to encapsulate a single method is unnecessary and this is solved by the use of functional interfaces. 
+
+---> Under the hood, a lamdba function can be defined with an interface that has a single abstract method. 
+
+	---> The Java compiler will treat any functional interface as a lambda. 
+
+	---> A functional interface can be used with a variety of different use cases, such as with Java streams and also as arguments to other lamdbas. 
+
+
+---> A simple example of a functional interface is: 
+
+	public interface Function<T, R> {
+		
+		someMethod R (T inputT); 
+	}
+
+	---> Here, R is defined as the return type / output and T is defined as the input. 
+
+	---> This can then be implemented using a class potential. 
+
+	---> This already exists in Java and can be implemented by other classes.  
+
+	public class SomeClass implements Function<T, R> {
+
+		public R apply(T inputT) {
+			...
+		}
+	}
+
+	---> This represents a very basic implementation of a functional interface, with the necessary apply() method being the abstract method that needs to be applied. 
+
+
+
+---> Since functional interfaces are a wide topic, the following link is good for getting further overviews of the functional interface: 
+
+	1. https://www.baeldung.com/java-8-functional-interfaces
+
+		---> A simple, but comphrensive overview of functional interfaces. 
+
+
+ 	
