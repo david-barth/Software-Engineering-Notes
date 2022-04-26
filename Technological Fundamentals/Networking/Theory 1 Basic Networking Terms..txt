@@ -1,0 +1,127 @@
+Networking Theory 1: Basic Networking Terms. 
+
+
+What is a network?
+
+---> Officially, a network computer network is a digital telecommunications network that shares resources between nodes. 
+
+	---> Nodes are computing devices, which use a common telecommunications technology. 
+
+
+---> Communication between nodes is done via data transmission through data links such as cables (e.g. fibre optics) or by wireless methods (e.g. Wi-fi). 
+
+---> Resources are shared over the network and transmitted via a data link. 
+
+	---> A resource can be a file, a data encoding, a video, or something else. 
+
+	---> Context => In the MVC pattern, the resource layer is what the "resource" in question that is  sent from a backend server to client devices, which consume the resource. 
+
+	---> Given the above context, a resource can also be something like an HTML response, a JSON response, and or an xml response. 
+
+
+
+Server, Clients, Ports, and Protocols: 
+
+---> Server => A server is a computer program or machine that provides functionality to other programs / devices. 
+
+---> Client => A client is a program or device that "consumes" the resources provided by a server.  
+
+---> Both server and client can be software and hardware entities. 
+
+	---> In fact, both are often consisting of software which acts as an abstraction layer of functionality to direct hardware functionality for their respective function in the network. 
+
+
+---> Client and server form a very common networking architecture called the client-server model.
+
+	---> In the client-server model, a single computation (ie resource) is distributed across multiple processes (programs) and devices. 
+
+
+---> Note: A device or machine can be a server or a client depending on the context it is functioning in.  
+
+
+---> Context => A client is accessing a "service" which is provided by the server. 
+
+	---> Context => The service layer of the MVC model is an abstraction of the service that is provided to the client device + program. 
+
+	---> The service layer is what contains the programming necessary to provide the specific "functionality" or "service" that results in the end resource.  
+
+		---> This programming includes data processing, validation, etc that ends up providing the resource in the desired form. 
+
+
+	---> The resource layer is therefore only representing the final resource that is created from the service layer and therefore no processing should be included in the resource layer. 
+
+	---> Note: In large enterprise contexts, many servers often end up forming a distributed service in order to scalably provide resources. 
+
+
+
+---> The network is what represents the mode of communication between client and server devices. 
+
+
+---> Protocol => A protocol is a set of rules that define how machines communicate with each other over a network. 
+
+	---> Protocols can be defined on different levels as will be seen later. 
+
+
+---> Port => A port is a specific section of memory on a machine that can recieve and send communications over the network using a specific protocol or set of rules. 
+
+	---> Examples: 
+
+		---> HTTP is done over port 80. 
+
+		---> HTTPS is done over port 443.
+	
+		---> FTP uses port 21 and port 20. 
+
+	---> The port number is the designation used to label a port uniquely for identification purposes. 
+
+	---> When a server is "listening" on a specific port number, this means that the server is configured to process communication over a network using a specific protocol. 
+
+	
+
+Networking Devices: Repeaters, Switches and Routers. 
+
+---> A repeater is an electronic device that recieves a signal and retransmits it in order to extend transmissions over a longer distance or to strengthen a signal through an obstruction. 
+
+	---> A hub is a multi-port repeater that amplifies a signal that it recieves into one port out of all of its other ports. 
+
+	---> A switch is a repeater that selectively forwards an amplified signal out of a specific port, likely related to the destination of the signal. 
+
+		---> A switch learns MAC (IP?) addresses using hardware methods. 
+
+		---> A bridge is a repeater that learns MAC addresses using software. 
+
+		---> Switches are used in LAN contexts (see below)
+
+
+---> A router is a repeater that intelligently routes a network transmission from one network to another network.  
+
+	---> A router can route from one type of communication to another or even from one device type to another. 
+
+	---> In this sense, a network can be over many different types of devices, but the focus here is on computers. 
+
+		---> This is what meant by routing from one network to another. 
+
+
+---> WAN => Wide area network, which is a network that extends over a large geographical area for computer networking. 
+
+---> LAN => Local area network, which is a network that extends over a small local region and can be used with many different device types. 
+
+	---> A router can route a communication from WAN to LAN and vice versa. 
+
+
+
+Networking Devices: Firewalls, IDS, IPS. 
+
+---> Firewall => This is a specific type of hardware or software that is meant to allow in and thus filter out certain kinds of traffic that come in from a network.
+
+	---> A firewall has a set of rules configured or programmed into it to accept or deny certain pieces of traffic. 
+
+
+---> Intrusion Detection System => This is a system that detects if an attack or suspicious activity is occurring over a network and alerts the adminstrator or user of a network to the issue. 
+
+---> Intrusion Prevention System => This is a system that detects an attack or suspicious activity and can block an attack from occurring. 
+
+---> IDS and IPS both analyze streams of network traffic data in order to see if suspicious activity exists on the network. 
+
+
+

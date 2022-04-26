@@ -1,0 +1,312 @@
+Customizing Repository Communications in Maven. 
+
+
+Introduction: 
+
+---> By default, Maven is set to pull dependencies from the public Maven central repository. 
+
+---> However, in enterpise settings, private remote repositories, such as those based on Nexus and Artifactory, will be used to store dependencies for internal use. 
+
+---> The main way to customize the ability of a local repository to pull from a private remote repository is through the use of the settings.xml file in Maven. 
+
+
+
+Introducing settings.xml as a configuration file: 
+
+---> Project specific configuration is set in the pom.xml of a Maven project. 
+
+---> settings.xml represents the local global Maven configuration and addresses issues such as: 
+
+	A. Specifying remote and local repositories to use. 
+
+	B. Store settings such as credentials for use in accessing remote repositories. 
+
+	C. Setting up proxies, mirroring, and profiles. 
+
+
+---> The main structure of settings.xml is as follows: 
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <localRepository/>
+    <interactiveMode/>
+    <offline/>
+    <pluginGroups/>
+    <servers/>
+    <mirrors/>
+    <proxies/>
+    <profiles/>
+    <activeProfiles/>
+</settings>
+
+
+---> Each of these 9 tags are descirbed as follows: 
+
+
+	A. Local Repository => This element points to the home directory of the system's local repository and by defailt is where all dependencies from a project are cached. 
+
+		---> The directory location is the home directory, but this can be changed. 
+
+	
+	B. Interactive mode => This defines if Maven can interact with a user, asking for input.  
+
+		---> This is a boolean value that defaults to true. 
+
+
+	C. Offline => This boolean value determine if the build system can work in offline mode.
+
+		---> The default value is false, but when switched to true for cases when Maven cannot connec to a remote repository, local repository dependencies can be used in the build process. 
+
+
+	D. Plugin Groups => This is a list of child elements that are specified by groupId. 
+
+		---> This list is searched through by Maven when a plugin is used without a groupId at the command line. 
+
+		---> This can be used to execute certain truncated plugin commands, such as: 
+
+			mvn tomcat7:run or spring-boot:run
+
+
+	E. Proxies => This is where proxies ccan be defined, with only one proxy being active at a time: An example includes: 
+
+	 <proxies>
+        	<proxy>
+           		<id>baeldung-proxy</id>
+            		<active>true</active>
+            		<protocol>http</protocol>
+            		<host>baeldung.proxy.com</host>
+            		<port>8080</port>
+            		<username>demo-user</username>
+            		<password>dummy-password</password>
+            		<nonProxyHosts>*.baeldung.com|*.apache.org</nonProxyHosts>
+       		</proxy>
+    	 </proxies>
+
+		---> Credentials, port numbers, and other information related to a proxy are held here. 
+
+		---> The active proxy is defined with the boolean active flag. 
+
+		---> nonProxyHosts specifies hosts, which are not proxied. 
+
+
+	F. Mirrors => This defines a mirror, which is defining an alternative to a particular repository.  An example is shown: 
+
+		<mirrors>
+        		<mirror>
+            			<id>internal-baeldung-repository</id>
+            			<name>Baeldung Internal Repo</name>
+            			<url>https://baeldung.com/repo/maven2/</url>
+            			<mirrorOf>*</mirrorOf>
+        		</mirror>
+    		</mirrors>
+
+		---> Only one mirror can be defined for a given repository (defined also in settings.xml) and Maven will pick the first match. 
+
+		---> This will override what is in the pom.xml
+
+		---> Maven will normally first attempt to pick a repository that is defined for retrieving dependencies from and then (or optionally) can defer to a mirror repository. 
+
+
+	G. Servers => This is where security settings of the servers that host a Maven repository are placed. An example is shown: 
+
+	https://maven.apache.org/xsd/settings-1.0.0.xsd">
+    		
+	<servers>
+        	<server>
+            		<id>internal-baeldung-repository</id>
+            		<username>demo-user</username>
+            		<password>dummy-password</password>
+            		<privateKey>${user.home}/.ssh/bael_key</privateKey>
+            		<passphrase>dummy-passphrase</passphrase>
+            		<filePermissions>664</filePermissions>
+            		<directoryPermissions>775</directoryPermissions>
+            		<configuration></configuration>
+        	</server>
+    	</servers>
+
+	---> This information is used to allow access into the server that contains the defined remote repository.  
+
+	---> This information includes keys, passwords, usernames, permissions, and other authentication / authorization based data. 
+
+	---> The ID of the server needs ot match the ID element of the repository defined in the pom.xml 
+
+	---> Ideally, placeholder variables should be used in order to allow for environmental variables to be placed inside for best practice security hygeine. 
+
+
+	H. Profiles => Profile elements and their children (activation, repositories, pluginRepositories, properties) are used to configure the build system as a whole rather than particular projects. 
+
+		---> These are global configuration values, which will override any equivalent profile values in the pom.xml or profiles.xml files of an individual project. The profiles are matched by ID. 
+
+
+		---> An example is given: 
+
+  <profiles>
+        <profile>
+            <id>baeldung-test</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <jdk>1.8</jdk>
+                <os>
+                    <name>Windows 10</name>
+                    <family>Windows</family>
+                    <arch>amd64</arch>
+                    <version>10.0</version>
+                </os>
+                <property>
+                    <name>mavenVersion</name>
+                    <value>3.0.7</value>
+                </property>
+                <file>
+                    <exists>${basedir}/activation-file.properties</exists>
+                    <missing>${basedir}/deactivation-file.properties</missing>
+                </file>
+            </activation>
+        </profile>
+    </profiles>
+
+	---> Profiles can modify a certain set of values under a given set of circumstances.  
+
+	---> <Activation> => This is the element that defines the circumstances in which a profile is triggered. 
+
+	---> There are 4 possible activators: 
+
+		A. JDK 
+
+		B. OS
+
+		C. property
+
+		D. file 
+
+		---> Any of these can be defined and will trigger an activation should their values be present or match a specifically desired value. 
+
+
+	I. Properties => Like with properties values given in pom.xml files, these are properties that can be defined for global configurational use based on specific values or via environmental variables. 
+
+
+	J. Repositories => Also under profiles, remote repositories can be defined here in order to obtain artifacts from specific remote Maven repositories. 
+
+		---> Maven will search for remote repositories enabled under an active profile. 
+
+		---> An example is given: 
+
+		
+    <profiles>
+        <profile>
+            <id>adobe-public</id>
+            <repositories>
+	        <repository>
+	            <id>adobe-public-releases</id>
+	            <name>Adobe Public Repository</name>
+	            <url>https://repo.adobe.com/nexus/content/groups/public</url>
+	            <releases>
+	                <enabled>true</enabled>
+	                <updatePolicy>never</updatePolicy>
+	            </releases>
+	            <snapshots>
+	                <enabled>false</enabled>
+	            </snapshots>
+	        </repository>
+	    </repositories>
+        </profile>
+    </profiles>
+
+		---> Certain aspects of artifacts, such as snapshots vs releases can be customized here. 
+
+
+
+	K. Plugin Repositories => This is where plugin artifacts are defined. Plugins are another type of Maven artifact in addition to normal dependencies and hence have their own dedicated repositories. 
+
+		---> As with normal repositories, plugin repositories are defined within a profile. An example is given: 
+
+ <profiles>
+        <profile>
+            <id>adobe-public</id>
+            <pluginRepositories>
+               <pluginRepository>
+                  <id>adobe-public-releases</id>
+                  <name>Adobe Public Repository</name>
+                  <url>https://repo.adobe.com/nexus/content/groups/public</url>
+                  <releases>
+                      <enabled>true</enabled>
+                      <updatePolicy>never</updatePolicy>
+                  </releases>
+                  <snapshots>
+                      <enabled>false</enabled>
+                  </snapshots>
+	        </pluginRepository>
+	    </pluginRepositories>
+        </profile>
+    </profiles>
+
+		---> As with repository elements, snapshots vs releases flags can also be defined here. 
+
+
+	L. Active Profiles => Active profiles are automaticlly activated by Maven (without regards to activation). 
+
+		---> An example is given: 
+
+  		<activeProfiles>
+        		<activeProfile>baeldung-test</activeProfile>
+        		<activeProfile>adobe-public</activeProfile>
+    		</activeProfiles>
+
+		---> These are contained outside of the Profile tags. 
+
+
+---> A settings level is defined as either global or user and determines the scope the settings.xml file is applied to: 
+
+	A. Global => Global settings can be found in ${maven.home}/conf/settings.xml
+
+	B. User => User settings can be found in ${user.home}/.m2/settings.xml
+
+	---> Note: The .m2 directory is where the local repository cache is also stored. 
+
+	---> User settings and global settings are merged into one unified set of settings when a user of a particular project invokes Maven to pull dependencies from a remote or local repository. 
+
+
+---> The locations of settings.xml can be found via the following command: mvn -X clean | grep "settings"
+
+	---> This will give debugging level log output to show wheere certain settings files are located. 
+
+
+
+Troubleshooting timeout issues with artifactory: 
+
+---> This refers to the issue of trying to fix dependency downloads from Swisscom's artifactory and is intended as a general guideline to solving the issue. 
+
+---> The main error is a DependencyResolutionException. 
+
+---> The following represents a list of potential explanations as to why a timeout connection occurs: 
+
+	1. The POM misses the declaration of the <repository> which hosts the artifact.
+
+	2. The repository you have configured requires authentication and Maven failed to provide the correct credentials to the server. In this case, make sure your ${user.home}/.m2/settings.xml contains a <server> declaration whose <id> matches the <id> of the remote repository to use. See the Maven Settings Reference for more details.
+
+	3. The remote repository in question uses SSL and the JVM running Maven does not trust the certificate of the server.
+
+	4. There is a general network problem that prevents Maven from accessing any remote repository, e.g. a missing proxy configuration.
+
+	5. You have configured Maven to perform strict checksum validation and the files to download got corrupted.
+
+	6. Maven failed to save the files to your local repository, see LocalRepositoryNotAccessibleException for more details.
+
+	7. In Maven 3 if you just had a failed download and have fixed it (e.g. by uploading the jar to a repository) it will cache the failure. To force a refresh add -U to the command line.
+
+	8. In case of a general network-related problem, you could also consult the following articles:
+
+
+
+
+
+	   
+
+
+
+
+Useful Reference Links: 
+
+
+	1. https://www.baeldung.com/maven-settings-xml
+
+	---> A simple, but effective introduction. 
