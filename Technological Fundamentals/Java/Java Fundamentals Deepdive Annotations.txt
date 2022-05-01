@@ -1,0 +1,235 @@
+Java Fundamentals: Deep Dive Introduction to Annotations. 
+
+
+Introduction to Annotations: 
+
+---> Annotations are syntactic meta data that is used to provide special information to different Java source code constructs. 
+
+	---> This metadata provides special instructions to the Java compiler + interpreter during code compilation, translation, and execution. 
+
+
+---> Annotations can be applied to the following source code constructs: 
+
+	A. Class level
+
+	B. Interface level
+
+	C. Method level
+
+	D. Field level
+
+	E. Parameter level (ie arguments for methods)
+
+	F. Variables
+
+	G. Packages
+
+
+---> In effect, an annotation is an additional instruction to the Java compiler + interpreter with regard to the Java source code construct it is annotating. 
+
+	---> In this sense, the word "metadata" hides a lot about what an annotation actually does. 
+
+	---> The following section explores annotations conceptually. 
+
+
+
+
+Conceptual Link to Annotations: Consumers
+
+---> Under the hood, an annotation is effectively an interface and even uses an interface as part of its definition as shown below: 
+
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.SOURCE)
+	public @interface Override {
+
+	}
+
+	---> The interface definition of an annotation only provides a container for specific metadata related to that interface. 
+
+	---> Actual programming / business logic is not defined inside of the annotation interface definition. 
+
+	---> Instead, the metadata contained within the interface is provided to a consumer for the interface, with the metadata pertaining to the source code construct that it is annotating.
+
+	---> The consumer is the piece of code that reads the interface data of the annotation and performs the necessary logic. 
+
+
+---> Ultimately, the annotation + the consumer are what forms the instruction that the annotation is associated with. 
+
+	---> These instructions are ultimately translated to bytecode during compilation and executed by the JVM. 
+
+
+---> A consumer can be many different pieces of code.  
+
+	---> For example, for @Override, the consumer is the JVM and this consumer therefore works at the bytecode level. 
+
+	---> However, custom annotations can define their own consumers. 
+
+
+
+---> But in order to properly understand how consumers are defined, it is important to consider the ingredients to writing an annotation.  
+
+
+
+
+Ingredients for Custom Annotation Creation: 
+
+---> There are 4 essential annotations provided by java.lang.annotation that are used when writing annotations: 
+
+	A. @Documented => This gives an instruction to its consumer (JVM?) on whether or not the annotation is placed into the Java doc or not.
+
+	B. @Retention => Defines how long the annotation is to be kept and when it is needed during the code life cycle (ie from source -> execution).  There are 3 different retention policies associated with this: 
+
+		1. RetentionPolicy.Source => This tells the compiler to discard the annotation during compilation. 
+
+			---> The annotations are not written to Java bytecode and examples include @Override and @SuppressWarnings
+
+
+		2. RetentionPolicy.CLASS => This tells the compiler to discard the annotation during class loading (ie before execution by JVM). 
+
+			---> This is the default rentention policy and is useful for doing bytecode-level post processing. 
+
+
+		3. RetentionPolicy.RUNTIME => This tells the compiler to retain the annotation all the way through to execution of the Java byte code.  
+
+			---> This means that the annotation shoul dbe available for reflection during runtime. 
+
+			---> This is used in general for custom annotation. 
+
+
+	C. @Target => This defines to the compiler what source code construct the annotation can be placed on (ie class, method, package, etc). 
+
+		---> This is defined by an enum called ElementType, which has options of: 
+
+			---> TYPE (class, interface, enum) , FIELD, METHOD, PARAMETER, CONSTRUCTOR, LOCAL_VARIABLE, ANNOTATION_TYPE (referring to another annotation), and PACKAGE. 
+
+
+	D. @Inherited => This determines whether the annotation can affect a subclass or not. 
+
+
+
+---> An annotation interface definition can hold the following types of data: 
+
+	---> Primitives, Strings, and enums. 
+
+	---> Attributes are defined as methods, which can acccept values or have defailt values as shown: 
+
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	@interface Todo {
+		public enum Priority {LOW, MEDIUM, HIGH}
+		public enum Status {STARTED, NOT_STARTED}
+		String author() default "Yash";
+		Priority priority() default Priority.LOW;
+		Status status() default Status.NOT_STARTED;
+	}
+
+	---> The "default" keyword is used to specify the default value for the attribute. 
+
+	---> Each "method" / attribute becomes an input for the annotation when it annotates something: 
+
+	@Todo(priority = Todo.Priority.MEDIUM, author = "Yashwant", status = Todo.Status.STARTED)
+	public void incompleteMethod1() {
+		...
+	}
+
+	---> With only 1 attribute, the name of the attribute can be "value" and there is no need to write any attribute when using the annotation: 
+
+	@interface Author{
+		String value();
+	}
+	
+	@Author("Yashwant")
+	public void someMethod() {
+	}	
+
+
+
+Using an Annotation: Defining a Consumer. 
+
+---> As mentioned before, an annotation is merely a container for metadata relating to whatever it annotates. 
+
+---> The actual use of the metadata is executed through the use of a consumer object. 
+
+---> For the case of runtime annotations, reflection is used via getAnnotation(), which gives the key annotation object.  An example is shown: 
+
+
+
+	Class businessLogicClass = BusinessLogic.class;
+	for(Method method : businessLogicClass.getMethods()) {
+		Todo todoAnnotation = (Todo)method.getAnnotation(Todo.class);
+		if(todoAnnotation != null) {
+			System.out.println(" Method Name : " + method.getName());
+			System.out.println(" Author : " + todoAnnotation.author());
+			System.out.println(" Priority : " + todoAnnotation.priority());
+			System.out.println(" Status : " + todoAnnotation.status());
+		}
+	}
+
+	---> In this case, the annotation must be down casted to the custom annotation type in order to be used. 
+
+	---> Under the hood, the interface is implemented by annotation class to yield the annotation object, which is produced through reflection. 
+
+	---> Then via the attribute methods of the annotation, the metadata can be retrieved and used in the consumer business logic. 
+
+
+
+The Complete Basic Mechanism for Annotations: 
+
+---> The following process is defined for a custom (runtime) annotation: 
+
+	1. The annotation is defined with the following information: 
+
+		A. It's retention policy
+
+		B. It's target structure(s)  
+
+		C. Whether it can be applied to inherited classes or not
+
+		D. The information it is supposed to contain
+
+	
+	2. The annotation is used on its target structure, with the appropriate information given to it. 
+
+	3. The annotation is implemented by a class at its particular runtime to produce an object associated with its particular use. 
+
+	4. The annotation is used in its appropriate consumer via reflection (ie via getAnnotation()). 
+
+	5. Data within the annotation can then be used in runtime for variosu purposes. 
+
+	---> Note: Annotations can be combined with each other to form composite annotations. 
+
+	---> Important: The annotation object is attached to its target object at runtime (for the runtime retention policy). 
+
+		---> This means that if it is a method target object, then the appropriate method object must be retrieved via reflection and then the approrpiate casted annotation object. 
+
+
+	---> The common pattern is very common for framework annotations such as Spring and Hibernate. 
+
+
+---> It is noted that the Java compiler will add the annotation's equivalent byte code data to the .class form of the source code construct that it annotates. 
+
+	---> If the retention policy is runtime, then the annotation byte code is left even after class loading to execution code.  
+
+	---> The annotation therefore forms an additional "bridge" between its target construct and its consumer(s). 
+
+	---> The annotation implicitly represents an additional "step" that is taken in addition to the construct's usage / execution behind the scenes with the consumer code for various purposes. 
+
+		---> This sometimes occurs imperatively and at other times, it may occur in parallel with the actual execution associated with the target construct. 
+
+
+
+
+---> Some examples that exemplify this mechanism: 
+
+
+	A. @HandlesTypes => This is a holder for an array of application classes that are passed to a ServletContainerInitializer class. 
+
+
+	B. @HttpConstraint => This acts as a container for security constraints that are applied to HTTP requests and therefore its consumers are the HTTP request. 
+
+
+	C. @WebFilter => Used to contain information that helps to declare a web filter.  
+
+
+
+

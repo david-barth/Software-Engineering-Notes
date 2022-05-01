@@ -1,0 +1,191 @@
+Theory 2: Introduction to Computer Networking Models
+
+
+
+Introducing the OSI Model: 
+
+---> The OSI model stands for Open Systems Interconnection (Reference) Model. 
+
+	---> It is a conceptual framework showing how data moves between nodes in a network. 
+
+	---> It is not implemented in the real world, so it is only used for reference. 
+
+
+---> The OSI model provides a granular perspective on the complexity of computer-to-computer network communications into 7 layers. 
+
+---> The basic layers are: 
+
+	A. Upper Layers or Host Layers => These higher level layers are dealt with mostly on a software level and handled by the host computer. 
+
+		---> Application-specific functionalities are dealt with here, such as data formatting, encryption, and connection management. 
+
+
+	B. Lower Layers or Media Layers => These lower level layers are dealing with both lower level software and hardware levels and provide network specific functions. 
+
+		---> These functions include routing, addressing, and flow control. 
+
+
+---> The OSI model can be decomposed into the follow 7 layers: 
+
+
+	7. Application Layer (Host) => Concerns netork process to application communication.  
+
+	6. Presentation Layer (Host) => Concerns data representation and encryption. 
+
+	5. Session Layers (Host) => Concerns interhost communication 
+
+		---> Each of these upper layers are condensed into a single "Application" layer in the TCP/IP models. 
+
+		---> The data unit used in this layer is just simply data. 
+
+
+	4. Transport Layer (Host) => The transport layer deals with end-to-end (source <-> destination machine) communication and reliability. 
+
+		---> This layer uses "segments" as the unit of data exchanged. 
+
+
+	3. Network Layer (Media) => The network layer deals with path determination and IP (logical) addressing. 
+
+		---> The data unit used here is the packet. 
+
+
+	2. Data link Layer (Media) => The data link layer deals with MAC and LLC, which are forms of physical addressing. 
+
+		---> Frames are used as the unit of data, which is exchanged at this level. 
+
+
+	1. Physical Layer (Media) => This layer deals with the physical media, signal, and binary transmissions. 
+
+		---> Bits are the unit of data dealt with here. 
+
+
+---> The flow of data from initiation of transmission in source machine to complete reception in the destination machine is as follows: 
+
+	1. The application layer of the source machine initiates transmission over the network. 
+
+	2. The data moves down through the layers of the OSI model in the origin machine right down to the physical layer. 
+
+	3. The transmission is sent through the physical layer to the destinatio machine / node. 
+
+	4. The transmission moves up the OSI layers of the destination machine to its application layer. 
+
+	---> Note: The initial communication starts as high level data and is sequentially converted to lower levels of data (while moving down layers) before getting to the most basic type of data (ie bits).
+
+	---> The communication is reconverted from bits to higher level data as the communication moves up the destination machine layers. 
+
+	---> This rough "flow" process is also what follows in TCP/IP, but with its own caveats according to its own specific model. 
+
+
+ 
+Introducing the TCP/IP model: 
+
+---> The TCP / IP model is a 4 (or 5) layer model which is the foundational model on which much of modern networking, including the internet, is based on. 
+
+---> It consists of 4 primary layers: 
+
+	4. Application  => This layer encapsulates the OSI application, presentation, and session layer functionalities into one unified layer. 
+
+		---> Common protocols => HTTP, SMTP, FTP, etc
+
+
+	3. Transport => This is the same layer as in the OSI model.
+
+		---> Protocols => TCP, UDP
+
+
+	2. Internet => This is effectively the OSI network layer. 
+
+		---> Protocols => IP, ARP 
+
+
+	1. Network Interface => This layer encapsulates the OSI physical and data link layers. 
+
+		---> Protocols => Ethernet, Token Ring
+
+
+	---> Important: Each layer has its own protocols associated with it. 
+
+		---> Since each layer deals with different concerns and complexities in a networking communication, each corresponding set of protocols also deals with a separate set of rules and therefore concerns. 
+
+		---> e.g. HTTP deals with application level security while TCP deals with issues related to the transport layer.  
+
+
+	---> There are many different protocols on the highest level that are built upon a more limited number of lower level protocols. 
+
+		---> HTTP and FTP likely both have a component of TCP in it. 
+
+		---> This is a common engineering concern in which a high number of emergent possibilities come from different combinations of lower level components. 
+
+
+
+Introduction to MAC addresses:
+
+---> A MAC address is the physical address of a network adapter card. 
+
+	---> MAC stands for Media Access Control. 
+
+	---> The network adapter card is what allows a device to connect to a LAN and hence to even larger scale networks by extension. 
+
+	---> Cyber Security Note: Faking a MAC address by changing it on an operating system is called "spoofing" and is a common element in certain cyber security attacks. 
+
+	---> MAC addresses are physically engraved on the network adapter card. 
+
+
+---> The MAC address is associated with the Data Link layer on OSI (layer 2) and the Network Interfac Layer (Layer 1) on the TCP / IP model. 
+
+---> MAC addresses are represented by 6 bytes of information in hexadecimal: 
+
+	---> Example: 00:21:70:6f:06:f2
+
+	---> 00:21:70 (Left Half) => This is the Organizationally Unique Identifier which represents the manufacturer uniquely. 
+
+	---> 6f:06:f2 (Right Half) => These last 3 bytes are assigned sequentially which represent unique network adapter cards. 
+
+
+	---> The 6 byte space of the OUI allows for ~16.7 million unique network adapter card MAC addresses before a new OUI needs to be assigned for a new set of unique MAC addresses. 
+
+		---> This can be assigned to a manufacturer by the IEEE. 
+
+
+
+IP Addresses: 
+
+---> An IP address is a logical address which is used to uniquely identify a device on an IP network. 
+
+	---> The IP address is assigned manually (or automatically) to the OS of a device. 
+
+	---> This stands in contrast to a MAC address, which is a physical address that assigned directly into the hardware itself. 
+
+
+---> The IP address and MAC address are used together to uniquely identify a device on a network. 
+
+---> In terms of models, the IP address is associated one layer above the MAC address. 
+
+	---> This is layer 3 (ie the network layer) for the OSI model. 
+
+	---> This is layer 2 (ie the internet layer) for the TCP/IP model. 
+
+	---> Therefore, an IP address is an important element in path determination when mapping out communication pathways over a network. 
+
+
+---> IP addresses exist in 2 format: IPv4 and IPv6, which are detailed later.
+
+
+
+IP vs MAC Addresses: Communication Usages in Networks
+
+---> IP addresses are used in network-to-network communications via routers. 
+
+	---> Ie this is used for WAN communications over something like the internet.  
+
+	---> This communication is mediated by routers. 
+
+
+---> MAC addresses are used to allow for inter-network communications over a LAN network. 
+
+	---> This means MAC addresses are used to communicate between devices / nodes on the same network via hubs, switches, and routers. 
+
+	---> The main difference is that IP addresses are used for much larger communication scales vs MAC addresses, which reflects their relative levels on the TCP/IP (or OSI) model. 
+
+
+--->  

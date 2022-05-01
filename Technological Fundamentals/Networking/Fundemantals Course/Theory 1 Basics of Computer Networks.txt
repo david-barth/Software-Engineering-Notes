@@ -1,0 +1,114 @@
+Theory 1: A High Level Overview of a Computer Network. 
+
+
+
+Basic Networking Rules: 
+
+---> Reminder: Computers in a network must use the same procedures for sending and receieving data. 
+
+	---> The procedures (See Cisco Exam notes) are called communication protocols, which form the framework of rules needed to allow computer to computer communication to happen in a network. 
+
+
+---> Data must be sent over a network uncorrupted.  In other words, the encoded state of that data must be immutable the moment it is sent over the network via a protocol. 
+
+	---> In certain cases, data can be corrupted partially, but this is not the case with computer networks dealt with in Software Engineering. 
+
+
+---> Finally, computers in a network must be capable of determining the origin and destination of a piece of information. 
+
+	---> Computers in a network are marked by either an IP address or a Mac address in order to designate where they are in a network. 
+
+
+
+Types of Network: 
+
+---> The following represent the different types of network that exist in terms of size scaling: 
+
+
+	A. Personal Area Network (PAN) => This is the smallest network, typically consisting of only a user's personal devices connected to each other. 
+
+	B. Local Area Network (LAN) => LAN is a computer network within a small geographical area. 
+
+		---> The geographical area can be between a single room, a building or multiple buildings. 
+
+		---> User devices in this network are all nodes in this network. 
+
+
+	C. Wireless Local Area Network (WLAN) => This is a LAN in which all nodes are connected wirelessly. 
+
+		---> Common examples include home networks. 
+
+
+	D. Campus Area Network (CAN) => This is a computer network made up of multiple interconnected LANs that cover a small geographical area (e.g. a college campus). 
+
+
+	E. Metropolitan Area Network (MAN) => This is a computer network consisting of nodes that are interconnected within a city. 
+
+		---> This is larger than CAN and is probably made up of mulititudes of CANs and LANs. 
+
+
+	F. Wide Area Network (WAN) => The largest type of network that covers a large geographical distance, typically multiple cities or even countries. 
+
+		---> An example is the internet, which is an extremely large wide area network. 
+
+
+
+Network Architecture: Peer-to-Peer and Client-Server
+
+---> Peer-to-Peer architecture offers a decentralized approach to the structure of a network. 
+
+	---> Each node (computer / device) in the network can act as a client or a server. 
+
+	---> Any node can share or retrieve resources freely, since security measures are often minimally setup. 
+
+	---> Setup for this is typically very simple. 
+
+
+---> Client-Server architecture offers a centralized approach to the structure of a network. 
+
+	---> The role of server and client is well defined in this architecture with client and server nodes never changing their status, unlike a peer-to-peer architecture. 
+
+	---> Servers, such as authentication servers and file servers, each have defined roles and provide centralized control over network resources. 
+
+	---> This allows for a centralized approach to user accounts, security, access administration. 
+
+	---> The only downside to this versus the peer-to-peer architecture is that the client-server architecture is more difficult to setup and requires an IT administrator to setup. 
+
+
+
+
+High Level Focus 1: Computer Networking Protocols. 
+
+---> A network protocol is essentially a framework of rules that act as specifications for how computers communicate with each other over a network. 
+
+---> The rules that define a protocol govern how machines exchange data with each other and therefore enable effective communication. 
+
+---> Protocols are bound to certain port numbers and therefore computers must communicate through these port numbers with the protocol. 
+
+	---> The protocol associated with one port number on one machine can only communicate to the same port on another machine using the same protocol. 
+
+	---> This is what enables effective communication to occur. 
+
+
+---> Network protocols can be divided into physical and logical protocols: 
+
+	A. Physical Protocols => This accounts for the medium of communicate (e.g. wiring / wireless), the connections (ie ports), and the signal (voltage level on a wire). 
+
+	B. Logical Protcols => This concerns software that controls how and when data is sent / recieved to / from computers. 
+
+	
+---> Physical and logical protocols support and rely on each other during the functioning of a network. 
+
+---> Some examples of protocols based on situation: 
+
+	A. Web Communication => HTTP, HTTPS
+
+	B. Email => SMTP, IMAP
+
+	C. File Transfer => FTP
+
+	---> These all form the TCP/IP suite of protocols and are based on the TCP/IP model in computer networking. 
+
+
+
+

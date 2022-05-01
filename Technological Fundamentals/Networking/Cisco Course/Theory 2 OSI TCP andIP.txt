@@ -1,0 +1,93 @@
+Theory 2: OSI and TCP/IP Models. 
+
+---> Networking can be rationalized in terms of 2 main models. 
+
+
+	A. OSI => This stands for the Open Systems Interconnection model. The 7 layers are: 
+
+		1. Application
+
+		2. Presentation
+
+		3. Session
+
+		4. Transport
+
+		5. Network
+
+		6. Data Link
+
+		7. Physical  
+
+		---> Traditionally, the OSI model is considered to be too theoretical to be of practical use. 
+
+
+	B. TCP/IP => This model consists of 5 layers: 
+
+
+		1. Application
+	
+		2. Transport
+
+		3. Network
+
+		4. Data Link
+
+		5. Physical 
+
+		---> In the TCP/IP model the Application layer wraps up the OSI Session, Presentation, and Application layers into a single layer. 
+
+		---> The TCP/IP model is the more practically considered model between the two models defined here. 
+
+		---> The network communication protocols supported by the TCP/IP model are as follows: 
+
+			1. IPv4 =>  Internet Protocol Version 4
+
+			2. TCP => Transmission Control Protocol 
+
+			3. UDP => User Datagram Protocol
+
+			4. IPv6 => Internet Protocol Version 6
+
+			---> These are all on the Transport layer of the TCP/IP.
+
+
+---> Overall, the models represent a separation of concerns among the different levels of complexity that comes computer networking. 
+
+	---> The Application, Network, and Transport layers have direct relevance to software engineering to differing extents.
+
+
+
+---> Reminder: A communication protocol defines a system of rules that allow two or more entities of a communications system to transmit information. 
+
+	---> The protocol essentially defines rules, syntax, semantics, and synchronization of communication when communication is done over a network. 
+
+	---> A protocol also defines possible erorr recovery methods. 
+
+
+
+TCP/IP: Bits, Frames, Packets, and Segments. 
+
+---> The forms that data is transmitted in can also be considered in terms of the layers of the TCP/IP model. 
+
+---> The following forms of data are considered at each layer: 
+
+
+	A. Application => Applications 
+
+	B. Transport => Segments
+
+	C. Network => Packets
+
+	D. Data Link => Frames -> A frame represents a "frame" of bits being switched between two ports in a switch. 
+
+	E. Physical => Bits -> On the physical layer, electrical binary states are represented by 1/0 states. This is the simplest representation.
+
+
+---> Packets and segments will be defined later in more theoretical detail. 
+
+---> Important => Issues usually propagate from the top level of the Application down to the lower levels. 
+
+	---> Ie the Application layer is what can cause the most problems for the lower levels of the network. 
+
+

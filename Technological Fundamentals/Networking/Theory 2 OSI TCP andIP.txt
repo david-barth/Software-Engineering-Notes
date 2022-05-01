@@ -1,2 +1,0 @@
-Theory 2: OSI and TCP/IP Models. 
-
