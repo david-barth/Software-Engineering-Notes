@@ -1,0 +1,111 @@
+Using Interceptors in SpringBoot. 
+
+
+Overall Introduction: The Interceptor Design Pattern. 
+
+---> The Interceptor design pattern is used to offer a way to change or augment the processing cycle of a software system. 
+
+	---> The way this is achieved is by creating a design that allows some element of the usual cycle to be intercepted. 
+
+	---> The intercepted element is changed in some way in order to provide the stated augmentation to the software processing cycle. 
+
+	---> This produces an alternative route of processing that gives the augmentation. 
+
+
+---> The important aspects of this design pattern are that: 
+
+	A. The change in the process is transparent => The rest of the software system must not know about the change that occurs via the Interceptor pattern. 
+
+	B. The change happens automatically under its defined conditions in the software processing flow. 
+
+
+
+---> The key implementation details are: 
+
+	---> A predefined interface that is  defined for extension for a particular situation in which the interceptor is needed. 
+
+	---> A dispatching mechanism is used in which the interceptor is registered into a context. 
+
+		---> This registration can be dynamic at runtime or static via configuration before / at compile time. 
+
+
+	---> Context objects needed to store the interceptors and to allow access into the softwares internal state. 
+
+
+ 
+Spring Implementation: HandlerInterceptor
+
+---> In the context of Spring / SpringBoot and MVC, interceptors are used to intercept client requests and do some pre and post-processing of them for purposes like authentication. 
+
+	---> After pre-processing, the interceptor can pass the request object over to controller handler methods. 
+
+
+---> 2 ways exist to implement interceptors in Spring: 
+
+	1. Interface => org.springframework.web.servlet.HandlerInterceptor 
+
+
+	2. Abstract Class => org.springframework.servlet.handler.HanderInterceptorAdapter
+
+
+
+---> The theory of the handler interceptor is as follows: 
+
+	---> Reminder: In Spring MVC, the DispatcherServlet acts as the front controller by receiving all incoming HTTP requests and processing them.
+
+	---> In order to pass requests to their proper components / controllers, handler mappings are needed, which maps a method to a URL. 
+
+		---> HandlerMapping is an interface that defines a mapping between request and handler objects. 
+
+	
+	---> An example of a HandlerMapping implementation is BeanNameUrlHandlerMapping, which maps request URLs to beans with the same name. 
+	
+		---> This HandlerMapping implementation can also work with pattern based URL matching. 
+
+	---> Another example of a MapperHandling implementation is the SimpleUrlMapping, which allows for direct and declarative mappings between bean instances or names and URLs. 
+	
+	---> The Handler mapping therefore plays an essential role in the use of a handler interceptor. 
+
+		---> In order to invoke the method a URL is mapped onto (e.g. a controller method), the DispatcherServlet uses a class called HandlerAdapter to invoke said method. 
+
+		---> The Handler interceptor acts in between the DispatcherServlet and the HandlerMapping mapping between request URL and method. 
+
+		---> In other words a handler interceptor can intercept messages before the HandlerAdapter is used to invoke the mapped method, after the method is invoked (but before view rendering), or after view rendering. 
+
+			---> See the next section in notes. 
+
+
+	---> The overall flow between classes is: 
+
+	Request => DispatcherServlet -> HandlerMapper -> Handler Adapter -> Interceptor (pre-handle) -> Controller (+layers) -> Interceptor (postHandle) -> Model -> DispatcherServlet -> View Resolver -> DispatcherServlet -> View -> Interceptor (afterCompletion) -> DispatcherServlet => Response
+	
+	---> Therefore, the HandlerInterceptor must work with the HandlerMapping in order to properly 
+
+
+
+
+---> The abstract methods that need to be handled are: 
+
+
+	1. preHandle() => This method is called before the handler method is invoked. 
+
+		---> The return type is boolean: 
+
+			A. false => Request is stopped at the interceptor preHandle() method. 
+
+			B. True => Request is allowed to continue in the execution chain. 
+
+
+	2. postHandle() => This method is called after the handler method is called, but before the view is rendered. 
+
+	3. afterCompletion() => This method is called after the view is rendered. 
+
+	---> All of these interceptor based method are used for cross-cutting concerns or for issues relating to authentication. 
+ 
+
+
+
+Using a HandlerInterceptor to intercept based on Paths: 
+
+---> 
+

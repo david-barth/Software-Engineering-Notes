@@ -188,4 +188,48 @@ IP vs MAC Addresses: Communication Usages in Networks
 	---> The main difference is that IP addresses are used for much larger communication scales vs MAC addresses, which reflects their relative levels on the TCP/IP (or OSI) model. 
 
 
---->  
+
+Duplex Communication: 
+
+---> In network communication, there are 2 types of communication modes between machines: 
+
+	A. Half Duplex mode => This is when a machine can send / receieve data, but not at the same time. 
+
+	B. Full Duplex Mode => This is when a machine can send / receive data at the same time. 
+
+	---> This concept is relevant for the hardware level of networking. 
+
+
+Network Transmission Types: 
+
+---> A network transmission type refers to the way in which a machine transmits to other machines. 
+
+---> There are 3 primary transmission types: 
+
+	A. Unicast => The machine transmits to only 1 other machine in the network, in a 1-1 fashion. 
+
+	B. Multicast => A machine transmits to multiple machines in the network, but not ALL machines in a 1-many fashion. 
+	
+		---> All client machines that recieve the transmission are part of the multicast group in the network. 
+
+
+	C. Broadcast => A machine transmits to all other machines in the network, in a 1-all fashion. 
+
+		---> This is especially common in LAN. 
+
+
+Introduction to Ethernet: 
+
+---> Ethernet is a popilar family of standards that define physical and logical aspects of the world's most common type of LAN. 
+
+---> Ethernet also forms the backbone for the standard communications protocol used for LANs. 
+
+---> Ethernet consists of a physical component and a logical component: 
+
+	A. Physical => This refers ot the cabling, connectors, and equipment used to implement Ethernet. 
+
+	B. Logical => This refers to the network access method implemented with Ethernet called Carrier Sense Multiple Access (CSMA). 
+
+
+
+

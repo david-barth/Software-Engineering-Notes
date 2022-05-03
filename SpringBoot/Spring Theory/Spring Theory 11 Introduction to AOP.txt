@@ -259,7 +259,7 @@ Pointcut Declarations in AOP:
 ---> An example is given as follows: 
 
 	@Pointcut("execution(public void someMethod())")
-	private void forSomeMethod(); 
+	private void forSomeMethod() {}; 
 
 	---> The @Pointcut annotation is used to specify the pointcut expression as a declaration, which can be reused. 
 

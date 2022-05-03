@@ -1,0 +1,137 @@
+Theory 3: Introduction to Network Topologies and Networking Devices. 
+
+
+Physical vs Logical Topologies: 
+
+---> A network topology is divided into 2 components: a physical topology and a logical topology. 
+
+
+	A. Physical Topology => This refers to the placement of network devices and how they are physically connected. 
+
+	B. Logical Topologies => This refers to how data flows throughout a network. 
+
+		---> Important concepts and standards here include: 
+
+			i) 802.3, Ethernet, and CSMA/CD
+
+		       ii) 802.11, Wi-Fi, and CSMA/CA
+
+
+---> Both wired and wireless topologies exist in networking.  Some common patterns are: 
+
+
+	A. Mesh (Wired and Wireless) => This involves every device essentially being connected to every other device in a net-like pattern. 
+
+		---> This provides high resilience in the network and therefore good fault tolerance. 
+
+
+	---> Other types of topologies exist in both categories, but are out of scope for the current set of notes. 
+
+
+
+Network Interface Card (NIC): 
+
+---> The network interface card is a card that is installed on a network device and it provides the physical and wireless (electrical, light, radio frequency) connections needed to interface with a network. 
+
+	---> Essentially, the NIC "adapts" the device to the network allowing for it to connect to the network. 
+
+
+---> An NIC can be an expansion card, a USB device, or built directly into a motherboard. 
+
+	---> In modern devices, it is quite common for there to be multiple NICs. 
+
+	---> Typically, at least 2 are present: a wireless NIC and a wired NIC. 
+
+	---> In enterprise servers, there are multiple NICs. 
+
+		---> Important => Since a MAC address is burnt onto an NIC and is unique to that NIC, a server with multiple NICs can have multiple MAC addresses and therefore IP addresses. 
+
+
+Switches and Hubs: 
+
+---> Hubs and swtiches connect devices together via wiring in a wired network. 
+
+---> Both devices are types of "repeaters" in that they take in a signal and amplify it before sending it off to other machines in the network. 
+
+---> The difference lies in their "intelligence": 
+
+	A. Hub => This is an OSI level 1 device and is not intelligent. 
+
+		---> A signal is broadcasted to all other devices connected to a hub. 
+
+		---> The result is a large collision domain in which data collection are much more likely to occur. 
+
+		---> The hub is also less secure than a switch from a security perspective as the "attack surface" is much larger. 
+
+	
+	B. Switch => This is an OSI level 2 device and is intelligent compared to a hub. 
+
+		---> A switch connects devices together, but is able to send information only to one destination port from a source. 
+
+		---> The switch is able to memorize MAC addresses via a Content Addressable Memory (CAM) table and this allows it to pay attention to MAC addresses during network communications. 
+
+		---> The result of this selectivity is that traffic goes into one port and is repeated only to the intended destination port. 
+
+		---> It's attack surface and collision domain are therefore much smaller than a Hub, making this the modern standard in wired network infrastructure. 
+
+
+Wireless Access Points: 
+
+---> A Wireless Access Point (WAP) is a device that bridges a wired network to a wireless network. 
+
+	---> This is yet another example of a physical network topological element that form a central pattern in network topologies. 
+
+	---> The WAP is connected to a switch and is capable of transmitting wired signals from the switch to wireless devices. 
+
+
+---> Note: A WAP is not a router. 
+
+---> Additionally, a WAP is an OSI layer 2 data link device.  
+
+
+
+Routers: 
+
+---> A router is a device that is used to connect different networks together, allowing for LANs to bridge to WANs and other larger scale networks. 
+
+	---> The router is OSI layer 3 in that it is even more intelligent than switches and is increasingly closer to the "logical" side of networking, going up the OSI model. 
+
+	---> A router uses intelligent decisions, determined by routing protocols, to transmit a packet of information from one network to another.  
+
+	---> The router uses IP addresses with its routing protocols whereas a switch uses MAC addresses to transfer information to its destination. 
+
+
+---> A router is ultimately going to break up the broadcast domain (ie the range of devices a node in a network can broadcast to) of a device in a network. 
+
+---> Typically a signal will go through a switch and then a series of routers before finally arriving at its destination network. 
+
+---> A router will actually send information to an intended source whereas a WAP simply converts a signal to a wireless signal for consumption by other devices in the same network. 
+
+
+
+
+Firewall: 
+
+---> A firewall is either a network based (hardware) or host based (software) cyber security measure that is used to protect internal networks from external traffic (e.g. from the internet or other networks). 
+
+---> A firewall filters data packets based on a set of configured rules in order to protect a network aainst malicious external activity. 
+
+---> Typically an internal network can have several firewalls at different points in order to provide a layered defense against attacks. 
+
+---> There are 3 different generations of firewalls based on sophistication: 
+
+	1. Packet filtering firewalls => These are 1st generation firewalls that filter out packets of information based on simple rules. 
+
+		---> Rules can be based on concepts such as IP addresses, networking protocol used, etc. 
+
+		---> These basic types of firewalls allow for blacklisting (disallowing) and whitelisting (allowing) of certain communication types. 
+
+
+	2. Circuit-level firewalls => These are 2nd generation firewalls that filter based on valid / invalid TCP sessions. 
+
+	3. Application Layer firewalls => These refer to 3rd generation firewalls that operate on the 7th layer of the OSI model, on the logical level of applications. 
+
+
+
+
+ 
