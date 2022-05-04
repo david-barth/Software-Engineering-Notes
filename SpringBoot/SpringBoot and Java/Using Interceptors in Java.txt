@@ -105,7 +105,25 @@ Spring Implementation: HandlerInterceptor
 
 
 
-Using a HandlerInterceptor to intercept based on Paths: 
+---> The interceptor config can be setup as follows: 
+
+
+public class WebMVCConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new AdminAuthInterceptor()).addPathPatterns("/admin/**");
+    }
+
+}
+
+---> addInterceptor() can also allow for path patterns to be added in order to allow only interception of requests that are mapped to a certain URL or URL pattern. 
+
+
+
+
+Use Case Exploration:  Using Interceptors for Authentication. 
+
 
 ---> 
 

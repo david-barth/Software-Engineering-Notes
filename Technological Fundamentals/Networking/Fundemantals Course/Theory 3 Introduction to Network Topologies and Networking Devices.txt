@@ -133,5 +133,15 @@ Firewall:
 
 
 
+DHCP Servers: 
 
- 
+---> DHCP stands for Dynamic Host Configuration Protocol. 
+
+---> A DHCP server is a server that uses DHCP to automatically assign IP addresses to different hosts. 
+
+	---> This provides an alternative to static IP addressing which is when an IP address is assigned manually. 
+
+
+---> In large networks of 200 nodes or more,  a DHCP server allows for a scalable solution to assigning IP addresses. 
+
+    

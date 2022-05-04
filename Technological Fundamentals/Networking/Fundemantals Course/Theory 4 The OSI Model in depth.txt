@@ -1,0 +1,235 @@
+Theory 4: The OSI Model in-depth. 
+
+
+The Application Layer (7): 
+
+---> This is the layer of the OSI model which resides on the host machine. 
+
+---> This layer deals with level of user interaction with the computer. 
+
+---> The application layer acts as an interface between an application and end-user protocols. 
+
+---> The application layer provides this interface to communicate with the network (e.g. via Outlook or a web browser). 
+
+---> However, applications themselves do not reside in the application layer, but instead applications interface with application layer protocols. 
+
+	---> Applications such as Outlook, Chrome, etc simply interface with application layer protocols and this interaction between application and protocol is the application layer. 
+ 
+
+---> Example of application layer protocols include: 
+
+	A. Email => SMTP
+
+	B. Web Browsers => HTTP, HTTPS
+	
+	C. Remote Access => SSH  
+
+
+
+The Presentation Layer (6): 
+
+---> Data moves up the OSI network when a communication is being sent from a client device to a server device, with respect to the server layers. 
+
+	---> Conversely, data moves down when the server is returning a response communication.
+
+
+---> The presentation layer of the OSI model deals with 3 major aspects with respect to the data that flows through it: 
+
+
+	A. Character code conversion / data representation => This deals with the conversion of data between readable forms (character) and unreadable forms (e.g. binary) depending on which direction the data is moving through the layer (up / down). 
+
+	B. Data Compression => This deals with changing the format of data so that it is more efficient in terms of space, when it is read.
+
+	C. Data encryption => This deals with changing the form of data via encryption / decryption algorithms for the sake of security purposes. 
+
+
+---> The presentation layer is also where conversions between bytes / bit binary representations and readable representations occur.  Examples are: 
+
+
+	A. Bits / Bytes <-> HTML, XML => For web browser interfaces to a network. 
+
+	B. Bits / Bytes <-> JPEG, GIF, PNG => Graphic files like images
+
+	C. Bits / Bytes <-> TLS, SSL => Encryption files
+
+	---> These interconversions occur in the presentation layer, according to the OSI model. 
+
+
+The Session Layer (5): 
+
+---> Like the Application and Presentation layers, the Session layer is also resident in the host machine. 
+
+---> This layer deals with settin up, managing, and tearing down sessions between network devices.
+
+	---> A session can roughly be thought of something that represents an active connection between client and server with regards to a specific application, with its own application specific data. 
+
+	---> The session contains the data associated with the client - application interactions for a specific period of time. 
+
+
+---> The Session layer therefore contains the necessary infrastructure to manage session lifecycle + state and to ensure data from different application sessions are kept separate. 
+
+---> In effect, the session layer helps to coordinate different communications between systems with different applications in a network. 
+
+---> The session layer allows for 3 different methods of communication between devices: 
+
+	A. Simplex => This is a one-way communication, such as only listening to a radio without ending back a response. 
+	
+		---> This also occurs for computing network contexts. 
+
+	B. Half Duplex
+
+	C. Full Duplex
+
+
+The Transport Layer (4): 
+
+---> The transprt layer deals with the establishment of end-to-end connections and the reliable transmission of data. 
+
+---> At this point, complete "data" that exists in the 3 above layers exists in "segments". 
+
+	---> Segments can be thought of as slices or bundles of a complete resource transmission, such as an HTML page. 
+
+	---> The resource is disassembled into segments to be transmitted, in sequence, over a network in an error free fashion. 
+
+	---> Upon reception at the destination machine, the segments are reassembled in the transport layer there. 
+
+
+---> Two protocols exist in the transport layer: 
+
+	A. TCP => Transport Control Protocol
+
+		---> This establishes connection-oriented network communication. 
+
+
+	B. UDP => User Datagram Protocol
+
+		---> This establishes connectionless network communication. 
+
+	---> The primary difference between TCP and UDP is that TCP uses a 3-way handshake mechanism to ensure to the client that the communication has been sent to and recieved by the server.
+
+		---> UDP does no such thing.  These differences will be explored in later theory notes. 
+
+
+---> In addition to segment creation and transmission, the transport layer also deals with data flow controls to ensure reliable data transmission.  There are 2 main measures: 
+
+
+	A. Buffering => The sending system stores data segments in-memory in a queue-like fashion until the receiving device is ready to accept further segments. 
+
+	B. Windowing => The sending and recieving system negotiate an optimal window / size of data segments to be sent for optimal performance. 
+
+
+
+The Network Layer (3) 
+
+---> The network layer is also called the "routing" layer because it provides 2 primary functions: 
+
+	A. Logical Addressing => (Dis)assigning IP addresses to data that go through it. 
+
+	B. Routing Services => The routing layer uses IP addresses on "packets" of information in order to properly send the data packets to their destination. 
+
+		---> IP (Internet Protocol) is used as the primary network protocol for internet manifestations of this layer. 
+
+	
+---> In this layer, data exists in the form of packets, which are effectively segments that are tagged with source and destination IP addresses. 
+
+	---> Segments arriving from the transport layer are assigned source + destination IP addresses. 
+
+	---> Incoming packets from the data link layer have the IP addresses removed before being sent to the transport layer as segments. 
+
+
+---> IP addresses can use either IPv4 or IPv6 formats. 
+
+---> On the nature of packets, 2 types of packets exist in the Network layer: 
+
+	A. Data Packets => These are the packets of data related to resources that are being routed to their destinations by routers. 
+
+		---> These packets contain IPv4 and IPv6 information. 
+
+
+	B. Route-Update Packets	=> These are packets shared with neighboring routers that contain router information for optimal path determination.  These are used according to the routing protocol being used. 
+
+		---> The routing protocols can include RIP, OSPF, and more. 
+
+
+---> Routers and Multi-layer switches make up the main physical devices being used in this layer. 
+
+	---> Important: This is the highest layer of the media layers. 
+
+	---> The media layers exist outside of the host machine whereas the host layers exist inside of the host machine. 
+
+
+ 
+Data-Link Layer: 
+
+---> The data-link layer is also known as the "Switching" layer because the primary component are switches. 
+
+---> In this layer, messages are delivered to the proper device over a LAN, using MAC addresses. 
+
+	---> Important => The data-link layer is only concerned with LAN (ie close proximity) and not WAN, which is what the network layer focuses on. 
+
+
+---> The data-link layer translates messages from the physical layer (bits -> frames) and packages data into frames for the physical layer (packets -> frames) from the network layer. 
+
+
+---> The data-link layer has 2 primary components: 
+
+	A. Logical Link Control (LLC) Layer => This sub-layer provides error control and data flow control functionalities. 
+
+		---> The LLC layer detects and corrects corrupted data frames while also limiting the amount of data sent to other devices in the LAN so that they are not overwhelemed. 
+
+		---> This bears similarities to the error and data flow control in the transport layer, but here the scope is limited to LAN whereas the transport layer scope applies to network sizes larger than LAN over inter-network device communications. 
+
+	
+	B. Media Access Control (MAC) Layer => This sub-layer deals with the physical addressing, media access, and logical topology. 
+
+		---> The MAC layer uses MAC addresses to determine the physical addressing needed for sending data over the LAN to their intended destinations. 
+
+		---> The logical topology used today is Ethernet.  
+
+		---> Closely associated with this Carrier Sense Multiple Access (CSMA) in both collision detection (CSMA/CD)  and collision avoidance (CSMA/CA). 
+
+	
+---> The physical layer will be skipped because this is out of scope for the current set of notes. 
+
+
+
+OSI Model Data Encapsulation and De-Encapsulation:  
+ 
+---> Data is transformed into several different forms as it moves between the different layers of the OSI model.  
+
+---> The following is a representation of how data is transformed between layers: 
+
+
+	A. Application + Presentation + Session => Data
+
+	B. Transport => Data + Segment Header
+
+	C. Network => Data + Segment Header + Packet Header 
+
+	D. Data Link => Frame Trailer + Data + Segment Header + Packet Header + Frame Header
+
+
+	---> The headers each are portions of data that contain the necessary information corresponding to the layer that adds it. 
+
+		---> e.g. the packet header contains source + destination IP addresses for routing purposes.  
+
+
+	---> As data moves down the layers of a source machine to be sent, headers are added to the data and so the data is said to be encapsulated. 
+
+	---> As data moves up the layers of a destination machine, the headers are removed and so the the data is de-encapsulated. 
+
+	---> The headers each contain important information relating to how the data is processed in its particular layer. 
+
+
+---> Important: An OSI model layer representation occurs per device in a network according to the limits of that devices functionality: 
+
+	A. Switch => Contains only data-link and physical layers
+
+	B. Server and computers => Contain all 7 layers. 
+
+	C. Router => Contains all media layers. 
+
+	---> Data flow through a network must be considering the model (OSI / TCP/IP) in order to understand a detailed view of the data flow through a single communication. 
+
+
+
