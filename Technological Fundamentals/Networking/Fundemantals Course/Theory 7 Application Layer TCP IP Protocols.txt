@@ -1,0 +1,281 @@
+Theory 7: Application Layer Protocols in the TCP / IP Model. 
+
+
+Management Protocols: 
+
+---> This represents a high level overview of common management protocols in the application layer of the TCP/IP model: 
+
+	1. Domain Name System (DNS): 
+
+		---> DNS is the protocol responsible for resolving a domain name to its corresponding IP address. 
+
+		---> DNS uses port 53 and it uses UDP as the transport layer protocol. 
+
+		---> The main purpose for DNS involves allowing for a particular domain name (ie a string) to be mapped to its corresponding IP address. 
+
+		---> This is done in an automated fashion (once configured) and the mapping will even occur if the host provider changes location and thus changes IP address. 
+
+		---> More on this protocol will be explored later. 
+
+
+	2. Dynamic Host Configuration Protocol (DHCP)
+
+		---> DHCP is a protocol that is responsible for automatically assigning IP address configurations to devices on a network. 
+
+		---> An IP address configuration consists of the following: 
+
+			1. IP address
+
+			2. Subnet Mask 
+
+			3. Default Gateway
+
+			4. DNS Server
+
+		
+		---> All of these configuration data are given in what is called a DHCP scope, which is used for the dynamic assigning of an IP address. 
+
+			---> All these concepts will be explored in later notes. 
+
+
+		---> DHCP uses ports 67 and 68 by default and its underlying transport layer protocol is UDP. 
+
+
+	3.  Network Time Protocol (NTP) 
+
+		---> NTP is a protocol that synchronizes the time on a system OS with a network time server. 
+
+		---> By default, it uses port 123 and it is a connection oriented protocol that uses TCP and its 3-way handshake in order to synchronize with the network time server. 
+
+		---> NTP is important for time-dependent network applications and protocols. 
+
+			---> E.g. Network access might be configured to only accept specific times or timezones, which can leave a system unable to access the network if its own time is incorrectly configured. 
+
+			---> Or authentication fails often if devices times are not properly synchronized between each other. 
+
+
+	4.  Simple Network Management Protocol (SNMP) 
+
+		---> SNMP is a protocol that is used to monitor and manage network devices. 
+
+			---> Usually this is done by setting up a central station through which devices can communicate various pieces of information regarding their status. 
+
+			---> The central station and SNMP allows network admins to monitor and manage network deivces and traffic through a centralized point. 
+
+
+		---> Common pieces of information that are monitored relate to a device's state: 
+
+			A. Memory
+
+			B. CPU
+
+			C. Bandwidth
+
+		---> SNMP uses TCP port 161 by default and requires connections with particular devices on a steady basis in order to remain up to date with various system states. 
+
+
+	5. LightWeight Directory Access Protocol (LDAP)
+
+		---> This protocol provides a means to access and query directory service systems. 
+
+			---> E.g. when a user logs into a windows machine and the machine needs to send these login credentials over a network for authentication, then LDAP is being used underneath the hood. 
+
+		
+		---> LDAP exists for Microsoft Active Directory-based systems or Unix/Linux systems. 
+
+		---> The unsecured version of LDAP uses port 389 and TCP. 
+
+		---> LDAP Secure (LDAPS) uses port 636 and TCP, but it also uses SSL to encrypt LDAP network traffic. 
+
+	
+	6. Server Message Block (SMB) 
+
+		---> SMB is a protocol that allows for systems to share their files and printers with other systems within the context of a Microsoft environment. 
+
+		---> This uses TCP port 445 by default. 
+
+		---> Compared to LDAP, which allows for other systems to be queried over a network, SMB allows resources to be shared between different devices. 
+
+			---> Again only applies to Windows environments. 
+
+
+
+Remote Communication Protocols: 
+
+---> This is also a high level overview of several important remote communication protocols in the application layer. 
+
+	1. Telnet
+
+		---> Telnet is a protocol that is used to connect to form a terminal connection to a remote host in an insecure fashion. 
+
+			---> Dats is transferred ovr telnet in clear text and not in an encrypted form. 
+
+			---> This is the reason why telnet is a legacy protocol and is replaced by SSH. 
+
+
+		---> Telnet is mostly used in a modern context to connect to network managed devices such as routers via a serial connection. 
+
+		---> Telnet uses TCP port 23 by default. 
+
+
+	2. Secure Shell (SSH)
+
+		---> SSH is a cryptographic protocol that is used to securely connect to a remote host via terminal. 
+
+			---> It is available on Linux, Unix, Windows, and Mac machines. 
+
+
+		---> Public Key Infrastructure (PKI) is used to encrypt the data that is sent over SSH. 
+
+			---> PKI encrypts the data and uses a key to decrypt the data. 
+
+
+		---> This is considered the secure replacement for Telnet and runs on TCP port 22. 
+
+
+
+	3.  Remote Desktop Protocol (RDP)
+
+		---> This is a Microsoft specific protocol that allows users to remotely connect to, view, and control a remote computer from another Windows machine.
+
+		---> Unlike SSH or Telnet, this allows for a connection that allows for GUI control to take place. 
+
+		---> This is found on all Microsoft Operating Systems and is used on TCP port 3389 by default. 
+
+
+
+Application Layer File Transfer Protocols: 
+
+---> The main usage of file transfer protocols on the application layer is File Transfer Protocol (FTP). 
+
+---> FTP allows for files to be transferred over a network from one system to another. 
+
+---> More specifically, FTP can allow a user to authenticate with a username and a password before allowing for file transfer to take place. 
+
+	---> Once authenticated a user can use FTP, a fully-featured functionality protocol, to view, list, add, and delete files / folders, among many other commands. 
+
+	---> FTP can be used via an FTP client or by commandline. 
+
+
+---> FTP uses 2 TCP ports: 20 (for data transfer) and 21 (for commands / control). 
+
+---> Note: FTP is a legacy protocol because data in transit is sent in clear text rather than in an encrypted form. 
+
+	---> The more modern approach to this is Secure FTP, which uses SSH to encrypt files (using a PKI) in order to securely transfer files over a network. 
+
+	---> Therefore, SFTP is built on SSH and uses the same port as SSH (TCP port 22). 
+
+
+---> Trivial FTP is considered a barebones version of FTP that has the following qualities to it: 
+
+	A. Authentication is not supported. 
+
+	B. Directory navigation is not supported. 
+
+	C. The exact path / file location and name is required to get the file. 
+
+	---> All of these qualities make TFTP an ideal choice for simple downloads and to transfer software images for routers + switches during upgrades. 
+
+	---> TFTP thus uses UDP port 69 since it is a lightweight version of FTP. 
+
+
+
+Application Layer Email Protocols: 
+
+---> The following covers a high level overview of 3 popular application layer email protocols: 
+
+
+	1. Simple Mail transfer Protocol (SMTP) 
+
+		---> SMTP is an email protocol used to deliver emails from an email client (e.g. Outlook) to a destination email server. 
+
+			---> Important: The chain of event is => Sender -> Email server -> Receiver
+
+			---> SMTP only handles the transition of email from sender to email server, where the email is stored in a repository-like setup. 
+
+			---> The email server only sends the email when the recipient is ready and SMTP is not used here. 
+
+
+		---> SMTP can be configured to use encryption (SSL / TLS) and authentication in order to enforce best practice measures when email is being sent over the network via this chain of events. 
+
+		---> SMTP uses TCP port 25 by default (used in plain text transmission). 
+
+
+	2. Post Office Protocol Version 3 (POP3) 
+
+		---> POP3 is an email protocol that is used to retrieve emails from an email server in order to send the email to a recipient. 
+
+		---> POP3 can be configured to use SSL / TSL encrypted connections amd authentication if desired: 
+
+			---> Note: Both SMTP and POP3 will use different ports for ingoing and outgoing transmissions (port 995 -> POP3 and port 465 -> SMTP) when encryption is used for connections. 
+
+			---> Otherwise, by default, the port number here is TCP 110. 
+
+			---> Note: It is also possible for emails to be preserved on the email server once the emails have been sent off to their recipient, but this requires enabling. 
+
+
+	3. Internet Message Access Protocol (IMAP) 
+
+		---> IMAP allows users to access emails on email servers and either read the email on the server or download the email to the client machine (as in the case of POP3). 
+
+			---> This is a major distinguishing difference to POP3 which sends the email to the client machine and allows the client to download the email. 
+
+			---> Allowing the email to be read from the server enables IMAP to synchronize email presentation across multiple client devices for the same email account.  
+
+			---> This makes IMAP an ideal candidate for allowing email to be synched across multiple devices. 
+
+		
+		---> Web-based email clients such as Gmail use IMAP. 
+
+		---> Other similar protocols (such as Microsoft Exchange) also exist. 
+
+		---> IMAP uses TCP port 143 by default. 
+
+
+
+Application Layer Web Browser Protocols: 
+
+---> This talks about HTTP and HTTPS as a high level overview: 
+
+	
+	1. Hypertext Transfer Protocol (HTTP): 
+
+		---> HTTP is the protocol that provides browsing services for the internet. 
+
+		---> IT allows for the content of a web page to be retrieved from a web server. 
+
+		---> Requests are made in HTML and returned to the browser in that format (for static web sites). 
+
+			---> However, the content type can be changed with the use of Headers. 
+
+			---> Other content types can also be JSON, XML, and so on. 
+
+
+		---> In transit, data is sent in plain text, which is unencrypted.  
+
+		---> The default port is TCP port 80. 
+
+
+	2. HTTPS: 
+
+		---> HTTPS is HTTP that is used over Secure Socket Layer (SSL) or Transport Layer Security (TLS). 
+
+			---> Both forms of encryption involve the use of PKI to encrypt HTTP content so that it is not sent over plain text. 
+
+			---> TLS and SSL are both topics that will be covered in more depth later. 
+
+			---> The main idea is that a certifcate is produced for one client, which contains a public key that is used to decrypt information once it is no longer in transit.                                
+		
+
+		---> HTTPS uses TCP port 443 by default. 
+
+
+                      
+
+	
+
+
+
+		
+
+																																																																																																																										

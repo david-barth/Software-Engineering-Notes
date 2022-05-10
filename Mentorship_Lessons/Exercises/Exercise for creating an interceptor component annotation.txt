@@ -1,0 +1,82 @@
+Exercise: Planning for creating an @Interceptor Component. 
+
+
+Analysis of other Component Annotations: 
+
+---> This is an approach that is based off of @Component, @Service, @Repository, etc. 
+
+	---> Many of the more specialized stereotype components can be created with @Component being being on the annotation definition. 
+
+	---> Using an annotation with @Component with the annotation definition allows that annotation to be applied to the annotation definition. 
+
+
+---> Therefore, it is helpful to use the @Componnet annotation when creating a new stereotype annotation. 
+
+	---> An example is shown below with @Controller: 
+
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@Documented
+	@Controller
+	@ResponseBody
+	public @interface RestController {
+
+	
+		@AliasFor(annotation = Controller.class)
+		String value() default "";
+
+	}
+
+	---> @Component will allow for the annotated class to be detected as a bean during component scanning. 
+
+
+
+
+
+Consumption Strategy: 
+
+---> Create an annotation @Interceptor that makes it possible to configure the interceptor without manually creating beans, while at the same time allowing for more fine-tuned configuration.
+
+
+	---> @Interceptor needs to allow for the interceptor to be created without needing manually configure a bean. 
+
+	---> An example use of the annotation includes: 
+
+		@Interceptor(
+        		include={"/admin/**", "/secret/**"},
+        		exclude={"/secret/notReally"})  
+
+
+	---> Inlcude and exclude need to be String[] and they need to be used with path matching and path exclusion for the configuration step of interceptors, when they are added to the registry. 
+
+	---> Classes marked with @Interceptor should automatically be considered an interceptor class, with the class ultimately being added to the interceptor registry that is present in Spring. 
+
+	---> These classes are added into the Spring context during the startup of the app and creation of the context. 
+
+		---> Therefore, an explicit interceptor class is not needed to consume the annotation at runtime. 
+
+
+	---> The likely way involves accessing all @Interceptor annotated beans at runtime and using their "inclusion" and "exclusion" path values in the path matcher / exclusion parts of the interceptor registry. 
+
+
+
+
+---> The most important point to ask: Where do the @Interceptor values (include and exclude) need to be consumed? 
+
+	---> If the beans marked with @Interceptor are created before the Config file is created, then these can be retrieved from the application context as follows: 
+
+		applicationContext.getBeansWithAnnotation(Foo.class);
+
+
+	---> It can be assumed that all beans are instantiated before config files are used within the bean lifecycle.  As a reminder, this is the bean lifecycle in Spring: 
+
+
+		---> Link for bean lifecycle: https://springframework.guru/wp-content/uploads/2019/08/lifecycle.png
+
+
+	---> To use the application context: 
+
+	
+
+
+ 

@@ -1,0 +1,203 @@
+Theory 6: More on TCP/IP Model Protocols. 
+
+
+Understanding Protocols, Ports, and Sockets. 
+
+---> Reminder: A network protocol is a framework of rules that govern how machines exchange data and enable effective communication. 
+
+	---> On an OS, a protocol runs as process or service. 
+
+
+---> Ports: 
+
+	---> A logical port is a logical construct that binds a unique port number to a protocol process or service. 
+
+	---> Reminder: A common theme in networking is that the higher layers (ie host layers) are represented by logical constructs. 
+	
+		---> The lower media layers start being represented by hardware / physical constructs. 
+
+
+	---> Therefore, a logical port is different from a physical port, which is used with wiring an dhardware devices such as switches. 
+
+	---> Since a port binds a number to an OS process / service, the port represents a specific protocol or service that is running on the computer. 
+
+		---> E.g. HTTP is usually associated to port 80
+
+
+	---> A logical port is represented by a section of RAM memory within a computer. 
+
+
+---> Sockets => Sockets are a combination of a port and an IP address: 192.168.1.1:80. 
+
+	---> In high level languages, sockets can usually be represented by a class. 
+
+
+---> Computers reequire ports because of network application multi-tasking: 
+
+	---> Port numbers are used to differentiate the network protocols and services that are running on a host at 1 IP address. 
+
+	---> Note: Network protocols are specifications that are implemented by different server programs.  Examples can include: 
+
+		A. FTP servers
+
+		B. DHCP servers
+
+		C. HTTP servers
+
+		---> All of these servers require different port numbers and thus memory locations in order to properly allow a request to be directed to its proper server. 
+
+		---> The socket therefore represents an abstraction for a connection point by first connecting to the IP address of the host (layers 1-3 + 4) and then to the logical port number in-memory in order to find the specific server program that implements the protocol that needs to process the communication. 
+
+		---> Note: The logical server is the program that implements the protocols specified (e.g. a web server or an FTP server). 
+
+		---> Note2: The logical server (E.g. a DHCP server) usually also has a client connected to it. 
+
+			---> The client is the program that interfaces with the server to complete the request processing on a logical level within the host. 
+
+
+	---> Important: What actually processes network communications with regards to protocols are programs that implement those protocols, which are bound to different port numbers. 
+
+
+---> TCP/IP has 65536 ports available which are segmented as follows: 
+
+	A. 0 - 1023 => These are assigned to well known protocols such as HTTP (ie port 80).  
+
+	B. 1024 - 49151 => These are ports that are registered to specific, but less well known protocols. 
+
+	C. 49152 - 65535 => These ports are called dynamic ports and are not registered or used for any purposes. 
+
+		---> Likely these can be assigned manually or dynamically depending on the use case. 
+
+
+---> Note: A protocol on the Application layer of TCP/IP is built on either TCP or UDP when considering the transport layer. 
+
+	---> E.g. NTP (Network Time Protocol) is based on NTP while HTTP is based on TCP. 
+
+
+
+TCP vs UDP: 
+
+---> UDP and TCP are transport layer protocols: 
+
+	A. TCP => Stands for Transport COntrol Protocol and is connection oriented. 
+
+		---> TCP is the most widely use dprotocol because its connection oriented nature allows for guaranteed and reliable delivery of packets. 
+
+	
+	B. UDP => Stands for User Datagram Protocol and it is connectionless. 
+
+		---> UDP being connectionless means that it is less reliable than TCP. 
+
+		---> Like with IP, UDP is merely concerned with the transport of data through its layer without any reliability and security guarantees. 
+
+		---> Consequently, UDP is more lightweight and performance oriented allowing its use fo real-time data and streaming. 
+
+
+---> The core of TCP's reliability as a transport layer protocol is traced down to the following qualities: 
+
+	A. 3-way handshake => This mechanism is the basis for creating the virtual connection between the source and destination before data is sent.  
+
+		---> This is also the basis for the connection oriented nature of TCP. 
+
+
+	B. Acknowledgement => The destination host always needs to acknowledge the reception of one segment of data before the next segment is sent from the source. 
+
+	C. Checksum => This is a mechanism that can be run against data in order to detect corrupted data. 
+
+	D. Sequence numbers => Segmented data of a response from a machine is labeled with a sequential set of numbers, allowing for a correct order to be established for how the segments need to reassembled when recieved by the destination. 
+
+		---> Sequence numbers of segments can be used to detect missing data as well. 
+
+
+	E. Retransmission => For cases of corrupted or missing data, TCP also allows for retransmission of the lost / corrupted data segment(s). 
+
+
+	---> All of these qualities are implemented by the TCP programming that exists on source/destination and the TCP header contains the metadata needed to enforce the above qualities. 
+
+		---> This is similar to an HTTP header in many ways, but within a more granular scope. 
+
+
+	---> A TCP header is 20 bytes in size vs 8 bytes for a UDP header, which accounts for all the above qualities being implemented by TCP, but not in UDP. 
+
+
+---> The TCP three-way handshake is used to create a connection between client and server as follows: 
+
+
+	1. Source (client) sends a synchronization (SYN) request to the destination (server). 
+
+	2. The destination sends a response with the SYN request information and an acknowledgement (ACK) back to the source machine. 
+
+	3. The source machine receives the response and sends back a response to the destination with its own ACK signal saying that the destination ACK was received. 
+
+	4. The connection is created. 
+
+	---> This is how the connection is created. 
+
+	---> Given this context, the connection itself merely consists of both devices recognizing each other and thus being able to send data between one and another. 
+
+	---> The timeframe in which the data is sent, before the connection is terminated, can be considered a session. 
+
+	---> Note that the key to the connection is that the devices acknowledge each other over the WAN via ACK signals, which is not the case in connectionless contexts. 
+
+
+
+---> UDP is a scaled-down more economically performant version of TCP.  It lacks the following quality of TCP: 
+
+	---> Connection oriented => UDP is connectionless. 
+
+	---> Data retransmission => UDP does not retransmit data
+
+	---> Acknowledgement => UDP does not acknowledge the reception of data segments. 
+
+	---> Reliability measures => Checksums, corruption, and missing data are not handled for the case of UDP. 
+
+
+---> UDP's mechanism is just simply sending communications to their destination IP addresses without regard to whether or not the request is received or data being lost or corrupted. 
+
+	---> Data can just simply and indiscriminately be recieved. 
+
+	---> There is no form of communication acknowledgement between devices, such as the TCP three-way handshake. 
+
+
+---> All of these make UDP less performance intensive, but more suitable to streaming real-time data. 
+
+---> UDP is used as a basis for less higher level protocols due to this. 
+
+
+
+Closing TCP Sessions: 
+
+--> A TCP connection (and session) terminates by a similar acknowledgment as the 3-way handshakes: 
+
+	1. The client sends a finish (FIN) signal to the server / destination. 
+
+	2. The server responds with an ACK signal, saying it received the FIN signal. 
+
+	3. The server then also sends a FIN signal of its own, asking the client to terminate the connection on its end. 
+
+	4. The client responds with an ACK signal, saying it recieved the server FIN signal. 
+
+	5. The connection is terminated. 
+
+	---> The session and connection are both terminated with this. 
+
+
+---> This type of acknowledgment and therefore recognition between 2 communicating machines over the network separates TCP from UDP. 
+
+	---> This style of communication for opening and closing sessions doesn't exist in UDP. 
+
+	---> UDP instead relies on indiscriminate request / response communications, assuming that the communications are received without first testing the connection at the start and end of the session. 
+
+
+
+---> However, a session can also be thought of as the timeframe in which client and server communicate with each other for some purposes. 
+
+	---> TCP defines an explicit start/ending communication and this forms the basis of connection oriented communication. 
+
+	---> UDP doesn't do this, but the actual start and end of communications can also be thought of as a "session". 
+
+	---> Therefore, connections are not limited to just connection oriented protocols explicitly. 
+
+
+
+

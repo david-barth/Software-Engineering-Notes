@@ -1,0 +1,243 @@
+Theory 5: Introduction to the TCP/IP Model and its Protocols
+
+
+What is TCP/IP?
+
+---> TCP/IP stands for Transmission Control Protocol / Internet Protocol. 
+
+---> This model is used and implemented for the internet, but it is also the most common model for the internet. 
+
+	---> This stands in contrast to the OSI model, which was never implemented and is purely a reference model for conceptual purposes. 
+
+
+---> The 2 first protocols that were defined for the TCP/IP were TCP and IP hence the name. 
+
+---> A reminder on the difference of TCP/IP vs OSI: 
+
+	A. The TCP/IP application layer consists of the OSI application, presentation, and session layer. 
+
+	B. The TCP/IP transport layer maps directly to the OSI transport layer. 
+
+	C. The internet layer of the TCP/IP model maps onto the network layer of the OSI model. 
+
+	D. The network interface layer of TCP/IP consists of the data link and physica layer of the OSI model. 
+
+
+
+TCP/IP Protocols: 
+
+---> The protocols of the TCP/IP suite / model are divided per layer as follows: 
+
+
+	A. Application layer => FTP, HTTPS, DNS, TLS/SSL, SSH, SMTP, etc
+
+		---> Many of these higher level protocols can be sub-divded into further categories. 
+
+	
+	B. Transport layer => TCP, UCP, and ports. 
+
+
+	C. Internet layer => IP Addressing (routing), Address Resolution Protocol (ARP), ICMP
+
+
+	D. Network interface layer => Ethernet, Token Ring
+
+
+	---> These protocols all work together on different layers as data goes up and down through them. 
+
+		---> Communication, management, and troubleshooting are all provided by the combiened effort of these protocols. 
+
+
+
+Network Access Methods: 
+
+---> These are methods that are used on the network interface layer in order to access networks and send data over either wired or wireless networks. 
+
+---> There are 2 such methods: 
+
+	A. Carrier Sense Multiple Access (CSMA): 
+
+		---> Carrier Sense is used by a node to check the network for communication. 
+
+		---> Multiple Access allows for multiple devices to be used on the network. 
+
+		---> There are 2 flavors of CSMA for collision handling, based on whether a wireless or wired network is being used. 
+
+			A. CSMA/CD (Collision Detection) => This is used for wired networks. 
+
+			B. CSMA/CA (Collision Avoidance) => This is used for wireless networks. 
+
+
+	B. Token Ring: 
+
+		---> This involves a singular access to the network in which a token is passed between devices in the network. 
+
+		---> Only the device with the token can send data across the network (and the token with it). 
+
+		---> The token helps to prevent collisions, but enforces a singular access to the network unlike CSMA which allows multiple access. 
+
+			---> Collisions occur when multiple devices use a network, but what defines a "collision" will be dicussed later. 
+
+		
+		---> Multiple access in CSMA allows for a more scalable approach to networks than token ring and consequently, token ring is antiquated as a result. 
+
+
+
+TCP/IP Network Layer Protocol 1: Address Resolution Protocol (ARP). 
+
+---> ARP is a protocol, existing on the Internet / Network Layer, which resolves IP addresses to physical MAC addresses.  
+
+	---> The reverse of this is Reverse ARP (RARP), which resolves MAC addresses to IP addresses for reverse movements.
+
+
+---> Essentially, ARP finds the hardware address of a host from a known IP address. 
+
+---> In commandline, regardless of operating system, the "arp" command and its various flags can be used to manipulate host entries or gain information on them: 
+
+	---> e.g. => arp -a can be used to list tables of IP and physical addresses, along with their type. 
+
+		---> Each table refers to one network interface. 
+
+
+	---> Note: MacOS / Linux outputs are different than windows outputs. 
+
+	---> It is possible to manually set physical and logical addresses via the ARP command in the commandline. 
+
+
+---> Conceptually, ARP works as follows: 
+
+	---> ARP uses a request-response model for its functionality in a similar sense to HTTP. 
+
+
+	1. A new device to a network sends an ARP request to the network, looking for a specific MAC address. 
+
+		---> The ARP request contains the IP address of the device with the desired MAC address. 
+
+
+	2. The switch in the system receives the ART request and broadcasts the message to all devices connected to the network. 
+
+	3. All devices in the network check to see if their IP address matches the IP address specified in the ARP request. 
+
+	4. The device whose IP address matches the ARP specified IP address then acknowledges the request and returns an ARP response with its MAC address. 
+
+	5. The MAC address is sent back to the client machine, via switch, and the switch records the MAC address in its CAM table for future communications. 
+
+	6. The client machine OS places the completed IP / MAC address combination into a cached table so that future communications can be done in a 1-1 fashion 
+
+		---> This allows the client machine to directly include the MAC address so that the CAM table in the switch can be used to map the request directly to the destination machine. 
+
+
+	---> The client machine can now communicate with the destination machine in a 1-1 fashion without broadcasting since the MAC address now exists in the CAM table of the switch. 
+
+	---> A RARP request follows the same procedure, but with the MAC address present in the RARP request instead of the IP address. 
+
+
+
+TCP/IP Network Layer Protocol 2: The Internet Protocol (IP). 
+
+---> IP is an OSI layer 3 protocol that defines routing and logical addressing of packets, allowing them to traverse WANs and the internet. 
+
+	---> Reminder: A packet is a data segment that has a source + destination IP address combination attached to them (as a header). 
+
+
+---> Specifically, IP specifies the formatting of packets and provides schemas for logical addressing, via IPv4 and IPv6. 
+
+---> IP provides end-to-end connectivity between layer 2 LANs (ie data link based) via the use of routers. 
+
+---> Therefore, routers are the primary devices to use IP and this is why they are classified as OSI layer 3 devices. 
+
+---> IP is a connectionless protocol in that connection is not established between source and destination devices.  
+
+	---> Important => A connection assumes a form of association between segments / packets of data that is sent between source and destination machines. 
+
+		---> This can also be maintained over a "session" which acts as the context for this connection. 
+
+
+	---> This is similar to UDP, which is also a connectionless protocol.  
+
+	---> Overall, each packet sent is independent of each other packet. 
+
+	---> This means that IP is only responsible for addressing and routing of packets to their destinations, not for anything to do with the context of the packet beyond that. 
+
+	---> TCP and other protocols are used to reassemble packets into their complete form of data at the end of a transmission. 
+
+
+---> Important => IP doesn't always send packets (associated with the same destination) along the same path to their destination. 
+
+	---> IP helps to provide a means of efficient path determination in order to send packets along the most efficient route to their destination. 
+
+	---> This demonstrates IP and the networking layer's functionality in path determination within a routing context. 
+
+	---> The highly dynamic nature of WANs and the internet ensure that packets are usually sent along different paths. 
+
+
+---> Finally, IP doesn't provide any error recovery or sequencing functionality.  
+
+	---> IP's sole functionality is to send packets of information from one LAN to another LAN via efficient path determination (ie by routing protocols). 
+
+	---> Error recovery and sequencing functionalitites are delegated to other protocols. 
+
+
+
+TCP/IP Network Layer Protocol 3: Internet Control Message Protocol (ICMP). 
+
+---> ICMP is an OSI layer 3 protocol that is a companion to IP. 
+
+	---> ICMP provides error reporting functionalities for cases when network issues prevent delivery of a packet or packets. 
+
+	---> ICMP ensures that error messages are generated and sent back to the source IP address. 
+
+	---> Also note that ICMP is connectionless as well. 
+
+
+---> Note: ICMP generates error reports, but it cannot correct these errors.  Error recovery is typically delegated to other protocols such as TCP. 
+
+---> ICMP messages are helpful to troubleshoot network connections via commandline utilities including ping, pathping, and traceroute. 
+
+---> In the case of IPv6, IMCP also is used for: 
+
+	---> Neighbor solicitation and Advertisement Messages
+
+	---> Router Solicitation and Advertisement Messages
+
+
+---> ICMP has multiple message types of which some signficant ones are: 
+
+	A. Echo Request, Echo Reply => Tests a desintation for accessibility and status by sending an echo request and listening for a corresponding echo reply.  T
+
+		---> This can be done by ping (commandline command). 
+
+	
+	B. Destination Unreachable => Sent by a router when it cannot deliver a packet. 
+
+	C. Source quench => This is sent when a host or router receives an excess of data beyond its ability to handle. 
+
+		---> The message is sent to the source machine to instruct it to reduce its rate of data transmission. 
+
+
+	D. Redirect Message => Sent by a router when it recieves a packet that should have been sent a different router. 
+
+		---> This message includes an IP address to which future packets are sent in order to optimize path determination for routing. 
+
+
+	E. Time Exceeded => Sent by a router when a packet reaches the maximum number of routers through which it can travel. 
+
+		---> The maximum number of router "hops" is set by routing protocols at the start of routing for a packet and this determines the lifetime of a packet before  it is stopped from traveling any further. 
+
+
+	F. Router Advertisement, Router Solicitation (IPv6) => This allows a host to discover the existence of a router. 
+
+		---> Routers periodically broadcast their IP addresses via Router Advertisement messages. 
+
+		---> A host may also broadcast a router solicitation message which requests for a specific IP address. 
+	
+			---> The host will wait for a reply with a Router Advertisement message. 
+
+
+	---> There are many more examples of IMCP message types. 
+
+
+
+
+
+

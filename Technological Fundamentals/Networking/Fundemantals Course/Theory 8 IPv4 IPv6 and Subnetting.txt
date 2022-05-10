@@ -1,0 +1,144 @@
+Theory 8: IPv4, IPv6, and Subnetting. 
+
+
+Understanding IPv4 Addresses: 
+
+---> Reminder: An IP address is a logical address that is used to uniquely identify a device on an IP network. 
+
+	---> The IP address is used in the Internet Protocol by routers and is present on the network layer of the OSI model and the Internet model of the TCP/IP model.                     
+
+	---> There are 2 version: IPv4 (dominant) and IPv6. 
+
+
+---> The anatomy of a IPv4 address consists of 4 bytes / 4 octets (1 byte = 1 octet) and therefore 32 bits.              
+
+	---> The structure is: Byte1.Byte2.Byte3.Byte4
+
+	---> An example is: 192.168.1.131 (decimal) => 11000000.10101000.00000001.100000011
+
+	---> In each case, a number represents one octet / byte and bytes are separated by .                                   
+
+	---> Overall, the IP address is separated into: 
+
+		A. Network portion => Used to uniquely identify the network the device is on. 
+
+		B. Host portion => Used to uniquely identify the host machine itself. 
+
+		---> This division is accomplished using a subnet mask.
+
+
+---> A device on a network is assigned the following IPv4 addresses: 
+
+	1. IP address => A unique logical adress assigned to each device on a network. 
+
+	2. Subnet Mask => Used by the device to determine what subnet (network, e.g. LAN) the device is on. 
+
+		---> The subnet mask is specifically used to determine the network and host portions of the IP address. 
+		
+		---> Therefore, an IP address is always used in combination with an IP address.         
+
+
+	3. Default Gateway: The IP address of a network's router that allows devices on the local network to communicate with other networks.                      
+
+		---> The default gateway is always the entry point for requests from a WAN seeking to be routed to the LAN by the router.  
+
+
+
+---> Important note: Binary math is needed in order to perform subnetting. 
+
+	---> However, the scope here is simply to understand the concepts. 
+
+
+
+IP Address Classification and Subnet Masks: 
+
+---> IPv4 addresses are divided into 3 classes: 
+
+	---> Each class has different numbers of bits devoted to their respective network and host portions of the IP address. 
+
+	---> Furthermore, the address range of the classes differ from one another. 
+
+	
+	Class A => Has more network bits (8) than host bits (16). 
+
+		---> Address range: 1.0.0.0 - 126.255.255.255
+
+
+	Class B => Has an even number of bits for network and host (16) 
+
+		---> Address range: 128.0.0.0 - 191.255.255.255
+
+	
+	Class C => Has more network bits (24) than host bits (8). 
+
+		---> Address range: 192.0.0.0 - 223.255.255.255
+
+	
+	---> Address 127.255.255.255 is a special reserved address. 
+
+	---> Important: The number of bits denoted by the network and host portions tell how many networks and hosts can be devoted to each class of IP address. 
+
+		---> Each network portion of an IP address has leading bits that are taken out of the network bit portion. 
+
+			---> e.g. The leading bits of class A is 0, so there are 2^7 network addresses rather than 2^8. 
+
+
+	---> Also important: The host portion of an IP address denotes the number of hosts PER NETWORK.                   
+
+		---> E.g. Class A has 2^24 hosts per network while class C has 2^8 hosts per network. 
+
+
+---> Each class of IP address also has a default subnet mask: 
+
+	---> Class A => 255.0.0.0
+
+	---> Class B => 255.255.0.0
+
+	---> Class C => 255.255.255.0
+
+	---> The occupancy of the subnet mask IP address is based on the number of bits the network portion of the IP address is made of. 
+
+	---> For example: Class C has 24 bits, which is 8 bytes.  Therefore, the subnet mask consists of 3 occupied byte slots out of 4. 
+
+	---> Reminder: The subnet mask is used to determine the network portion and the host portion of the IP address. 
+
+		---> The subnet mask, associated with a particular IP address, itself can be used to tell what class the IP address falls into.                       
+
+
+	---> The process of subnetting involves breaking a larger network into a set of smaller networks. 
+
+		---> Therefore, an IP address itself is not reliable in saying what class of IP address is. 
+
+		---> The final subnet mask of an IP address must be used to determine this information.                     
+
+		---> The subnet mask itself changes in the process of subnetting, but this will be explored more later. 
+
+
+---> Class Inter-Domain Routing (CIDR) notation can be used as a methdology for subnetting. 
+
+	---> CIDR is a slash notation used for telling how many bits are associated with a subnet mask for an IP address. 
+
+	---> Examples of the notation are: 
+
+		---> 192.168.1.0 /24 => 255.255.255.0
+
+		---> 10.1.0.0 /16 => 255.255.0.0
+
+`		---> These examples show that the number that follows the / indicates the number of "on" bits that are associated with the subnet mask of the IP address. 
+
+			---> Above, /24 denotes 24 on bits and therefore a subnet mask corresponding with class C  
+
+			---> /16 denotes 16 on bits and therefore a subnet mask of class b. 
+
+
+		---> Note: 125.0.14.0/29 lies beyond the range of any permitted network bits in an IP address and this is a consequence of subnetting which will be explored more thoroughly later. 
+
+
+
+
+
+
+
+
+                                                                                       
+
