@@ -1,0 +1,193 @@
+Theory 9: IP Address Assignment and DNS. 
+
+
+
+Static vs Dynamic IP Address Assignment: 
+
+---> Static IP addresses are manually configured by entering the IP address into the computer. 
+
+	---> Static IP addresses do not change in the network and always remain assigned to that machine. 
+
+	---> Static IP addresses are commonly used for devices such as servers (DNS, web, and application) and other important devices such as routers and network printers. 
+
+	---> The holders of these static IP addresses are important to the network and can cause problems if they have IP address that can change. 
+
+		---> Static IP addresses also make administrative functions much easier to perform.          
+
+
+---> Dynamic IP addresses can be configured dynamically via the uses of something like a DHCP server or stateless auto-configuration. 
+
+	---> These IP addresses are effectively "on loan" in the sense that they can change from device to device if a device remains disconnected from the network for a long time.                         
+
+	---> These are commonly used for end-user devices that do not need a static IP address and are therefore reusable. 
+
+
+IPv4 Dynamic IP Address Assignment: 
+
+---> In IPv4, dynamic address assignment occurs through the DHCP protocol and a DHCP server. 
+
+---> The primary process is outlined as follows and uses the DHCP DORA process: 
+
+	1. The client requests an IP address by broadcastig a DHCP Discover message on its local subnet. 
+
+	2. The DHCP server (if it exists) responds with a DHCP Offer message containing an IP address and lease information. 
+
+	3. The client can then accept the offer by replying with a DHCP Request message that tells the DHCP server that the offer has been accepted. 
+
+	4. The DHCP server assigns the client the address and sends a DHCP Acknowledgement message, which finalizes the DHCP IP address lease. 
+
+	---> DORA therefore stands for Discover, Offer, Request, Acknowledgement, which is the signal sequence used for a DHCP dynamic address assignment. 
+
+	---> If there is no DHCP server available, then the client can use Automatic Private IP Addressing (APIPA), which is an alternative configuration method for dynamic IP addressing. 
+
+
+---> The configuration of a DHCP server needs to consider the following in order to allow the above DORA process to work: 
+
+	1. The IP address scope / pool needs to be specified: 
+
+		---> The address scope represents the range of IP addresses that can be used for leasing in the DHCP protocol. 
+
+		---> This involves specifying a starting address and an ending address that can be used to define the space of address available for leasing. 
+
+		---> The ranges are usually determined by the usage of static IP address already assigned in the network as well as the network size + subnetting that exists. 
+
+
+	2. The default gateway is also specified. 
+
+	3. IP address exclusiosn are also specified in the same manner as the IP address scope. 
+
+		---> These are typically used to exclude statically assigned IP addresses. 
+
+	
+	4. Mac Addresses that can be specified and have IP addresses reserved for them. 
+
+	5. DNS servers can also be specified. 
+
+	6. IP address lease durations can also be assigned. 
+
+
+---> There are also contexts in which the DHCP server can be on a different network or subnet than the client devices that would request leasable IP addresses. 
+
+	---> A DHCP relay agent device can be used to forward DHCP request and replies between the DHCP server and the client in this situation. 
+
+	---> This allows for the DHCP server and client devices to be located on different networks. 
+
+
+---> For the cases where a DHCP server is not available to dynamically assign an IP address, then Automatic Private IP Addressing (APIPA) can be used. 
+
+	---> APIPA is a feature of Windows and other similar features exist on other OSs.
+
+	---> APIPA allows for a DHCP-configured client to self-configure an APIPA IP address and subnet mask based on the following address range and subnet mask: 
+
+		A. Class B IP Address Range => 169.254.0.1 - 169.254.255.354
+
+		B. Subnet Mask = 255.255.0.0 
+
+		---> The APIPA subnet is based on a class B network. 
+
+
+	---> All clients that self-configure within this manner on the same APIPA network can communicate wit one another. 
+
+		---> However, APIPA addresses are link local and thus not routable.  
+
+		---> This means that they can only communicate locally on this network with each other and not with other networks.
+
+
+DNS: Domain Name System Overview: 
+
+---> DNS provides TCP/IP name resolution services, which is the process of translating host and domain names into their corresponding IP address and vice versa. 
+
+---> DNS makes use of a Fully Qualified Domain Name (FQDN) in order to uniquely identify a host on the internet.         
+
+	---> The FQDN consist of 3 components: 
+
+		A. Host Name => For example "www"
+
+			---> This will denote the type of host, e.g. a website, a file server, an email server, etc.                 
+
+
+		B. Domain Name => For example "something.com"
+
+		C. Top-Level Domain => For example ".com"
+	
+			---> This can also be .net, .org, etc. 
+                              
+
+---> Domains exist in a hierarchy with the top level domain being the highest level.  For example: 
+
+	---> something.com => This represents the highest level domain. 
+
+	---> This can further be split to: 
+
+		---> www.something.com
+
+		---> mail.something.com
+
+		---> HQ.something.com
+
+
+		---> These are all sub-domains which can be found under the top level domain. 
+
+
+	---> Sub-domains can have their own sub-domains as well.  An example is using sub-domains of HQ.something.com: 
+
+		---> Printers.HQ.something.com
+
+		---> FileSvr.HQ.something.com
+
+		---> These are all considered FQDNs. 
+
+
+---> The fullest mechanism that exists when navigating to a proper subdomain / domain is to travel via the DNS hierarchy as specified above: 
+
+	---> Assuming the local DNS server doesn't know the finally destination domain the client wishes to visit, the journey will start at the highest level of the hierarchy at the root DNS servers. 
+
+	---> Then, from the root DNS server, the journey will navigate to the top level domain DNS server and proceed down the different subdomains until the desired subdomain is found. 
+
+
+Common DNS Record Types: 
+
+---> In DNS, records are entities that are used to resolve domain names to IP addresses or vice versa in different ways. 
+
+---> Some of the common fundamental DNS record types are:
+
+	A. A (IPv4 Host) => This resolves a domain name to an IPv4 address. 
+
+	B. AAAA (IPv6 Host) => This resolves a domain name to an IPv6 address. 
+
+	C. PTR (Pointer) => This resolves an IP address to a domain name. 
+
+	D. CNAME (Alias) => This resolves one domain name to another domain name, allowing for multiple domain names to be resolved to the same IP address. 
+
+		---> In other words, a CNAME record allows a domain name to have one or more aliases.  
+
+
+	E. MX (Mail exchange) => This is used for mail exchange / email servers. 
+
+	F. NS (Name server) => This identifies the DNS name servers themselves. 
+
+
+---> Note: It is quite common for multiple domains to exist on the same physical server, but existing under different logical servers.  
+
+	---> An example could include a mail server, a file server, and a web server all existing under the same physical server. 
+
+	---> In such cases, all of the A / AAAA records for these domains will resolve to the same IP address. 
+
+	---> This is a common pattern in most host providers. 
+
+
+---> The command nslookup can be used as follows to find out the domain name for a particular IP address. 
+
+	---> nslookup domainName.com
+
+
+                                
+
+
+
+
+
+
+
+
+                                           

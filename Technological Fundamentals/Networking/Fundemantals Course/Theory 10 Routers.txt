@@ -1,0 +1,84 @@
+Theory 10: Routers and Routing.
+
+
+
+Introduction to Routing and Routers: 
+
+---> A router is an OSI layer 3 device that routes traffic between different networks (e.g. LANs) using IP addresses and routing protocols.                             
+
+	---> A router uses intelligent decisions, via routing protocols, to find the best way to get a packet of information from on enetwork to another.             
+
+	---> A router also allows for broadcast domains to be broken up into smaller pieces, allowing for collisions to be avoided. 
+
+
+---> The simplified process for routing is given below: 
+
+	1. A client device creates a packet destined for PC2 with the following IP address: 
+
+		A. Source IP 
+
+		B. Destination IP
+
+	
+	2.  The packet is sent to the client's default gateway, which is the Ethernet interface of its associated router. 
+
+		---> If the router's MAC address is not known, this can be found out via an ARP request which resolves the MAC address from the IP address of the router. 
+
+
+	3.  The router will then inspect the destination IP address and make a routing decision based on its routing table in order to identify which route to send it to. 
+
+		---> The routing table can contain connections to other routers and also to direcly connected devices in the LAN. 
+
+		---> The table will contain the router IP addresses that resolve to the fastest path and this will be how the router decides on the route path determination. 
+
+
+	4.   The packet will be sent on the chosen route via a serial connection (for WAN) and not an ethernet connection (for LANs). 
+
+		---> If intermediary routers exist, then the packet will be sent continously along the fastest available path based on the IP addresses in the routing tables of the intermediary routers.  
+
+
+	5.   Upon reception of the packet, the destination router will check to see if the direct ethernet connections in its routing tables correspond to the destination IP address. 
+
+	6.   If correspondence is found, then the destination router will forwad the packet to the LAN switch in order to ultimately forward the packet to its destination device. 
+
+
+      
+Static vs Dynamic Routing: 
+
+---> In routing there are 2 types of routing: static and dynamic routing. 
+
+---> In static routing, the routes are entered manually by a network administrator into the routing tables of the network's routers.                                
+
+	---> In this sense, the path determination of the network are pre-determined. 
+
+	---> This means there is no extra overhead for routing and static routing is faster as a result, but also subject to more problems with larger networks. 
+
+	---> In larger networks or networks that are subject to regular changes, the static routes must be manually changed with every change, which can become time consuming and error-prone. 
+
+	---> Therefore, static routing is ideal for smaller networks with few routes that rarely change.                      
+
+
+---> Dynamic routing is an automated form of routing that uses routing protocols to automatically populate the router's routing tables and muses metrics to make the most efficient routing path determinations. 
+
+	---> Furthermore, in dynamic routing, the routing table of the router is automatically updated whenever the network changes. 
+
+	---> This ensures that all routing decisions are handled by the routing protocol. 
+
+	---> Therefore, dynamic routing is ideal for larger and more complex networks that are subject to regular change. 
+
+	---> There are 3 main cateogories of dynamic routing protocol: 
+
+		A. Distance-Vector => This category considers the distance between source and destination in terms of the number of routers the packet must "hop" through in order to reach the destination. 
+
+		B. Link-State => This category considers several metrics such as the state of the connection (down or up) between routers in the network.            
+
+			---> Other factors are also considered. 
+
+
+		C. Hybrid => This category is a combination between distance-vector and link-state. 
+
+
+
+                     
+
+

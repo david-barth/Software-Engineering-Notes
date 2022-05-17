@@ -134,8 +134,430 @@ IP Address Classification and Subnet Masks:
 		---> Note: 125.0.14.0/29 lies beyond the range of any permitted network bits in an IP address and this is a consequence of subnetting which will be explored more thoroughly later. 
 
 
+---> Within each network of a network class, there are 2 addresses that are reserved for the network itself: 
+
+	A. Network Address => This is an IP address that is reserved for identifying the network itself. 
 
 
+	B. Broadcast address => This is an IP address reserved for the point which broadcasts a signal to all other devices in the network (.g. an ARP request). 
+
+
+
+Public vs Private IP Addresses: 
+
+---> Within IP addresses there is a distinction between public and private IP addresses: 
+
+	A. Public => These are IP addresses that are registered and uniquely assigned by an internet service provider to a business or home. 
+
+		---> These are globally unique to the devices that they are assigned to (e.g. web servers, DNS servers, routers)
+
+		---> Public IP addresses can be used or routed directly on a public network. 
+
+	
+	B. Private => These are IP addresses that are unregistered and reusable. They are designed for use within a private netineral network. 
+
+		---> These cannot be directly used or routed on a public network. 
+
+
+---> Private IP addresses can be mapped to public IP addresses via Network Address Translation, which allows private IP addresses to be indirectly used / routed on a public network. 
+
+---> Private IP addresses can occupy an address range that is a subset of the full IP address range within a class. 
+
+	---> For example: the private IP address range of class C is: 192.168.255.255 - 192.168.255.255
+
+		---> In private class C networks, 256 networks are allocated to private IP address. 
+
+
+	---> It is possible for multiple devices to use a private IP address. 
+
+		---> It is only though NAT (built into SOHO devices e.g.) that the a private IP is translated to a unique public IP address for use. 
+
+		---> Therefore, despite private IP addresses being used for many devices at once, it is still possible for each device in a network to be using a unique IP address.              
+
+	
+	---> Typically, a class C network is used for a LAN scale network, with all devices connected to this network having a private class C IP address. 
+
+		---> The internet and other WANs can typically be class A or Class B due to their larger host portion sizes. 
+
+		---> It is typical for a router / device with NAT functionality to translate private class C IP addresses to public class A or class B addresses. 
+
+		---> Therefore, the router / SOHO device has a private IP address interface and a public IP address interface. 
+
+
+---> IPv6 allows for many more unique addresses to be used, but due to NAT and private IP addresses (IPv4), IPv4 is still in large use. 
+
+
+The Loopback IP Address: 
+
+---> Loopback refers to the process of an OS sending a packet back to itself without ever interfacing the NIC. 
+
+	---> The packet is forwarded by the operating system to a virtual network interface within itself. 
+
+	---> This ultimately has the packet being forwarded back to the OS and is used to successfully check if TCP/IP is working on the computer. 
+
+
+---> The loopback address is an IP address that the OS uses in its virtual network to send the packet to itself. 
+
+	---> The address range of 127.0.0.0 - 127.255.255.255 is reserved for loopback IP addresses. 
+
+	---> The typical default loopback address is 127.0.0.1 
+
+
+---> Pinging localhost is used for loopback testing on the device. 
+
+	---> Pinging 127.0.0.1 uses IPv4 explicitly
+
+	---> Pinging localhost uses IPv6 
+
+	---> This is because most devices in the modern day are "dual stack" in that they use Pv4 and IPv6.                    
+
+
+
+Introduction to Subnetting: 
+
+---> Subnetting allows larger networks to be broken down into multiple smaller sub-networks, which are called subnets. 
+
+	---> Normal default classful IP addressing (via classes A, B, C) are inefficient and lead to to wasted IP public IP addresses. 
+
+	---> Subnetting allows for multiple logical logical networks to be created by breaking down larger networks.         
+
+	---> The end result of this is more efficient routing (via router summarization) and increased network security. 
+
+
+---> There are 2 types of subnetting: variable length subnetting (VLSM) and fixed length subnetting (FLSM). 
+
+	---> Fixed length subnetting is covered here as VLSM is more advanced, but VLSM is used more in practice.             
+
+	---> FLSM is also known as fixed-length subnet mask. 
+
+
+---> In the general process of subnetting, host bits are borrowed from the host bit space in order to increase the network bit space. 
+
+	---> This allows for the creation of more subnets from a class A, B, or C network. 
+
+	---> By increasing the network bit address space, more subnets can be created, but less host IP addresses can be accommodated by the subnet.                  
+
+	---> The process of borrowing host bits occurs as follows: 
+
+		---> 2^n subnets are created, where n is the number of host bits borrowed. 
+
+		---> In class C, if 2^2 subnets are created / subnetted, then 2 host bits have been borrowed. 
+
+
+---> 2 questions are always relevant when subnetting: 
+
+	A. How many subnets are needed?
+
+	B. How many hosts are needed per subnet?
+
+	---> These questions relate fundamentally to how many host bits are borrowed for subnetting.       
+
+
+---> Subnetting can be broken down roughly as follows in a conceptual sense: 
+
+
+	A. N.N.N.00000000 (Binary), /24 (CIDR), 2^0 (# of subnets), 2^8 = 256 (Block Size), 2^8 - 2 = 254 (# of hosts) 
+
+
+	B. N.N.N.11111100 (Binary), /30 (CIDR), 2^6 (# of subnets), 2^2 = 4 (Block Size), 2^2 - 2 = 2 (# of hosts) 
+
+
+	---> In the above example are the extreme boundaries for subnetting a class C network. 
+
+	---> In binary, the number of host bits borrowed to form network bits are shown by the number of "on" bits present in the binary representation.               
+
+	---> In CIDR notation, the total number of network bits are shown (24 for a default class C network and 30 for the maximum number of network bits borrowed). 
+
+	---> The number of subnets created is at a maximum of 64 for class C because the block size (ie the number of remaining host bits left used for subnet IP addresses) is 4. 
+
+		---> Thus 4 IP address comprise the host address space and 2 of these must be used for the network address and the broadcast address. 
+
+		---> Thus there are truly only 2 hosts available with 6 host bits borrowed in a class C network, which is the minimum number of hosts needed to create a network.                           
+		
+		---> A similar logic governs the other classes. 
+
+
+	---> Overall, there is a balance between the number of subnets that are created and the number of hosts that can accommodated on each subnet.                
+
+
+
+Example 1: Subnetting a Class C Network. 
+
+---> In breaking down a class C network, the following pieces of information must be taken into account: 
+
+	A. The number of host bits borrowed, which determines: 
+
+		---> The number of valid subnets
+
+		---> The number of hosts per subnet 
+
+		---> The valid IP address ranges per subnet, taking into account the broadcast and network addresses. 
+
+
+	B. The Subnet mask: 
+
+		---> This is also determinued by the number of active bits, including that which is borrowed from the host bits. 
+
+		---> E.g. with 1 host bit borrowed: 
+
+			---> 255.255.255.128 => Arises from 11111111.11111111.11111111.10000000
+
+			---> The additional borrowed host bit is added to the subnet mask in order to create a new subnet mask when subnetting a default class C network. 
+
+			---> In CIDR notation, this is /25 to denote 25 active network bits. 
+
+
+---> Inside of 2 class C subnets (ie borrowing 1 host bit), the following applies: 
+
+
+	---> The new subnet mask and the network addresses are used for each subnet. 
+
+	---> IP addresses can be assigned to the devices within the subnet including: 
+
+		A. Computers
+
+		B. Routers
+
+
+	---> A router is assigned an address in each subnet in order to allow devices to be able to know where to send communications that need to be routed. 
+
+	---> Note: Each subnet can also be classified as a LAN. 
+
+
+---> Important: The process of subentting seems to occur on the following levels: 
+
+
+	1. Determining the necessary IP address information: 
+
+		---> The number of host bits borrowed
+
+		---> The number of valid subnets
+
+		---> The IP address ranges for each subnet
+
+		---> The necessary subnet mask 
+
+
+	2. The network topology for the subnetted network is determined. 
+
+	3. The network topology is implemented. 
+
+	4. The devices are assigned private IP addresses as determined by the IP address ranges per subnet. 
+
+
+	---> The process of subnetting is implemented phsyically after the IP information is determined. 
+
+	---> Note: Each subnet mask implies a fixed length of network bits + borrowed host bits
+
+		---> This is the case for Fixed Length Subnet Masks, but not variable length.                                 
+
+
+
+IPv6 Introduction: 
+
+---> IPv4 has several disadvantages in using it that are addressed by IPv6:
+
+	1. IPv4 can accommodate approximately only 4.3 billion public IP addresses
+
+		---> This isn't enough to accommodate all the devices connected to the internet in the world.                   
+
+
+	2. IPv4 has less efficient routing than IPv6
+
+	3. In IPv4 security (e.g. encryption) is optional
+
+
+---> Comparatively, IPv6 offers the following advantages over IPv4: 
+
+	---> The total IPv6 address space is 2^128 while IPv4 is 2^32. 
+
+		---> This equates to 5*10^28 public IP addresses for everyone on the planet
+
+
+	---> IPv6 uses simplified internet routing tables compared to IPv4: 
+
+		---> Reason => IPv6 packet headers are fixed at 40 bytes whereas IPv4 uses variable length packet headers to account for optional fields            
+
+		---> Fixed length allows for optimizations of routing protocols to be made toward one single value rather than generalizing towards a range of values.
+
+
+	---> IPv6 allows for a stateless auto-configuration of IP addresses without the need for dynamic IP address assignment by a DHCP server.                     
+
+	---> Security is required by IPv6 via use of a protocol called Internet Protocol Security (IPSec), whih allows for data in transit encryption and authentication of source IP addresses. 
+
+		---> This is not the case for IPv4. 
+
+	
+	---> IPv6 is also classless compared to the classful IPv4. 
+
+
+---> IPv4 is still used because the combination private IP addresses, NAT, and subnetting allows for an efficient use of address space and to minimize the use of public IP addresses.                         
+
+
+
+IPv6 Addressing: 
+
+---> An IPv6 address has the following structure as follows: 
+
+	AAAA:AAAA:AAAA:BBBB:CCCC:CCCC:CCCC:CCCC (general structure) 
+
+	2001:0DB8:85A3:0000:0000:8A2E:0370:7334 (actual example)
+
+
+	---> The general structure of the IPv6 is based on 3 components: 
+
+		A => Site Prefix (48 bits) => This is used for routing over the internet or WANs. 
+
+		B => Subnet ID (16 bits) => This is used for subnets on internal networks. 
+
+			---> Therefore, subnetting as a conceptual technique also exists for IPv6.
+
+			---> Note: The Subnet ID and the Site Prefix make up the network ID.  
+
+			---> The total network ID is analogous to the overall network bits used in IPv4 to identify a network uniquely.                              
+
+
+		C => Interface ID (32 bits) => This represents the host identification section used to uniquely identify a host. 
+
+			---> This is directly analogous to the host bits used in IPv4.
+
+			---> The host portion is automatically configured from the MAC address on the NIC or manually configured using something called EUI-64 format.			
+
+	
+	---> As shown in the actual example, an IPv6 address is based on hexadecimal. 
+
+		---> The address is broken down into 8 hexadecimal blocks that each contain 16 bits. 
+
+			---> Each block therefore contains 2 bytes and 2 hexadecimal numbers makes up 1 byte. 
+
+		
+		---> The use of a hexadecimal format allows for the representation of a larger address space in a smaller sized sequence of characters. 
+
+		---> Overall, there is 128 binary digits represented here. 
+
+  
+
+---> IPv6 can be simplified using some rules: 
+
+	A. Leadings 0s can be omitted: 
+
+		---> 0DB8 -> DB8
+
+		---> 0000 -> 0
+
+
+	B. Contiguous blocks of 0s can be compressed into a double colon :: once per address: 
+
+		---> 0000:0000 -> ::
+
+
+	---> Overall a full address of 2001:0DB8:85A3:0000:0000:8A2E:0370:7334 is compressed to:
+
+		---> 2001:DB8:85A3::8A2E:370:7334
+
+		
+---> CIDR notation can also be used with IPv6 in subnetting context: 
+
+	---> An example is FE80::8A:0:8398:85A3/64
+
+	---> /64 indicates the number of bits that are being used to compose the Network ID portion.                           
+
+	---> In situations where subnetting does occur, it is likely a borrowing mechanism exists between the Network and Interface ID portions.
+
+		---> In such subnetting cases, /64 can be changed further and therefore 64 is the default number in non-subnet cases. 
+	
+	---> Subnetting for IPv6 will not be covered here however. 
+
+
+
+IPv6 Data Transmission Types: 
+
+---> Like IPv4, IPv6 also has various transmission types:
+
+	A. Unicast (1-1) => One-to-one communication between devices in the network. 
+
+	B. Multi-cast (1-*) => IPv6 uses multicast and eliminates broadcast (1-all) transmissions. 
+
+		---> In multi-casting IPv6 allows for transmissions to be sent to multicast group members. 
+
+	
+	C. Anycast => This is a type of transmission used by IPv6 to identify mulitple interfaces, but to send a packet of data to the nearest network interface. 
+
+		---> This transmission type is used mainly in routing.
+
+
+
+Types of IPv6 Addresses: 
+
+---> For unicast commnication based addresses, there 3 main types of address in IPv6: 
+
+	A. Global Addresses => These are analogous to public IPv4 addresses in that they are globally routable over the internet. 
+
+		---> They start with a prefix of 2000
+
+	
+	B. Unique Local Addresses => These are analogous to IPv4 private addresses and are internally routable in a private network (e.g. a LAN)     
+
+		---> These are not routable over the internet. 
+
+		---> Their prefixes begin with FC00 or FD00
+
+
+	C. Link-Local Addresses => These are the IPv4 equivalent to APIPA addresses (to be defined later).                      
+
+		---> These can be assigned automatically or statically, but are not routable internally or over the internet. 
+
+		---> These begin with an FE8- prefix. 
+
+
+---> Note: The loopback address also applies to IPv6 addresses in the same fashion as IPv4. 
+
+	---> The main difference is that "ping ::1" is used in the IPv6 case for loopback addresses. 
+
+
+
+IPv4 tp IPv6: Translation and Compatability. 
+
+---> IPv6 is not backwards compatible with IPv4 natively, so there are a few approaches that are used to bridge the two:
+
+	A. Dual IP Stack => This is whne IPv4 and IPv6 co-exist together within the same operating system.                   
+
+		---> IPv4 and IPv6 can be used independently from each other or together. 
+
+
+	B. Tunneling => This is when IPv4 is encaupsulated into IPv6 via different tunneling protocols.  
+
+		---> A tunneling protocol is a protocol that is used to allow IPv4 and IPv6 to be compatible with each other during the transmission over networks. 
+
+		---> A tunnel is essentially the connection between routers over a WAN.  
+
+		---> Examples of tunneling protocols are: 
+
+			A. 4to6 => This encapusulates IPv4 data into an IPv6 tunnel. 
+
+			B. 6to4 => This encapsulates IPv6 data into an IPv4 tunnel and allows traversing with IPv4 NAT. 
+
+			C. Teredo => A Microsoft Windows implementation similar to 6in4, which also supports NAT. 
+
+			D. Miredo => A Linux / Unix based open source version of Teredo. 
+
+
+IPv6 Neighbor Discovery Protocol (NDP):
+
+---> IPv6 allows for auto-configuration of IP addresses and it does so partially through the use of the NDP. 
+
+---> NDP allows for an IPv6-enabled system to send a multi-cast "neighbor solicitation" transmission to all other IPv6 systems when it joins the network.            
+
+	---> When other systems receieve this signal, they respond with a corresponding neighbor "neighbor advertisement" signal which contains their IPv6 address. 
+
+	---> This ensures that the new device will not use any available IPv6 addresses when configuring its own IPv6 address. 
+
+
+
+
+
+
+                        
 
 
 
