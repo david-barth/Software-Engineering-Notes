@@ -78,7 +78,175 @@ Static vs Dynamic Routing:
 		C. Hybrid => This category is a combination between distance-vector and link-state. 
 
 
+IGPs and EGPs: 
 
-                     
+---> It is universal that all routers in a singular organization operate with a single clearly defined routing policy. Thisi s defined further: 
+
+	---> Routers are usually part of an Autonomous System (AS) which represents a networking system run by an entity such as a company or organization. 
+
+	---> An AS specifically is a connected group of one or more IP prefixes run by one or more network operators with a single clearly defined routing policy, within the context of a single organization. 
+
+
+---> An Interior Gateway Protocol (IGP) is used within a single organization / AS for routing.  Therefore, it is a routing protocol defined for intra-organizational use. 
+
+	---> Examples include: RIP, OSPF, and EIGRP (defined later)
+
+
+---> An Exterior Gateway Protocol (EGP) is used to route between different organizations / ASs. 
+
+	---> These are commonly used by ISPs in order to perform routing services. 
+
+	---> The most common EGP is Border Gateway Protocol (BGP), which is used by most ISPs. 
+
+
+
+Interior Gateway Protocols: 
+
+---> There are 3 common types of IGP: RIP, EIGRP, and OSPF. 
+
+	A. RIP and EIGRP are Distance-Vector protocols. 
+		
+		---> A distance-vector routing protocol uses distance as the metric for making routing decisions. 
+
+		---> Distance is characterized as hop count in which the number of hops are the number of routers that a packet must pass through from source to destination.
+
+
+	B. OSPF is a Link-State protocol. 
+
+		---> A link-state routing protocol builds a map of the entire network in order to make routing decisions. 
+
+		---> The map is initially build using a communication called Link-State Advertisements in order to share information with other routers over the network. 
+		
+		---> The LSAs alert all routers to the existence of other routers in the network and cumulatively this builds the network map. 
+
+		---> After the construction of the network map, routers will only update each other when there is a change in the network.  
+
+		---> Outside of this, routers using Link-State only communicate with periodic "hello" packets in order to alter other routers in the network that it is functioning properly. 
+
+		---> Overall, a link-state routing protocol leads to faster network convergence times and can support larger network sizes. 
+
+
+
+
+---> The first main IGP is Router-Information Protocol (RIP), which is a distance-vector protocol that supports a maximum of 15 hops for a packet. 
+
+	---> These 15 hops exist to prevent routing loop issues. 
+
+		---> A router will send a full copy of its routing table to other routers in the path every 30 seconds.
+
+		---> For the nth router to receive the 1st router's table, the routing table information needs to traverse n-1 times to the nth router. 
+
+		---> The total time could end up being (n-1)*30 seconds before the full routing table is received.  
+
+		---> The end result is a slow network convergence time, unnecessary network traffic, and high router CPU utilization. 
+
+
+	---> Due to the 15 hop limitation, RIP is commonly used for smaller networks and doesn't scale very well in larger network settings. 
+
+
+---> Another routing protocol is the Enhanced Interior Gateway Routing Protocol (EIGRP), which is a Cisco proprietary routing protocol that only works on Cisco routers. 
+
+	---> It is advanced distance-vector or hybrid routing protocol that uses hop count metrics, reliability, bandwidth, load, and delay metrics in order to make routing decisions. 
+
+	---> EIGRP uses a default hop count of 100 and a maximum of 255, so it scales better to larger network sizes. 
+
+	---> EIGRP supports classless routing and VLSM within subnetting. 
+
+	---> Overall, EIGRP has a very fast network convergence time. 
+
+
+---> The Open Shortest Path First (OSPF) protocol is an open standard link-state protocol that is well suited for large networks with multiple redundant paths. 
+
+	---> Open standard means that any network provider / organization can implement it. 
+
+	---> OSPF constructs a topological routing tree that is called a shortest-path tree in order to form its network map and routing decisions. 
+
+	---> Within the shortest-path tree, a larger network is sub-divided into areas wherein each router in an area can share information with other routers in the same area. 
+
+		---> This area division minimizes routing update traffic and improves network convergence times. 
+
+		---> Limiting update traffic to a specific area ensures that update packets don't have to travel to all other routers over the total network. 
+
+	
+	---> OSPF uses a cost metric in path determination, which includes link state (on / off router status) and speed as prime sub-metrics. 
+
+	---> OSPF also supports classless addressing and VLSM, which makes it well suited for subnetting. 
+
+	---> Finally, OSPF has an unlimited hop count, giving it a high degree of scalability. 
+
+
+
+Border Gateway Protocol (BGP): 
+
+---> BGP is a highly scalable routing protocol that supports IPv4 + IPv6 and is considered the core routing protocol of the internet today. 
+
+---> It is a path-vector / hybrid routing protocol in which each ISP is assigned an AS number. 
+
+---> AS hops (ie hops from one AS network to another) are used as the hop count rather than individual router hops. 
+
+---> For path determination, BGP utilizes a Best Path Selection algorithm (shortest path over a graph?) to identify the best route. 
+
+---> Overall, BGP is used to move from one AS to another over a WAN such as the internet. 
+
+
+
+Routing Tables and AD: 
+
+---> There are 3 different types of routing table entries that exist: 
+
+	A. Directly Connected Routes => These are routes in which the network is directly (either via wireless or wired links) connected with each other. 
+
+		---> An example is a router (ie as a default gateway) being connected to a LAN. 
+
+
+	B. Remote Network Routes => These routes to a network wherein the network (and thus router of the network) are not connected to the source router. 
+
+		---> An example is a router communicating over WAN with another router, each having their own LAN. 
+
+
+	C. Default Route => This is a route that is pre-configured into a router when no match is found for a route in the router's routing table. 
+
+		---> This default route is always taken in such circumstances. 
+
+
+---> The components of a routing table, at a minimum, include the following components: 
+
+	
+	A. Type => This refers to the type of routing protocol and/or path used and can have values such as "static" (unchanging IP address, but remote network route) or "Connected" (directly connected route). 
+
+		---> Type can also include the dynamic routing protocols such as OSPF, RIP, and EIGRP.
+
+
+	B. Destination Network ID + Subnet Mask => Exactly as the title implies. 
+
+		---> Note: This must be contextualized with the interface (serial / ethernet) and the connection type in order to understand the path. 
+
+		---> The network ID can be either a serial based IP address or an ethernet based one, depending on the direction of the path with respect to the router. 
+
+
+	C. Router Interface => This has to do with the interface the router uses: ethernet (for physical LAN connections) and serial (for long distance WAN connections). 
+
+	D. Metric => This refers to the Administrative distance (AD) of the route type used, which is a measurement of the trustworthiness of a route. 
+
+		---> The values of the AD range from 0 - 255, with lower values being more trustworthy. 
+
+		---> A router will update its routing table based on routes that have lower AD values. 
+
+		---> Usually a connected interface (ie ethernet physical connection) and static routes have lower AD values (0, 1 respectively)
+
+		---> EIGRP, OSPF, and RIP types of routes have higher values (90, 110, 170 respectively). 
+
+		---> Unknown routes have the highest value (255). 
+
+
+The Default Route: 
+
+---> The default route is used when a packet's destination IP address has no known match in a router's routing table.  
+
+	---> It is commonly called the gateway of last resort since it is only used if no other matching routes are found in the routing table of a router. 
+
+
+---> It is commonly configured with the IPv4 address 0.0.0.0/0 and the IPv6 address ::/0. 
+
 
 
