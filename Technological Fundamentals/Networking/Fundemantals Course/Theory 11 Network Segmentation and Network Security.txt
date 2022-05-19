@@ -1,2 +1,148 @@
 Theory 11: Network Segmentation and Basics of Network Security. 
 
+
+Network Address Translation (NAT): 
+
+---> NAT represents a way to translate / map private IP addresses to public IP addresses. 
+
+	---> By doing this, NAT allows for the preservation of scarce public IPv4 addresses and serves to increase network security.                  
+
+
+---> Using NAT private IP addresses of a network device within a LAN can be hidden to devices outside of the LAN.              
+
+---> There are 3 forms of NAT to consider: 
+
+
+	A. Static NAT (SNAT) 
+
+		---> Static NAT involves a one-to-one mapping of a private IP address that is statically configured to a public IP adress. 
+
+		---> SNAT is used as a means to hide the IP address of a publicly available device such as a web server. 
+
+		---> The mechanism can be illustrated as follows: 
+
+			A. A web server with IP address of 192.168.100.5 /24 gives a communication to a router. 
+
+			B. The router translates this private IP address to a public IP address of 150.100.5.100 / 16 when the communication reaches the serial interface of the router. 
+
+			C. This is the IP address that is resolved from the private IP address by way of SNAT.                                       
+
+
+	B. Dynamic NAT (DNAT) 
+
+		---> DNAT involves mapping a private IP address to a public IP address that is is available from a pool of public IP addresses.                      
+
+		---> The dynamic nature comes from the fact that a private IP address will be mapped onto a public IP address based on some sort of metric such as first-comee first served. 
+
+		---> Speculation: The pool of IP addresses represents a shared resource and the mapping might be done via a concurrency approach using threads to complete the mappings.  
+
+		---> If all the public IP addresses of the pool are in use, then other private IP addresses must wait for the public IP addresses to become available. 
+
+
+
+	C. Port Address Translation (PAT) 
+
+		---> PAT allows many private IP addresses to map onto only 1 public IP address. 
+
+		---> This is accomplished by the use of a dynamic port number between the ethernet and serial interfaces. 
+
+			---> The port number is assigned dynamically by the router to each public + private IP address mapping. 
+
+
+		---> A private IP - public IP address mapping will have a port number that is used to differentiate between different private-public IP address mappings.     
+
+		---> Therefore the port number + IP address combination, listed in a PAT table, is used as the basis for this type of NAT. 
+
+	
+
+---> Border network devices, like routers, proxy servers, and firewalls can use NAT. 
+
+
+
+Demilitarized Zone (DMZ): 
+
+---> A DMZ is a perimeter network that is designed to securely separate an organizations private internal network from the public networks, such as the internet. 
+
+	---> The DMZ is therefore located between the intranet of the organization and the internet.                          
+
+
+---> The DMZ typically allows untrusted users outside of a an organizations LAN to access specific services located within the DMZ such as: 
+
+	A. Public facing websites
+
+	B. Trivial FTP Server file downloads
+
+	C. Public email services
+
+
+---> The DMZ therefore acts as a buffer to block access to intranet resources whil being able to allow users to still access publicly designated resources.      
+
+---> There are typically different designs used with DMZ networks: 
+
+	A. Three-legged design: 1 router / firewall sits between the intranet and the internet.  
+
+		---> Traffic is filtered at the firewall point and unathorized / untrusted users are typically directed to the DMZ network. 
+
+		---> Only trusted traffic is allowed into the intranet while untrusted traffic is blocked by the firewall if it is requesting inappropriate resources. 
+
+
+	B. Screened Subnet / Back-to-Back Configuration => This involves 2 back-to-back firewalls between the internet and intranet.  
+
+		---> Firewall 1 screens traffic to filter out one level of untrusted users while allowing for potential redirects to public resources. 
+
+		---> Firewall 2 screens for another type of untrusted traffic before allowing access to the intranet. 
+
+
+---> DMZs provide one way to use network segmentation in order to increase overall network security in an organization. 
+
+
+Port Forwarding: 
+
+---> Port forwarding is a technique that involves mapping an external IP address + port number to an internal IP address and port number. 
+
+	---> This allows external devices from other IP addresses to access computer services within a private network. 
+
+
+---> An example is a packet that is destined for an IP address A with port 80. 
+
+	---> With port forwarding enabled, all such requests with port 80 will map to a specific device with port 80 (ie a web server).
+
+
+---> This is similar in concept to SNAT, but also mapping a specific port number from an external request to an internal destination. 
+
+
+
+Access Control Lists: 
+
+---> Access Control Lists (ACLs) are a network security feature that are effectively lists of network rules used to filter out network traffic based on an allow/deny basis.      
+
+	---> The ACL rules can be used with different metrics such as permissible IP address and port ranges, but can likely be etended to other metrics to determine access/deny results. 
+
+	---> These can be useful to restrict traffic in combination with different network designs and segmentation strategies. 
+
+
+---> ACLs help to achieve network segmentation by playing a role in a DMZ. 
+
+---> An ACL is typically used for incoming and outgoing traffic on devices such as routers, firewalls, proxy servers, and end-devices. 
+
+
+
+Intranet, Extranet, and the Internet. 
+
+---> Each of these represents a zone in a segmented network. 
+
+	A. Internet => This automatically represents the outermost zone and all traffic from the internet is untrusted and needs to be verified by various security measures. 
+                  
+	B. Extranet => This is a DMZ of an organization's private network that only business partners can access. 
+
+		---> It is typically used by business partners for various business activities. 
+
+		---> Here, an intermediate amount of security measures need to be passed (authentication, lighter authorizations) in order to access this type of network DMZ.                            
+
+
+	C. Intranet => This is an organization's private internal network that is only used by the organization's employees. 
+
+		---> This is the most highly protected part (LAN) of the organization's network and requires the highest amount of authorization and authentication to access properly. 
+
+
+             
