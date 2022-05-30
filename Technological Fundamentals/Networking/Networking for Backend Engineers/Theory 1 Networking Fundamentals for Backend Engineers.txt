@@ -1,0 +1,215 @@
+Theory 1: Network Fundamentals for Backend Engineers Introduction. 
+
+
+The OSI Model: A Developer's Perspective.
+
+---> The OSI model represents a communication model that is mean to act as a standard model of communication between different network devices. 
+
+---> The OSI model allows for an application to communicate with another application regardless of the underlying communication medium (ie Physical + Datalink layers)
+
+	---> An application does not need to know if the underlying communication medium works via Wifi, ethernet, LTE, fiber, etc. 
+
+	---> This allows apps to be written regardless of underlying media differences. 
+
+
+---> Additionally, with a standard communication model, it is possible to upgrade and change network equipment without necessarily havin gto affect higher or lower levels of the communication. 
+
+---> Finally, innovations + changes can be done at each layer without affecting the rest of the layers. 
+
+	---> In other words, the layers are decoupled from each other to a certain extent. 
+
+
+
+---> A reminder of the OSI model is given here: 
+
+	
+	7. Application => The application layer is relevant to application communication outside of itself.   
+
+		---> At this level, data is the main unit of consideration. 
+
+		---> It is here that networking protocols such as HTTP, FTP, gRPC, etc are considered and built on top of lower level layer protocols. 
+
+
+	6. Presentation => The presentation layer has to do with things such as encoding, serialization / deserialization of data, etc. 
+
+		---> This involves merely the interconversion of data from one format to another (e.g. JSON string format <-> flat byte strings). 
+
+
+	5. Session => The session layer is where connections are established and where session management is an important concept. 
+
+		---> Reminder: A session is the interval of time that exists between when a session is established and when it is terminated between host and client machines. 
+
+		---> In the session layer, the security aspect of the connection is also handled; data is encrypted / decrypted for secure transport via mechanisms such as TLS or SSL. 
+
+		---> It is also here where data related to session management is done. 
+
+
+	4. Transport => This layer deals with the actual transport of data from the application to the network layer of the OSI or TCP/IP model.
+
+		---> The dominant protocols here are UDP / TCP depending on whether or not the network communication is meant to connection oriented or connectionless. 
+		
+
+	3. Network => This layer deals with the aspects of logical routing of data packets to the destination IP addresses as well as efficient path determination. 
+
+		---> It is in this layer that the IP protocol is used along with various routing protocols. 
+
+
+	2. Data Link => This layer deals with sending information over physical connections (e.g. Ethernet) using MAC addresses as the method for path determination.
+
+	1. Physical => This layer deals with the actual physical media and how data ultimately gets decomposed to its physical signals (e.g. elecrical signals, light, radio waves)  
+
+	---> Of relevance for backend engineers are layers 4-7 (ie transport and application level layers). 
+
+
+---> A detailed, but simple example of this occurs as the following sequence of events through the layers: 
+
+	---> Situation => Sending a POST Request to an HTTPS webpage
+
+	Layer 7: Application => The POST request with JSON data is sent to the HTTPS server. 
+
+	Layer 6: Presentation => The JSON is serialized to flat byte strings.
+
+	Layer 5: Session => A request is sent to establish s TCP connection on TLS.
+
+	Layer 4: Transport => The actual TCP 3-way handshake SYN / request signal is sent to a target host port 443 (default TCP port of HTTPS). 
+
+	Layer 3: Network => The SYN request is converted to IP packets and source + destination IP addresses are added to the packet. 
+
+	Layer 2: Data Link => Each packets goes into a single frame and adds the source / destination MAC addresses. 
+
+	Layer 1: Physical => Each frame becomes a string of bits, which is converted into its physical medium (radio signal, electric signal, light). 
+
+	---> This is from the perspective of the sender and represents a simplified example.  Layers can inherit responsibilities from each other in practice. 
+
+
+	---> From the receiver's perspective the following happens: 
+
+
+	Layer 1: Physical => The physical medium signals are received and converted to digital bits. 
+
+	Layer 2: Data Link => The bits from layer 1 are assembled into frames. 
+
+	Layer 3: Network => The frames from layer 2 are assembled into an IP packets. 
+
+	Layer 4: Transport => The IP packers from layer 3 are assembled into TCP segments. 
+
+		---> Here congestion control, flow control, and retransmission are dealt with (for TCP). 
+
+		---> If the incoming segment is a SYN communication, then the communication stops between layer 4 and 5 since the 3-way handshake is still being processed. 
+
+		---> It is also here that the segments are assembled back into their single JSON representation, if this is the POST request itself and not the TCP handshake. 
+
+
+	Layer 5: Session => Here, the connection is established or identified, completing the 3-way handshake (if for TCP). 
+
+		---> For the case of incoming or outgoing JSON segments, the session layer is also where the encryption /decryption of the flat byte strings occurs over TLS / SSL. 
+
+
+	Layer 6: Presentation => After connection establishment, the JSON body of the POST request goes through the above layers and are deserialized from flat byte strings to JSON for the app to consume.            
+
+	Layer 7: Application => The application understands the JSON post request and the request event is triggered. 
+
+	---> This again is a simplified version of events. 
+
+	---> Note: The main points in each layer of that example can show a general perspective. 
+
+	---> The actual flow of events proceeds in the following phases: 
+
+		1. POST request is sent to layer 5. 
+
+		2. Layer 5 stops the POST request transmission in order to initiate a session via TCP 3-way handshake 
+
+		3. The handshake is initiated between client and server layer 5 sections. 
+
+		4. Upon completion, the POST request is sent through the layers to complete. 
+
+		---> This shows that certain communication types (e.g. the TCP 3-way handshake) do not need to go through all the layers. 
+
+	
+---> Note: When a device is called a layer 2 or layer 3 device, this is referring to the highest layer of the OSI model that the device operates to. 
+
+	---> E.g. A router is a layer 3 device => This means that the router performs data conversions from bits to packets up to the maximum of the network layer in order to perform its routing functions. 
+
+	---> The same logic holds for saying that a switch is a layer 2 device. 
+
+
+---> Important: There are also a couple of other layer n devices that can be considered: 
+
+	A. Firewall / (Forward?) Proxy => This is a layer 4 device that goes up to the transport layer only. 
+
+		---> Therefore, the maximum level of information considered here is up to the data segment and the TCP ports. 
+
+		---> This usage by a firewall is called a transparent firewall because application level information is not shown to the client's request and only publicly available entities, such as ports, are considered.   
+
+		---> More importantly, it is at these devices that destination IP addresses can also be rerouted or stopped by changing the IP addresses. 
+
+			---> This is the basis for how forward proxies or firewalls within DMZs might work, depending on the layer based headers of the incoming packets. 
+
+
+	B. Load Balancers / CDNs => These are layer 7 devices that go all the way up to the application layer. 
+
+		---> This means that all incoming communications (if accepted) are decrypted and consumed at the application level. 
+
+		---> This also means that session initiation and management occurs for communications with these types of devices. 
+
+		---> Overall, more events occur here vs a layer 4 firewall and communication latency increases when going through these types of devices. 
+
+		---> A client will usually reach a load balancer and their direct interaction stops at this point while the load balancer delegates the request to another backend server after performing the necessary admin and security functionalities. 
+
+			---> This is why such a device is also called a reverse proxy, because it is closer in proximity to the backend servers of the organization rather than the device of the client.  
+
+
+
+Host to Host Communication: Introducing the need for IP Addresses. 
+
+---> Host to host communication refers to communications between hosts on the same LAN and specifically is a layer 2 consideration. 
+
+	---> This deals with the communication that uses Media Access Control (MAC) addresses to communicate (see notes on MAC addresses specifically). 
+
+	---> This is done by Remote Procedure Call (RPC). 
+
+
+---> One device in the network will send a broadcast (near broadcast level) to all other devices in the network containing the MAC address of the sending device. 
+
+	---> This will end up being verified on the data-link level of each other device in the network (assuming Mesh network topology) wherein, the device with correct MAC address will end up accepting the communication up to the 7th layer. 
+
+	---> This type of broadcast like communication carries considerable security concerns with it (especially for older variations of WIFI). 
+
+
+---> The main issue with MAC addresses is that using them for truly remote communications is not feasible. 
+
+	---> While MAC addresses are unique globally, it would require a scan of all global devices over a global network in order to locate a unique MAC address and this is not feasible on a performance level. 
+
+	---> This is why IP addresses are used; the network bits of IP addresses can be used to eliminate many networks when trying to find a unique IP address. 
+
+	---> MAC addresses are still needed when communications have been sucessfully routed from a LAN to another LAN, but only for identifying the destination host machine with then LAN. 
+
+	---> This is why routers are used in order to deal with this as a layer 3 concern.   
+
+		---> Note: The subnet mask can be used to see if a communication is on the same network or a different network. 
+
+		---> This allows for a router to make a decision on whether or not to rout to a different network or to another device on the same network. 
+
+		---> The subnet mask is also useful for telling the degree of subnetting that exists as well as the type of network that is being is used, in terms of classful networking. 
+
+
+---> In addition to IP addresses, logical ports are needed in order to be able to successfully rout network communications to their proper applications on their destination machines. 
+
+	---> Physical ports are used for different purposes than logical ports. 
+
+	---> Logical ports specify not only a location where an app is running, but can only specify a section in a machines memory dedicated to running programming related to a specific protocol (HTTP - port 80, DNS - port 53, SSH - port 22). 
+
+	---> These protocol based ports are TCP ports and they all run on the same server. 
+
+	---> An IP address and a port number (or port numbers) are used to fully rout a network communication to its final destination in the application layer. 
+
+	---> Source ports and destination imports are important to have with packets / segments.  
+
+	---> Ports are a consideration for layer 4-7 mostly. 
+
+
+
+
+
+
+ 

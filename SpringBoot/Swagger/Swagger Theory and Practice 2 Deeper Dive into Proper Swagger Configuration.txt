@@ -1,0 +1,6 @@
+Swagger Theory and Practice 2: Deeper dive into proper Swagger Configuration. 
+
+
+Isolating Swagger Codegen into a Seaparate Module: Getting over manual dependency addition problem. 
+
+---> 

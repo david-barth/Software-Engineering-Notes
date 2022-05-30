@@ -1,0 +1,127 @@
+Theory 2: IP Protocol Backend Engineering Perspective. 
+
+
+IP Building Blocks: Basic Reminder
+
+---> The main form of data that exists in the layer 3 level is a packet (reminder). 
+
+	---> It contains the data sent over the network over a network communication, with the source and destination IP addresses attached. 
+
+
+---> An IP address is a layer 3 property and can set automatically (dynamically via DHCP) or statically. 
+
+	---> The IP address consists of a network and host portion. 
+
+	---> There are 2 variations: IPv4 and IPv6, with IPv4 addresses being made up of 4 bytes (32 bits) of information. 
+	
+	---> See notes on IPv4 for more information in Networking Fundamentals course. 
+
+
+---> The subnet mask is given by CIDR notation as shown in the following example: 192.168.254.0/24
+
+	---> The subnet mask allows for a destination IP address to be determined as to whether or not it belongs in the same subnet as the source IP address or not.          
+
+	---> The subnet mask also gives information on the level of subnetting that is used for a network and what is the default class of the network being used (A, B, C). 
+
+	---> The subnet mask is used as follows: 
+
+		A. (255.255.255.0 & IPA) = IPB
+
+		---> Bitwise operations are appled to see if the source (IPA) and destination (IPB) address network portions match the subnet mask network portion. 
+
+		---> If there is a match in this logic, then IPA is in the same subnet as IPB, and so layer 2 (MAC address) networking is used.
+
+		---> If there is no matchm then IPA and IPB are in different networks and routing must be used. The packet from IPA is sent to the default gateway.  
+
+
+---> A default gateway is simply a device that has 2 interfaces: an inward facing interface to the network and an outward facing interface to different networks. 
+
+	---> The default gateway is usually a router that allows incoming and outgoing communications to go through its interfaces to allow for routing to be possible between different networks. 
+
+	---> A network consists of host devices and one default gateway. 
+
+	---> Hosts wanting to talk to devices outside of the network will send information to either a default gateway directly or to a device that knows the default gateway. 
+
+	---> Default gateways have an IP address that should be known by all hosts in the network associated with it. 
+
+
+The IP Packet: Anatomy of an IP Packet
+
+---> An IP packet consists of the following components: 
+
+	A. Data => The data section can be a maximum of 65536 bytes, but is usually segmented to a maximum amount determined by the MTU.
+
+		---> The MTU stands for Maximum Transmission Unit and is responsible for determining the largest amount of packet size that can be sent over a network (e.g. the internet). 
+
+		---> A typical MTU for the internet is ~1500 bytes, with some going to 9000 or larger in specific contexts like cloud environments. 
+
+
+	B. Header => This section specifies additional "meta" information that is used to configure aspects of the packet, its routing, etc. 
+
+		---> An IP packet size can be from 20-60 bytes (if options are enabled). 
+
+		---> Headers are important to customize the IP protocol and routing protocols in the routing process for packets in layer 3 situations. 
+
+		---> An appropriate balance must be struck between the MTU and the header sizes in order to ensure that a sufficiently large amount of data is sent for a certain set of headers. 
+		
+		---> This is to ensure feasibility from a business perspective. 
+
+
+
+---> Normally, the IP packet has a simplified structure of: Source IP - Data - Destination IP
+
+---> However, the actual structure of an IP packet contains some of the following components: 
+
+	
+	A. Version => 4 bytes are devoted to specifying if the packet is using IPv4 or IPv6. 
+
+	B. IHL => This governs header length and determines the number of options / headers that can be enabled in the packet. 
+
+	C. Total Length => This governs the total sizes of the data and headers (data goes up to 65536 bytes). 
+
+	D. Fragmentation components => Fragmentation of data occurs at layer 2-3 when the packet size is determined to be too big compared to the acceptable MTU (and data frame) used for a routing situation. 
+
+		---> E.g. An MTU of 2000 bytes exists for a packet of 2500 bytes. The result is 2 packets that will be sent in place of 1 packet. 
+
+		---> There are 3 components of a packet that concern fragmentation: 
+
+
+		A. Identification => This is the unique ID of a fragment for a particular fragmented datum. 
+
+		B. Flags => This is a simple boolean flag to confirm whether or not the current packet is existing as part of fragmented data or not. 
+
+		C. Fragment Offset => This defines the number of fragments associated with a fragmented packet / datum.    
+
+
+	E. Time to Live => This determines the maximum number of "hops" that a packet can undergo when it is being routed to its final destination machine. 
+
+		---> A hop is counted as a visit or passing through of a packet on a device such as a host or a router. 
+
+		---> Once the time to live is exceeded, then the packet is no longer transmitted.  
+
+			---> This is done to prevent infinite loops / traveling of packets on WANs such as the internet. 
+
+		
+		---> Each time a router or host is visited, the Time to Live count is decremented. 
+
+		---> This type of information is considered "state" information that is transferred with the packet because routers and layer 3 protocols are not stateful. 
+
+			---> In this sense, information pertaining to the state of a particular packet is not saved on routers or visited machines. 
+
+
+	F. Protocol => Metadata that defines the protocol that is used with the data, allowing the router to perform operations on the data / parse it if necessary. 
+
+		---> This is used either descriptively to say what protocol(s) the data packet is run with or to use a protocol in certain cases in order to allow more performant use of the data. 
+
+
+	G. Explicit Congestion Control (ECN) => This is a form of control that is applied to congested routers, which notifies prevents packets from being dropped. 
+
+		---> Congestion occurs when a router's memory buffers start to overflow with packets and normally once overflow is reached, further packets will be dropped. 
+
+		---> ECN allows for notifications to be sent to client + receiver to trigger mechanisms (to be defined in the TCP section) to not drop the packets and to provide helpful information on when congestion occurs. 
+
+
+ICMP, PING, and TraceRoute: 
+
+	
+  
