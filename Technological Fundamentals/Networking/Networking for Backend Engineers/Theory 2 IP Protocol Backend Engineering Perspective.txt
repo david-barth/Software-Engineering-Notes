@@ -123,5 +123,98 @@ The IP Packet: Anatomy of an IP Packet
 
 ICMP, PING, and TraceRoute: 
 
+---> ICMP stands for Internet Control Message Protocol and is a layer 3 protocol on which tools like PING and traceroute use. 
+
+	---> ICMP is designed to send informational messages relating to layer 3 and layber 4 issues, even though this protocol exists in layer 3. 
+
+	---> Messages will be sent for issues such as unreachable hosts, packet expiration (due to maximum hop counts reached), fragmentation being needed, or unreachable ports. 
+
+	---> ICMP uses IP directly and doesn't require listeners or ports to be opened. 
+
+		---> Reminder: Logical ports are a layer 4 concept. 
+
+
+---> IMCP can be disabled or blocked for security reasons, which can disrupt tools like PING and traceroute. 
+
+	---> Security reasons can include using fake IMCP messages or flooding attacks with IMCP messages. 
+
+	---> However, disabling ICMP can also cause damage during connection establishment (ie during the 3-way TCP handshake), by preventing informational messages from being sent to the client alerting them to important events such as connection establishment or fragmentation issues. 
+
+	---> ICMP messages come in sequences.   
 	
   
+---> PING is a functionality that exists on all operating systems and is used to verify a connection in a simple way via echo messages. 
+
+	---> PING sends packets to a destination and the destination will send a series of echo packets back to confirm that the sending packets were received. 
+
+	---> ICMP is used with this in order to show the messages that confirm the metrics related to its process by showing information such as TTL, time to complete the ping, etc. 
+
+
+---> Traceroute is a tool that uses Time to Live (TTL) to identify the entire path that an IP packet takes. 
+
+	---> Traceroute slowly increments the TTL of a packet by 1 every time in order to identify the router IP address for each hop. 
+
+	---> ICMP messages are used to alert the client host as to the path information available for each packet during this process. 
+	
+	---> However, paths can change and ICMP can also be blocked / disabled which would disrupt Traceroute's ability to function properly in some cases. 
+
+	---> The specific usage of destination unreachable IMCP messages are used with IP addresses in order to sucessfully trace a route with this. 
+
+	---> Important: TTL is only decremented when a packet is crossing to another network; devices in the same network do not decrement the TTL counter. 
+
+		---> Therefore, TTL is firmly a layer 3 consideration and not a layer 2 situation (ie LAN context).
+
+
+ARP: Address Resolution Protocol (Developer's Perspective) 
+
+---> ARP is a protocol that is used to map IP addresses to MAC addresses to allow for translation between the 2 for WAN <-> LAN routing purposes, when packets arrive to or leave from the LAN.  
+
+---> To complete the routing process, once the default gateway is reached, ARP is used to convert the destination IP address into a physical MAC address, which marks the transition from IP Packets (layer 3) to frames (layer 2). 
+
+---> An ARP table is used to cache all current IP -> MAC address mappings.  
+
+	---> See notes on Networking for Non-techies for a mroe thorough introduction to ARP. 
+
+
+---> The structure of a data frame is also shown in the following: 
+
+	MAC address (Client) - IP Address (Client) - HTTP Information (e.g. GET Request) - IP Address (Destination) - MAC address (Destination) 
+
+	---> This shows the various sections of data that are encapsulated moving down to layer 2 from layer 3. 
+
+
+---> A full sequence of events for an ARP request to routing is given below: 
+
+
+	0. The host will apply its subnet mask to IP address B to determine if it is in the host's subnet. 
+
+		---> This example assumes it is not. 
+ 
+
+	1. A host in an LAN wants to communicate with a host of IP address B. 
+
+	2. The host will check its local ARP local to see if the IP address B is in it.  
+
+	3. If it isn't, then an ARP request (broadcast) is sent to all machines in the network, asking for the default gateway MAC address. 
+
+	4. The default gateway replies to the ARP request and the ARP table in the host device is updated. 
+
+	5. The information is sent to the default gateway router for routing. 
+
+
+	---> Note: It is possible in unsecure locations for the ARP request to be intercepted by a malicious machine (ARP poisoning / spoofing). 
+
+		---> This would ensure that all incoming traffic from the requesting device is intercepted by the malicious machine. 
+
+
+	---> Important: The subnet mask is always applied to the desired IP address before any further communications occur in the network. 
+
+
+---> ARP can be used with load balancing considerations.  (To be considered for later)
+
+
+
+
+
+
+                 

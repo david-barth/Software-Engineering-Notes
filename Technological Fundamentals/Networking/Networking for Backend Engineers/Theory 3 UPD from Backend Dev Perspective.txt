@@ -1,0 +1,55 @@
+Theory 3: UDP from a Backend Engineering Perspective. 
+
+
+What is UDP?
+
+---> The User Datagram Protocol (UDP) is a layer 4 protocol that provides the ability to address different processes in a host by using ports. 
+
+	---> Different processes (or application protocols) run on different ports and UDP (+TCP) provide granularity to direct traffic to different ports within the same machine. 
+
+	---> UDP itself is a simple layer 4 (transport layer) protocol that sends and receives data in a stateless fashion. 
+
+	---> Ie nothing related to the data transmission is stored on the receiving server, unlike TCP which is stateful. 
+
+		---> Arising from this, UDP is therefore connectionless. 
+
+		---> Prior communication with the receiving host is not necessary, which can present security risks. 
+
+
+	---> UDP uses an 8 byte header datagram for its metadata.
+
+	---> Overall, UDP is a more lightweight version of TCP. 
+
+
+---> UDP use cases include: video / data streaming, VPN, DNS, and WebRTC (RTC = Real Time Communication).  
+
+	---> All of these use cases revolve around the light weighted performant aspects of UDP. 
+
+	---> TCP includes more overhead in order to ensure certain communication guarantees, which includes notably retransmission of packets / data. 
+
+	---> Such overheads are non-ideal for use cases that require real time data streams to be used as mentioned above. 
+
+	---> UDP allows for realtime data streaming to occur, which is the basis for these use cases.
+
+
+---> The resolution of ports to networking communications is important in the consideration of UDP, which is why the concepts of multiplexing and demultiplexing must be considered: 
+
+	A. Multiplexing => Multiple inputs are resolved to a single output. 
+
+	B. Demultiplexing => A single input is resolved to multiple outputs. 
+
+
+	---> In this context, a sending device can multiple communications for multiple apps (on the destination machine) into a single communication output that is sent to / over UDP. 
+
+	---> The receiever will demulitplex the single communication and resolve the communication into its destination ports (ie multiple outputs). 
+
+	---> This allows communications to be streamlined into multiple processes / applications on host ports over UDP (and TCP). 
+
+	---> Important: The source port must also be included in UDP / TCP communications in order to allow data to be sent back to the sender. 
+
+
+
+User Datagram Structure: 
+
+---> 
+ 
