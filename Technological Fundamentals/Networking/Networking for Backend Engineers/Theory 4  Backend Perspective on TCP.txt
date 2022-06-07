@@ -1,0 +1,298 @@
+Theory 4: Backend Perspective on TCP 
+
+
+More Detailed Introduction to TCP: 
+
+---> Transmission Control Protocol (TCP) is a layer 4 protocol that provides "control" to the transmission of data within the transport layer. 
+
+	---> UDP provides no such control. 
+
+	---> The control here is for things such as flow control, congestion control, retransmission, connection establishment, and more. 
+
+
+---> Like UDP, TCP provides the ability to resolve requests to ports within a host. 
+
+---> However, TCP is a stateful protocol that does this, in that a connection is established by way of its 3-way handshake. 
+
+	---> The stateful nature means that data relating to the session (of the connection) is stored in host + server. 
+
+	---> This is used in order to provide the various elements of control that TCP has. 
+
+
+---> In order to handle these functionalities, TCP uses 20-60 byte segment (comparable to a UDP datagram) which contains headers / metadata useful for the algorithms that implement TCP. 
+
+---> TCP use cases center around the concept of reliable communication in which data sent over the protocol is guaranteed to be sent and able to achieve consistency. Such use cases include: 
+
+	A. Remote shell communications
+
+	B. Database connections => This one is especially important to ensure data consistency via the use of TCP. 
+
+	C. Web Communications
+
+	D. Bidirectional Communication => This is not via request - response format, but continuous communication back and forth between 2 entities or systems (to be defined later). 
+
+
+---> The concept of a connection is central to TCP: a connection is a layer 5 concept whose lifecycle is represented by a session. 
+
+	---> Conceptually, a connection is an effective agreement between client and server. 
+
+	---> The TCP connection is established by the 3-way handshake and its metadata is stored on the server as follows:
+
+		---> The connection contains: Source IP-Source Port and Destination IP-Destination Port.
+
+		---> These are effectively a socket + socket combination and is abstracted by 2 sockets talking to each other (ie the connection between 2 sockets). 
+
+		---> This information is hashed and stored by the OS on a table, which is referred to by a file description (see C UDP server example). 
+
+		---> After a connection is established and further data is sent to the server, the server OS will refer to this hashed information to see if the incoming data contains matching metadata. 
+
+		---> If there is a match, then the data is accepted and if not, then the data is dropped. 
+
+
+	---> This above process of connection creation must occur before data can be sent, providing a security guarantee built into TCP.  
+
+	---> Within TCP data can only be sent within the context of a connection, between 2 sockets / file descriptors. 
+
+
+
+---> Segments are the equivalent to a datagram within TCP and TCP sequences / orders data segments before data is sent off as IP packets. 
+
+	---> Segments usually arrive out of order because path determination can be different for each IP packet. 
+
+	---> The sequencing of segments allows a destination device to scan for lost segments in a sequence and then have those lost segments retransmitted from the source machine, providing a higher level guarantee for reception of data than UDP. 
+
+	---> Once all segments arrive, the destination machine can sort the segments in order and then reassemble the data, as it moves up to the application layers. 
+
+	---> Note: Like UDP, TCP also uses (de)multi-plexing (see explanation in UDP notes). 
+
+
+---> Reminder: The TCP 3-way handshake needs to be established in order to allow data to be sent between 2 hosts in a TCP connection.  The process for the 3-way handshak eis as follows: 
+
+
+	1. App 1 on IP A sends a SYN (synchronize) signal to App 2 on IP B. 
+
+		---> The SYN signal is located on a 1 byte header in the TCP segment. 
+
+		---> The SYN signal allows the sequence number of App 2 to synchronize with App 1. 
+
+	
+	2. App 2 then sends a SYN/ACK (synchronize + acknowledgement) signal back to App 1 (on IP A) to allow App 1 to synchronize its sequence numbers with App 2. 
+
+
+	3. App 1 then sends a final ACK signal to App 2, showing that App 1 acknowledges App 2's own SYN signal. 
+
+	4. The 3-way handhshake is established and data can now be sent between the 2 hosts. 
+
+
+	---> The 3-way handshake initial IP packets are used to establish the file descriptors within tables for each machine. 
+
+	---> Reminder: The file descriptor is the combination of IP + Port number of each machine (hashed). 
+
+	---> The storage of this information on machines is the core of how TCP is a stateful protocol as the state of the connection is stored in this way. 
+
+	---> Whenever a host sends data to another host via TCP, then TCP will drop the data segments if the file descriptor for the sending machine doesn't exist.  
+
+		---> This check for file descriptors is done on each TCP based commuication and the TCP 3-way handshake is what creates the file descriptor (if it didn't already exist before hand). 
+
+
+---> After the initial handshake / connection is established, then the actual sending of data segments also contains the use of ACK signals: 
+
+	---> Segments received by the destination host are responded to with ACK signals from the destination machine. 
+
+	---> Multiple sequence segments (e.g. 1, 2, 3) can be responded to with a signal ACK (e.g. ACK 3 acknowledges the reception of segments 1-3). 
+
+	---> This ACK signal is what allows TCP to ensure that delivery has occurred for IP packets / data. 
+
+	---> Multiple segments / packets can be sent from the source side before the arrival of a particular ACK signal, but there is a limit to this based on flow control and congestion control mechanisms implemented within TCP. 
+
+		---> This balance is done for performance tradeoffs because waiting for every ACK signal is too slow, while sending too many packets before an ACK signal can result in issues with flow and congestion on servers + routers. 
+
+
+	---> Lost data and retransmission is also accounted by use of ACK signals.  
+
+		---> A lost packet / segment will eventually timeout by exhausting hop counts or by some other metric when being routed. 
+
+		---> If a certain time threshold is exceeded on the destination side while waiting for a packet, the destination server will send an ACK signal accounting for n-1 segments (assuming the nth segment is lost). 
+
+		---> This n-1 ACK is sent to the source machine and the source machine will understand that the nth segment was lost and will retransmit the segment to the destination. 
+
+		---> This is the basic retransmission mechanism and guaranteed delivery for TCP. 
+
+
+
+---> A TCP connection + session is closed via a 4-way handshake (detailed in the non-techies course notes), which consists of FIN + ACK signals (FIN = finishing). 
+
+	---> The connection is only closed when the final ACK signal is sent from the source machine to the destination machine. 
+
+		---> Upon reception of this final ACK signal, the file descriptor entry on the destination machine is destroyed, ending the session for the destination machine. 
+
+	
+	---> The file descriptor for the source machine remains until all remaining packets of the session are receieved by the source. 
+
+		---> This puts the source machine into a time-wait state in which the file descriptor is only destroyed when all packets are received, thus ending the session for the source machine too. 
+
+
+	---> Important reminder: The state of the TCP connection is represented by the file descriptors on both machines. 
+
+
+
+TCP Segment: The anatomy of the TCP Segment.
+
+---> A TCP header (ie space for TCP specific metadata) is 2--60 bytes depending on the options used. 
+
+---> TCP related metadata is encapsulated into an IP packet's data section (before being unwrapped at the transport layer of the machine the packet is being sent to). 
+
+---> The TCP segment (header) contains the following components: 
+
+	A. Source + Destination Port => As in the case of UDP. 
+
+	B. Sequence Number => This denotes the number in the TCP sequence which the segment occupies after data has been segmented. 
+
+		---> This can go up to 4 billion before being reset to 0, which will initialize another sequence. 
+
+		---> TCP implementations contain mechanisms to ensure that reinitialized sequences can still be accounted for if the data segments for a particular entity exceeds the maximum threshold. 
+
+
+	C. Acknowledgement (ACK) Number => The ACK number represents the sequential number of segments receieved within a sequence. 
+
+		---> This is used, as specified above, to ensure guaranteed delivery + retransmission in TCP. 
+
+
+	D. Window Size => This denotes the threshold of data that a host can handle when receiving data from a source machine. 
+
+		---> The default is ~65k bytes, but maximums can be in the order of GBs.
+
+
+	E. Bit flags => These are flags used for various purposes and include: SYN, ACK, FIN, PSH (pushing data), RST, URG (urgent segment), ECE (used for congestion control), CWR, and NS (notifications?). 
+
+
+	---> There are also options and a few other components to detailed later. 
+
+
+---> Maximum segment size is innately determined by the Maximum Transmission Unit (MTU) of the network.  
+
+	---> The MTU is related to the size of a layer 2 data frame, which is a property closer to the physical / hardware side of the network. 
+
+	---> Given that the MTU of the internet is 1500 bytes by default, the maximum segment size (MSS) can be 1460 bytes over the internet (1500 - 20 (IP header size) - 20 (TCP header size) = size of data in transmission).
+
+	---> Certain cloud envs (e.g. AWS) and other specialized settings can provide MTUs of 9000+ bytes (ie "Jumbo" data frames). 
+
+
+ 
+Flow Control: How much can a receiving machine handle?
+
+---> The basis for flow control originates from how many TCP segments a receiver can handle at a given time (or time interval). 
+
+	---> A receving machine has a certain amount of memory devoting to receiving TCP segments in the form of buffers. 
+
+	---> If an excess of data is received, the destination machine's buffers are overwhelmed and segments will be dropped from being received. 
+
+	---> This introduces the idea of flow control which involves letting the source machine know how much data can be received.  
+
+
+---> The basic idea for flow control is that the receiver's buffer / receiving memory can be overwhelemed if too many segments are sent from the source. 
+
+	---> In order to implement flow control, the sender must be alerted to how much the receiver's buffer can handle. 
+
+	---> A "window" of data is defined, in terms of number of bytes, that a receiver's buffer can handle from the sender. 
+
+	---> The sender is given this window in the TCP header from the receiver and this window will modulate the flow of data from the sender. 
+
+	---> This will prevent segments from being droppped due to buffer memory overflow. 
+
+
+---> The window size is known as the "Receiver Window" and this is updated with every ACK signal sent from the receiver to the sender. 
+
+	---> The sender will receive this window size and calculate how much data should be sent based on the window size given with an ACK signal. 
+
+	---> The window size can be modulated by the receiver based on factors such memory availability, connections currently being maintained, and other important considerations. 
+
+	---> Therefore, the window size is constantly changing with every set of ACK signal given to the sender.  This allows for a dynamic adjustment of window size, allowing for dynamic flow control to be used. 
+
+	---> A sliding window can be used from the sender's side in order to ensure that further segments (in a sequence of segments) can be sent to the receiver. 
+
+		---> Example: Sender sends segments 1, 2, 3 (out of 6), but an ACK signal is sent to acknowledge 2 out of 3. 
+
+		---> To prevent excessive waiting for an ACK 3 signal, the receiver's window can be "slid" across the sequence of segments to send sequence 3, 4, and 5.  
+
+		---> This window can further be adapted down the segment sequence in order to adaptively send specific segments depending on network timing (from receiver's end) and the type of ACK signal received. 
+
+	
+---> An example of a window size can be 64KB, which is very small for modern network communications. 
+
+	---> A winodow scaling factor can be used in order to increase the window size. 
+
+	---> The window scaling factor is from 0-14 and is negotiated during the 3-way workflow. 
+
+	---> Example: A scaling factor of 14 can scale a 64KB window size up to 1GB, which is a suitable size for modern network communications. 
+
+
+---> These aspects (sliding window, window scaling, etc) all form the important aspects of TCP flow control. 
+
+	---> However, flow control can be implemented outside of TCP for customized situations (e.g. with the use of a modified version of UDP). 
+
+
+
+Congestion Control: How much the network can handle?
+
+---> Congestion control is the idea of flow control applied to routers that are intermediate between sender and receiver. 
+
+---> Routers have a limit to how much IP packets / segments they can receive and process, and passing this limits creates network congestion. 
+
+---> In order to avoid congestion, a Congestion Window is used to implement congestion control: 
+
+	---> The congestion window is a property of the sender.  
+
+
+---> Congestion control is implemented using 2 algorithms: 
+
+	A. TCP Slow Start => The congestion window is increased by 1 maximum segment size (MSS) per ACK signal receieved from the receiver. 
+
+		---> This is a fast increase in allowable congestion (based on the congestion window size). 
+
+		---> This increase of window size is exponential in nature. 
+
+
+	B. Congestion Avoidance => Once TCP slow start reaches a threshold point, this algorithm is used to increase the window size by up to + MSS only after one complete round trip time. 
+
+		---> Example of a round trip time: The amount of time for an ACK N signal to be recieved after N segments are sent. 
+
+		---> This ensures that a linear increase in the window size. 
+
+		---> The congestion avoidance algorithm will halve the congestion window when timeouts are reached or when duplicate ACK signals are received, which both are signs of the network / router upper limit being reached. 
+
+			---> This halving is what allows congestion control to be fully implemented. 
+
+
+	---> Important: The congestion window can never be larger than the receiver window. 
+
+
+---> In order to prevent the router from dropping packets, Explicit Congestion Notification (ECN) is used.
+
+	---> ECN occurs when a router is about to reach its congestion limit / window. 
+
+	---> At this point, routers can tag IP packets with ECN header bits (flags) in order to indicate this state of near congestion. 
+
+	---> The receiver will get these IP packets tagged with the ECN bit flag and promptly copy this bit back to the sender. 
+
+	---> The sender will receive this ECN and this will kickstart the sequence of events that leads to the congestion avoidance algorithm to halve the congestion window used by routers. 
+
+	---> This fully completes a mechanism that TCP uses in order to prevent or greatly reduce congestion in network traffic. 
+
+
+
+---> Note: The issue of buffer memory overflow is still the same for routers as it is for servers. 
+
+	---> The only difference is that routers can handle less data and traffic than servers can in terms of memory / resource capacity. 
+
+
+---> Note 2: Congestion control isn't normally needed in LANs (ie hosts that are controlled directly).  
+
+
+
+
+
+
+
+
+

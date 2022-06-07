@@ -49,7 +49,99 @@ What is UDP?
 
 
 
-User Datagram Structure: 
+User Datagram Structure: Anatomy of the UDP Datagram
 
----> 
- 
+---> The UDP datagram header is only 8 bytes (applicable for IPv4) and fits into an IP packet in its "data" section.
+
+---> The port number for the datagram can go from 0-65535. 
+
+---> The UDP datagram consists of the following sections in its structure: 
+
+	A. Source Port => This defines the port from which the datagram originates from. 
+
+	B. Destination Port => This defines the destination port to which the datagram will be sent. 
+
+	C. Length => This defines the length / amount of data being sent. 
+
+	D. Checksum => This is a number that defines whether the data has been corrupted or not. 
+
+		---> Corruption can happen from various circumstances in the different layers (e.g. physical layer issues such as voltage attentuation). 
+
+
+	E. Data => This is where the upper layer (4-7) is placed into and the form of it is now a segment. 
+
+
+---> Note: If UDP is used, then the "protocol" section of the IP packet structure (ie the header) will be "UDP".
+
+
+
+UDP Pros and Cons: 
+
+---> UDP has several advantages over TCP owing to its lightweight nature: 
+
+	A. The datagram header size is very small and so uses less resources to send / recieve. 
+
+	B. UDP uses less bandwidth due to its lack of complexity relative to TCP. 
+
+	C. UDP is stateless and so doesn't leave a memory footprint on the servers that its datagrams visit. 
+
+	D. UDP also has much lower latency than TCP. 
+
+		---> This owes to its connectionless nature (no handshake) and lack of other features such as retransmission, guaranteed delivery, etc. 
+
+
+---> However, UDP also has some cons: 
+
+	A. There is no acknowledgement of datagram reception, making it hard to know if a network communication go through successfully or not. 
+
+	B. No guaranteed delivery, unlike TCP, which means that segments of data can be lost and the total delivery of data can be corrupted. 
+
+		---> Ie the state of the data will be corrupted and this is a negative consequence for data consistency across a network where consistent state matters. 
+
+
+	C. UDP is connectionless, which means anyone can send data without prior knowledge or soft authentication. 
+
+		---> This becomes an issue with security considerations such DoS attacks and more, because servers can be tricked into performing malicious functionalities in this context. 
+
+
+	D. UDP also lacks the following features of TCP: 
+
+		A. No flow control => UDP cannot control the amount of data / packets that are sent to the server.  
+
+		B. No congestion control => UDP also provides no ability to control the amount of traffic that goes through a router. 
+
+		C. No ordered packets => Packets are not ordered sequentially unlike TCP where a specific sequence is implemented which determines the order in which data is reassembled. 
+
+
+Practical Exposure: A (High Level) UDP Server in NodeJS.
+
+---> This presents a high level overview of how UDP can be created within a NodeJS context. 
+
+	---> This is the focus of high level socket programming. 
+
+	---> Reminder: A socket is the combination of a port and an IP address, therefore representing an abstraction of these two entities. 
+
+
+---> In the high level situation, the socket is created for a protocol (such as UDP) and bound to the IP address and a port number. 
+
+---> A handler can be attached to this socket to implement processing when a datagram is receieved from a source socket. 
+
+---> At this level, the socket abstraction encapsulates many lower level details which are explained next. 
+
+---> Information from the source socket is sent with the datagram (within the datagram structure) in UDP communications. 
+
+
+
+Practical Exposure: A (Low Level) UDP Server in C. 
+
+---> From the low level perspective (in C), there are a few more details that must be considered with respect to the socket abstraction: 
+
+	A. Buffer Memory => Memory must be allocated for a buffer that can accommodated the data sent with the datagram.  
+
+	B. File description => This is a pointer that the Os uses to point to the proper location in memory that contains a table of information to complete the UDP transmission. 
+
+	C. Sizes of addresses => The actual memory size of an address (for when the socket is bound to to an IP address). 
+
+	---> These lower level details are taken care of in the NodeJS version of things. 
+
+
