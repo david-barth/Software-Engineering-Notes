@@ -1,0 +1,50 @@
+Theory 5: Networking Concepts for Effective Backend Applications (Selected Topics)
+
+
+Listening to Servers: 
+
+---> A logical server can be created to listen on a specific socket (IP address + Port number). 
+
+---> A machine normally has multiple interfaces with multiple IP addresses (public + private, IPv4 + IPv6). 
+
+---> The socket that a logical server (e.g. a web server) listens to is criticial for safety: 
+
+	---> E.g. (127.0.0.1, 8080) => This socket specifies an IPv4 interface on port 8080, which is a specific socket to listen to. 
+
+	---> (::1, 8080) => This is socket is an IPv6 interface on port 8080
+
+	---> (0.0.0.0, 8080) => This combination instructs to listen to all possible interfaces / IP addresses on port 8080. 
+
+	---> From the above examples, listening to a specific socket as opposed to all possible sockets with port 8080 is a safe option. 
+
+	---> The 3rd example is dangerous because this opens the server to all possible connection attempts, which can open the server to attacks and other dangerous parties. 
+
+
+---> Important: Only one process can listen to one socket at a time, except in the case of port reuse in operating systems. 
+
+	---> Port reuse is when an OS balances the connections associated with different processes to a single port number. 
+
+	---> The OS creates a hash of the file descriptor for a connection in order to implement, by matching communications from different processes and load balancing them to the same port. 
+
+
+
+The Importance of Proxies and Reverse Proxes: 
+
+---> A proxy is a machine which makes a request to a server on the behalf of a client.  
+
+	---> When a client makes a request to a particular website, it is likely that the actual request is made to a proxy (ie a "forward proxy" / client facing proxy). 
+
+	---> The client actually makes a TCP connection establishment with the proxy and the proxy makes a TCP connection with the actual server in order to forward the request to the server. 
+
+	---> On layer 4, the client only sees the proxy socket and not the server socket to which it makes a connection to, but on layer 7 the application code may have HTTP headers which contain information relating to the client's original IP address. 
+
+		---> An example of this is the HTTP header called X-Forwarded-For (XFF) which is the de-facto standard header used to identify the originating IP address of a client connecting to a web server via a proxy server. 
+
+
+
+---> 
+
+
+ 
+
+

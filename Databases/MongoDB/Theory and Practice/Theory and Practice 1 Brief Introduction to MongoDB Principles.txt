@@ -131,6 +131,14 @@ MongoDB Query Language:
 
 
 
+---> Note that object based notation is used in MongoShell querying language. 
+
+	---> There are several different objects: db, collections, documents etc. 
+
+	---> On each object there is a help() method (or just a "help" command) for various levels of help or methods available on the object. 
+
+
+
 ---> Shorthand articles to explore for shell commands and assistance: 
 
 	1. https://www.digitalocean.com/community/tutorials/how-to-use-the-mongodb-shell
@@ -138,6 +146,34 @@ MongoDB Query Language:
 		---> Simple how to on Mongo Shell commands. 
 
 	
-	2. 	 
+
+Principles of basic CRUD operations: 
+
+---> Within Spring Data for MongoDB, the main object that is used for entity persistence is the MongoTemplate class. 
+
+---> This class contains the operations needed to perform basic CRUD operations: 
+
+	A. insert() => This allows for writing a new document to the database, either as a single record or a list of records. 
+
+	B. find() => Retrieves an existing documents or groups of documents based on a query or an id. 
+
+	C. update() => Updates a document with new data, based on a query.   
+
+	D. remove() => Removes documents either based on a query or by removing based on a query or by collection name. 
+
+
+
+---> Articles for basics on various MongoTemplate CRUD operations: 
+
+	1. https://www.baeldung.com/spring-data-mongodb-tutorial
+
+		-> Basic overview of the various CRUD operations. 
+
+	
+	2. https://www.baeldung.com/spring-data-mongodb-transactions
+
+		-> Approaches to transaction considerations with Spring Data + MongoDB. 
+
+
 
 

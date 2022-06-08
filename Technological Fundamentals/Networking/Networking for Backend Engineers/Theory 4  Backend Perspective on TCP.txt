@@ -269,7 +269,7 @@ Congestion Control: How much the network can handle?
 
 ---> In order to prevent the router from dropping packets, Explicit Congestion Notification (ECN) is used.
 
-	---> ECN occurs when a router is about to reach its congestion limit / window. 
+	---> ECN occurs when a router is about to reach its congestion limit / window
 
 	---> At this point, routers can tag IP packets with ECN header bits (flags) in order to indicate this state of near congestion. 
 
@@ -287,6 +287,79 @@ Congestion Control: How much the network can handle?
 
 
 ---> Note 2: Congestion control isn't normally needed in LANs (ie hosts that are controlled directly).  
+
+
+TCP Connection States: 
+
+---> Reminder: TCP is a stateful protocol in that client and server need to maintain many different types of states including: 
+
+	A. Window sizes => Referring to congestion and receiver window sizes. 
+
+	B. Sequences
+
+	C. Connection State
+
+
+---> The TCP connection state is denoted on both sides of the connection: the server and the client. 
+
+---> The connection state is used to signfiy the state of the connection side being maintained by that machine.  Some examples of states include: 
+
+	A. ESTABLISHED => The connection is established with the other side on the current machine. 
+
+		---> This exists when the 3-way handshake has created a connection and data can be exchanged. 
+
+
+	B. FIN_WAIT_1 => This is a waiting state from the side of the connection that sends a FIN signal (4-way handshake to terminate a TCP connection) 
+
+	C. CLOSE_WAIT => This is a state to the receiver of the FIN signal, indicating that the ACK + FIN signal has been sent. 
+
+	D. CLOSED => This is the state that both sides of a connection enter when the TCP connection has been terminated by the 4-way handshake.  
+
+		---> This is when data is no longer being sent. 
+
+
+	---> There are other states associated with the various parts of the TCP conneciton lifecycle. 
+
+	---> Note: The sender of the 1st FIN signal for the 4-way handshake waits up to 4 minutes in order to enter a CLOSED state in order to ensure that all packets have been received or expire / timeout. 
+
+
+
+TCP Pros and Cons: 
+
+---> The pros of TCP include the following: 
+
+	---> Guaranteed delivery of packets via retransmission mechanism. 
+
+	---> Flow control and congestion control are implemented. 
+
+	---> Data cannot be exchanged without the 3-way handshake. 
+
+	---> Packets are ordered via sequences to ensure that corruption does not occur of data when sent over a network. 
+
+	---> TCP is more secure and is harder to spoof than UDP. 
+
+
+---> The cons of TCP are as follows: 
+
+	---> TCP headers are quite large vs UDP causes larger bandwith and latency. 
+
+	---> The statefulness of TCP consumes more memory on server and client in order to maintain + update state. 
+
+	---> Latency is increased by certain TCP mechanisms such as slow start + congestion control algorithms and ACK signal receptions. 
+
+	---> Single connection usage of TCP can result in some unqiue problems relating to multiple streams of data: 
+
+		---> If multiple streams of data are sent over a single TCP connection, then all packets associated to those streams must arrive to the sender (via guaranteed transmission). 
+
+		---> However, in some cases such as HTTP, the streams of data are not associated with each other, so the execution associated to one stream of data should not depend on the other. 
+
+		---> TCP makes it necessary to receive all packets of the sent streams of data, potentially delaying execution of one stream by being dependent on a non-related stream of data. 
+
+		---> A related issue is that there is no gaurantee in which order the streams of data will arrive in, which may result in issues with order of execution relating to hose streams (e.g. for queries in a DB transaction). 
+
+
+	---> Finally TCP is a bad candidate for VPN because things like windows, connections, etc must be duplicated in order for the VPN to work. 
+
 
 
 
