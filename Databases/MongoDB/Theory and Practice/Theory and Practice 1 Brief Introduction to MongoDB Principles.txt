@@ -157,9 +157,18 @@ Principles of basic CRUD operations:
 
 	B. find() => Retrieves an existing documents or groups of documents based on a query or an id. 
 
+		---> For long lists of results, an effective way to present the data involves pagination. 
+
+		---> Pagination can be done as follows: 
+
+			
+
+
 	C. update() => Updates a document with new data, based on a query.   
 
 	D. remove() => Removes documents either based on a query or by removing based on a query or by collection name. 
+
+
 
 
 

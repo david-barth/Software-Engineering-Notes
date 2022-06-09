@@ -1,3 +1,4 @@
+
 Theory 5: Networking Concepts for Effective Backend Applications (Selected Topics)
 
 
@@ -32,7 +33,7 @@ The Importance of Proxies and Reverse Proxes:
 
 ---> A proxy is a machine which makes a request to a server on the behalf of a client.  
 
-	---> When a client makes a request to a particular website, it is likely that the actual request is made to a proxy (ie a "forward proxy" / client facing proxy). 
+	---> When a client makes a request to a particular website, it is likely that the actual request is made to a proxy (ie a "forward proxy" / client facing proxy) and the proxy makes the request for the client. 
 
 	---> The client actually makes a TCP connection establishment with the proxy and the proxy makes a TCP connection with the actual server in order to forward the request to the server. 
 
@@ -40,11 +41,109 @@ The Importance of Proxies and Reverse Proxes:
 
 		---> An example of this is the HTTP header called X-Forwarded-For (XFF) which is the de-facto standard header used to identify the originating IP address of a client connecting to a web server via a proxy server. 
 
+	
+	---> In essence, the client will know the final destination (e.g. google.com) even though the TCP connection is made to the (forward) proxy.  
+		
+		---> Important: The proxy is usually located in the same network as the client machine, which is why it is also called a "forward proxy".
 
+
+
+---> A proxy can have many different use cases.  The main use cases are: 
+
+	A. Caching => A proxy can be used to cache frequently requested resources in order to help increase performance across the entire system. 
+
+	B. Anonymity => A proxy can also be used to intercept requests and hide the source IP addresses of the request. 
+
+	C. Logging => Proxies can have all service communications (e.g. in a mesh topology) going through it and the details + events surrounding these communications can be centrally logged. 
+
+		---> A tool like APIGEE could be considered a primary example of this use case. 
+
+
+	D. Blocking sites / traffics => Proxies can block traffic directed to / from certain sites in different ways (see fire wall notes in non-techies course).  Thus they act as firewalls in cyber security strategies. 
+
+
+
+---> A reverse proxy essentially acts as the reverse to the proxy.  The reverse proxy resides typically in the same network as a server.
+
+	---> Here, the client traffic is intercepted before the traffic / request reaches the actual servers. 
+
+	---> The reverse proxy delegates the traffic to their proper destination servers and the servers use the reverse proxy to achieve purposes relating to things such as load balancing and availability. 
+
+	---> In this scenario, the proxy does not act on behalf of the client, but rather for the servers.  
+
+	---> The reverse proxy is essentially the "forward proxy" for servers in that they process incoming traffic to servers and delegate that traffic to the server all the while ensuring that the true destination IP address of the server is never known to the client.  
+
+	---> The concept of socket connections is also considered from the perspective of reverse proxies: 
+
+		---> The destination server makes a TCP connection with the reverse proxy and thus knows the reverse proxy socket on a layer 4 perspective. 
+
+		---> The reverse proxy is what makes the TCP connection with the client socket. 
+
+		---> However, for security reasons, there is usually no IP forwarding of the destination server IP to the client (unlike the cases for a forward proxy). 
+
+	
+	---> The complete picture is that the direction of the traffic must be considered with respect to the proxy + client / server in order to properly understand the roles each type of proxy server plays. 
+
+	---> Reverse proxies are primarily used for caching, load balancing, security (e.g. firewalls), and canary deployments (?) among other use cases. 
+
+	---> Examples of reverse proxies: NGINX, apache, etc.
+
+
+---> It can be that a forward proxy contacts a reverse proxy on behalf of the client and this can be a scenario where both types of proxies are used at the same time. 
+
+	---> Important: A reverse proxy can never be a forward proxy. 
+
+
+---> On average, proxies are commonly used for HTTP network traffic. 
+
+
+
+Access Control to Database Servers:
+
+---> This topic refers to considering the types of connections that can be made to a database. 
+
+---> For example, a PostGreSQL database can sport some of the following types of connection configurations: 
+
+	A. Default connection => This is a direct connection, from the app / "client" to the database.  Ie the consumer of the database connects to the process the database is running on directly, with no involvement from a TCP connection. 
+
+		---> Performance wise this is the fastest type of communication. 
+
+
+	B. Loopback address connection => This is a connection in which the loopback address of the machine is used, with the TCP stack (ie layer 4), in order to form a connection to the database. 
+
+		---> This can be applied for IPv4 and IPv6 variations. 
+
+		---> This type of connection only allows for connection of an app to a database on the same machine only, but with interaction from TCP. 
+
+			---> Therefore, this is less performant, but easier to implement than the direct process connection mentioned above. 
+
+		
+		---> In IPv4, the subnet mask is used in 2 different ways (ie via CIDR notation or with direct IP subnet mask) in order to confirm the loopback address as being in the same network and thus machine. 
+
+
+	C. Localhost connection => This connection is effectively the same as the loopback address connection, but the connection string of "localhost" can resolve to either IPv4 or IPv6.  
+
+
+	D. LAN connection => This connection is based on an app / consumer of the DB being in the same LAN as the database and therefore possessing the same network portion of the IP address as the IP address permitted by the database. 
+
+		---> The method to allow the connection to takeplace can be based on password authentication on a certain domain or LAN or based on identity (e.g. by OS username). 
+
+		---> This involves forming a TCP connection between the 2 hosts within the same network using the typical subnet mask procedure to identify if the request is meant for the same network, etc. 
+
+
+	E. Non-LAN connection => The network bits of the allowed IP address can be configured to allow hosts from outside of the LAN to access the database as well. 
+
+	
+	---> In all of the above examples, the attempt to form a connection is blocked first by an authentication method (e.g. based on identity, password, IP filtering, etc) before the TCP connection is allowed to form between the database socket and the host socket. 
+
+ 
+---> Overall, it is important to ensure that the types of connections allowed to form with the database are considered for security purposes.  
+
+
+
+Understanding the Cost of TCP Connections: 
 
 ---> 
-
-
  
 
 
