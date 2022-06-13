@@ -1,0 +1,122 @@
+Theory 1: Introduction to MongoDB
+
+
+What is MongoDB?
+
+---> MongoDB is a NoSQL database that is optimized to storing large amounts of hierarchal data in the form of documents. 
+
+	---> The documents are stored in collections. 
+
+	---> Collections in turn are stored in "Shop databases" or simply databases. 
+
+	---> For analogous comparisons to the SQL / relational model implementations, see the theory and practice notes. 
+
+
+---> There are a few key characteristics of MongoDB that makes it distinct from the traditional SQL databases: 
+
+	A. Optional Schemas => Schemas are optional in MongoDB, as the data can be stored in a non-structured way within documents. 
+	
+		---> Schemas can be enforced and it is a best practice to do so in order to have clean meaningful data, but the flexibility of optional schemas remains helpful for use cases for MongoDB. 
+
+	
+	B. No / Few Relations => MongoDB has very little in terms of data relationships in the same sense of parent-child relationships that are foundin the relational model. 
+
+		---> Ie Foreign key relationships are not implemented in MongoDB, at least not in the same sense as relational DBs. 
+
+		
+	C. Automatic Merging of Data => Selected data sets need tobe merged by manual query language in traditional SQL databases, whereas MongoDB has a more automated and efficient way of performing merges. 
+
+
+
+The MongoDB Ecosystem: 
+
+---> The core offering of the MongoDB ecosystem is the MongoDB database: 
+
+
+	A. MongoDB Database => This comes with the self-managed / enterprise variation, the cloud variation (Atlas), and even a mobile variation. 
+
+	B. CloudManager / OpsManager => This is the manager / orchestrator that is used in deployed cloud versions of the database in order to manage clusters and other DB operations. 
+
+	C. Compass => This is a GUI that is used (cf MySQL workbench) which allows for graphical manipulation and administration of the MongoDB database. 
+
+	D. Stitch => This is the serverless query API that allows for direct DB queries to be made from the client side (e.g. from a React App).  
+
+		---> This includes serverless functions, database triggers, and real-time sync with database instances. 
+
+
+
+MongoDB: Quick Primer on the CLI (MongoShell). 
+
+---> The Mongoshell is used in order to interact with the MongoDB instances by CLI. 
+
+---> The navigation for the DB is essentially hierarchal and occurs on several different levels. 
+
+	A. (?) Cluster / Server Level => Here, all database instances can be found. 
+
+	B. DB Level => All collections can be found here. 
+
+	C. Collection Level => All documents within the collection can be found here. 
+
+	---> A database can be navigated to by using the "use DBName" command where DBName is a placeholder for a database. 
+
+	---> Note: If executing this command and there is no pre-existing DB present, then the database will be created with the provided name. 
+
+
+---> Within a DB, the central object to be considered is the "db" object, which contains a reference to the current DB instance referred to by "use DBName". 
+
+	---> Here, various methods on the db object can be called such as .help(), etc which all perform operations on the various components within the DB object. 
+
+	---> It is at this level that the collections of the DB are considered. 
+
+	---> Important: .help() is useful for finding detailed information on the various methods attached to the central object at each level.  
+
+	---> Note: The same considerations can also be applied on the collection level. 
+
+		---> On the collection level, the main pattern of CLI command would be: 
+
+			db.someCollection.someMethod()
+
+			---> SomeMethod() => help(), find(), and other methods that can be used to query or manipulate documents. 
+
+
+
+Shell vs Drivers: 
+
+---> The MongoShell CLI is useful for interacting directly with the MongoDB server itself and its underlying databases for language neutral settings. 
+
+---> However, for application and enterprise settings, an application, built upon a specific programming language, will be used to speak to the database. 
+
+	---> In such cases, a driver is needed in to bridge the gap between language specific application and the MongoDB server + database. 
+
+	---> Drivers, in this instance, are software that provide the interface between a specific programming language and the MongoDB server + database. 
+
+	---> Analogous patterns can also be found for many SQL database implementations. 
+
+
+
+The Big Picture Behind MongoDB + Application Architecture: 
+
+---> A MongoDB data layer itself is composed of the following components: 
+
+	A. MongoDB Server => This is the software that talks to the drivers in the application or the MongoShell and receives commands for queries. 
+
+		---> The server understands queries and passes these to the underlying storage engine, which performs the queries. 
+
+		---> The server also recieves query results from the storage engine and passes this back to the client. 
+
+
+	B. Storage Engine => This is the component focuses on the execution and processing of queries with the underlying data stored (either in-memory or in file). 
+
+		---> Multiple storage engines can be used. 
+
+		---> The storage engine can either interact with persisted data in the form of files, which read / write operations are performed on or on in-memory (RAM) data. 
+
+	
+	C. Persisted Data => Actual data can either be persisted in-memory (e.g. for caching / performance purposes) or stored in files (for safety) on the hard disk. 
+
+		---> The main tradeoff between these forms of persistence is that operations performed on in-memory storage structures are fast + performant, but subject to deletion (e.g. in system failure) whereas file persistence is safe, but operations peformed on files are slow. 
+
+
+
+
+

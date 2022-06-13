@@ -1,0 +1,57 @@
+Theory and Practice 3: Query Construction in SpringData-MongoDB. 
+
+Basics of Query Construction. 
+
+---> Within the current usage of SpringData, there are 2 important abstractions that exist, which encapsulate lower level details of the official synchronous MongoDB Java drivers: 
+
+
+	A. Query => This is an abstraction that encapsulates the essential elements of a MongoDB query into one single access point. 
+
+	B. Criteria => This is an abstraction that encapsulates the elements behind a query criteria that is used to narrow a query based on certain query criteria. 
+
+
+---> The basics of query construction and various native operators in the Mongo shell are reflected in the API that is used within these 2 abstractions. 
+
+---> The Query object is used as a parameter for all read operations provided by the MongoTemplate class. 
+
+---> The Criteria class instances can be used as inputs to the Query class, either via the Query class constructor or via the addCriteria() method. 
+	
+	---> A summarizing exampel of the above is shown below: 
+
+		query.addCriteria(Criteria.where("priceUSD").lte(request.getLowerBound()).gte(request.getUpperBound()));
+
+		
+		---> addCriteria() takes a criteria object and can be used multiple times in order to add more criteria. 
+
+		---> Each criteria focuses on a property / key within the query that is being used. 
+
+		---> A static factory method called where() is used to instantiate a Criteria instance based on the property that being targeted by the where() method.
+		
+		---> From the point of instantiation at where() various methods, corresponding to operators can be used to specify the query even further. 
+
+		---> In this example, the lte() and gte() method correspond to <= and >= operators with respect to the supplied boundaries provided as arguments. 
+
+		---> Other operators such as exists() and and() can also be used. 
+
+		---> All of these correspond to native methods used in the MongoShell query language. 
+
+
+---> Important: These methods all build on the lower level code that is provided by the driver. 
+
+	---> The lower level driver methods can also be used and the tradeoffs of these approaches will be explored. 
+
+
+---> Note: The SpringData based abstractions, using either MongoRepository or MongoTemplate, are synchronous in nature. 
+
+	---> Asynchronous approaches are based off of reactive streams in the Java ecosystem, which can also be explored from a tradeoffs perspective. 
+
+
+
+
+
+
+---> Query creation documentation: 
+
+	1. https://spring.getdocs.org/en-US/spring-data-docs/spring-data-mongodb/reference/mongo.core/mongo.query.html
+
+		---> Official Spring Docs

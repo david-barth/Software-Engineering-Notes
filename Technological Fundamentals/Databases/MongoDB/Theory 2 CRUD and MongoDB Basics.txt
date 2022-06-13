@@ -1,0 +1,20 @@
+Theory 2: Basics of CRUD Operations and MongoDB Basics. 
+
+
+Understanding Databases, Collections and Documents. 
+
+---> The hierarchy of components within the MongoDB architecture is: 
+
+	A. Server => This contains multiple MongoDB databases and a user can switch between multiple databases here. 
+
+	B. Database => This is the level one step down from the server level and contains multiple collections. 
+
+	C. Collection => This level is one step down from the database level and this is where documents within the same collection can be interacted with. 
+
+
+---> Note: In order to start MongoShell, the MongoDB server must be running. 
+
+
+Creating Databases and Collections: 
+
+---> 

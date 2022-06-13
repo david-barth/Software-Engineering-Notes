@@ -143,7 +143,147 @@ Access Control to Database Servers:
 
 Understanding the Cost of TCP Connections: 
 
----> 
+---> The establishment of a TCP connection can be costly and the following factors govern the performance behind the 3-way handshake process: 
+
+	A. Distance between hosts => Higher distance will lead to more hops over routers for IP packets / segments, thereby increasing latency. 
+
+	B. TCP Slow Start => Due to its exponential nature, the TCP slow start algorithm starts out slowly, thereby limiting the amount of packets that can be sent out via window size (especially the handshake packets). 
+
+	C. Congestion + Flow Control => Both of these traffic limiting mechanisms further add to the performance cost (ie latency) behind the 3-way handshake by limiting the amount of handshake segments / packets that can be sent. 
+
+	D. Delayed Acknowledgment + Nagel's Algorithm => (To be described later) Both are responsible for latency increases for the TCP handshake. 
+
+	---> Many of these factors also affect the 4-way termination handshake for the TCP connection destruction. 
+
+
+---> To offset the cost of connection establishment, a technique called connection pooling is used: 
+
+	---> Connection tooling is when a set number of TCP connections on a backend / server contet are established and continously maintained.  
+
+		---> Due to the slow start algorithm (congestion control), initial requests sent over the newly established connections are slow. 
+
+		---> However, the exponential nature of the algorithm ensures that later requests will be sent in a much faster fashion because the congestion window has increased exponentially over the intermediary routers. 
+
+
+	---> Requests are queued up and sent over available TCP connections (either synchronously or asynchronously) via the use of threads (1 thread per request / response transaction).  
+
+		---> The connections are maintained and thus avoiding continued costs of connection establishment. 
+
+		---> Connections are only destroyed when there is no need for the connection or when the process shuts down. 
+
+
+---> Finally, there is the conceptual choice between eager vs lazy loading of resources within the app context: 
+
+
+	A. Eager Loading => This is the idea of loading all resources at once for use. 
+
+		---> Requests are served immediately. 
+
+		---> However, due to the slow start algorithm, the amount of data sent over the network is limited by small congestion windows. 
+
+		---> Therefore, servicing requests is slow in eager loading because more data is sent back per time unit over a network connection. 
+
+		---> The limit of the congestion windows prevent data sent back over in sufficiently large amounts over an eager loading situation. 
+
+
+	B. Lazy loading => This concept is the idea of loading resources only when required explicitly by the request. 
+
+		---> Request serving is slower under this paradigm. 
+
+		---> Smaller volumes of data are sent over a connection per unit time, which contributes to a comparatively fast start up of lazy loading vs eager loading. 
+
+		---> However, due to the initially incomplete sending of data, the congestion window will increase at a slower rate and therefore servicing of initial requests can be quite slow. 
+
+			---> Vs Eager Loading => Lazy loading allows for requests to be served quickly because only the necessary parts of the request resources are given, whereas in eager loading all resources are given. 
+
+				---> Therefore, lazy loading entails a slower rate of increase for congestion window size than eager loading.  The volume of data to service a request in eager loading is larger than lazy loading, so eager loading's initial request servicing efficiency is quite slow vs lazy loading. 
+
+
+Load Balancing at Layer 4 vs Layer 7: 
+
+---> A load balancer is a reverse proxy that is used to distribute traffic across different backend services in order to "balance" inbound traffic across a system for performance + scalability reasons. 
+
+	---> Generically, a load balancer will send a request to one or more backends depending on several performance + load based metrics. 
+
+	---> The load balancer can operate either on layer 4 or layer 7. 
+
+
+---> A layer 4 load balancer operates on a 1 connection to 1 connection basis between client and backend destination server. 
+
+	---> It is common for a load balancer to maintain a set of maintained connections with a set of backend servers (ie via connection pool?). 
+
+	---> When a client forms a particular TCP connection with the layer 4 load balancer, the layer 4 load balancer will assign a correspondence with a particular connection to a destination backend server. 
+
+	---> Therefore, there is always a 1-1 correspondence between these connections such that any traffic from the client-load balancer connection will always be assigned to that particular load balancer - destination server connection. 
+
+	---> The segments are rewritten into new sequences (and sometimes segment sizes are adjusted) when being sent over the second connection. 
+
+	---> If the client forms another distinct connection with the layer 4 load balancer, then a new correspondence is setup with a new backend connection. 
+
+		---> Load balancers use specific load balancing algorithms in order to decide how to achieve this assignment (e.g. via round robin). 
+
+
+---> A layer 4 load balancer has the following pros and cons:
+
+	---> The main pro of a layer 4 load balancer is that it offers a simpler load balancing concept than a layer 7 load balancer: 
+
+		---> This includes a lack of data lookup (ie data in segments are not read). 
+
+		---> As an extension of the above, there is also a lack of decrypting the data in segments, allowing for layer 4 load balancing to be more secure. 
+
+		---> Because the load balancer works for layer 4 in this case, many application layer protocols are supported (HTTP, SQL connections, gRPC, etc). 
+
+		---> And if using NAT layer 4 load balancing (where the load balancer acts as an effective default gateway between client and server), then only 1 TCP connection is needed. 
+
+
+	---> However, the pros of a layer 4 load balancer also act as its main cons in another sense:
+
+		---> The lack of data lookup prevents contextualization of data for load balancing purposes and leads to a less "intelligent" load balancing vs layer 7 load balancers. 
+
+		---> Layer 4 load balancers also do not offer caching for incoming traffic. 
+
+		---> Layer 4 load balancers are protocol unaware (since many higher level protocols are not considered at layer 4) and this may allow certain traffic types to bypass normal security filtering rules. 
+
+
+
+---> A layer 7 load balancer offers a more intelligent load balancing concept based on the fact that the layer 7 load balancer provides data lookup into the data and is protocol specific. 
+
+	---> Data in a request is decrypted and buffered into the load balancer, which then parses the data to understand it and repackages it as a new request to its proper backend server (based on configured metrics). 
+
+	---> This approach offers a more selective way to load balance traffic between different backend servers. 
+
+	---> Since layer 7 load balancing is protocol specific, it is possible to send different requests, on the same connection, to different backend servers. 
+
+	---> This is in direct contrast to a layer 4 load balancer in which a private 1-1 connection is forged between client-load balancer-server. 
+
+	---> In the layer 4 case, the connection is stateful and that state is used to ensure that traffic always follows that connection. 
+
+	---> In the layer 7 case, the conneciton is not stateful in some cases (e.g. stateless protocols like HTTP).  
+
+
+---> For a layer 7 load balancer, the pros lie in its ability to provide smart load balancing vs layer 4 load balancers. 
+
+	---> This includes being able to decrypt the data, understand it based on certain metrics, and also to understand the protocol. 
+
+	---> The layer 7 load balancer can also allow for caching. 
+
+	---> A layer 7 load balancer can also provide authentication capabilities and can act as an API gateway for all requests.  
+
+	---> Altogether, this makes a layer 7 load balancer ideal for distributed systems composed of microservices. 
+
+	
+---> However, a layer 7 load balancer's smart load balancing approach also offers disadvantages: 
+
+	---> Data lookup, contextualization, and decryption (TLS termination) can be quite expensive. 
+
+	---> A minimum of 2 TCP connections must be used, unlike the case of NAT layer 4 load balancing where 1 TCP connection is used. 
+
+	---> The load balancer and the client must share a TLS certificate, which can be undesirable in some cases. 
+
+	---> Finally, the needs to buffer requests and to understand protocols can also be a performance bottleneck in times of high request traffic. 
+
+
+---> An example of a layer 7 load balancer is NGINX. 
  
 
 
